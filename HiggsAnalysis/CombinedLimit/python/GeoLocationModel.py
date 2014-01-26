@@ -59,17 +59,7 @@ class GeoLocationModel(PhysicsModel):
     def doParametersOfInterest(self):
       
       
-
-        #if ( self.mode == 'K1andK3' ):
-            #poi='k3k1_ratio'
-        #elif ( self.mode == 'K1andK2' ):
-            #poi='k2k1_ratio'
-        #elif ( self.mode == 'K1andK2andK3' ):
-            #poi='k2k1_ratio,k3k1_ratio'
-        #else:
-            #raise RuntimeError('InvalidKParameterChoice',
-                               #'We can only use k3k1_ratio, k2k1_ratio'\
-                               #' as POIs right now!')      
+   
       
 	poi = ",".join(self.pois)
 	print "POI 1: "+str(poi)
@@ -132,7 +122,7 @@ class GeoLocationModel(PhysicsModel):
         self.modelBuilder.doSet('POI',poi)
         
         # display the glory of our work
-        self.modelBuilder.out.Print()
+        #self.modelBuilder.out.Print()
 
         
         
@@ -140,12 +130,20 @@ class GeoLocationModel(PhysicsModel):
 	if not self.DC.isSignal[process]: return 1
 	return "r"
         
-        
+
+#class FaModelClass(PhysicsModel):
+        #pass
         
 K1andK3Model 		= GeoLocationModel('K1andK3')
 K1andK2Model 		= GeoLocationModel('K1andK2')
 K1andK2andK3Model 	= GeoLocationModel('K1andK2andK3')
-        
+#to be inplemented by 
+#Fa3Model                = FaModelClass("Fa3")
+#Fa2Model                = FaModelClass("Fa2")
+#FL1Model                = FaModelClass("FL1")
+#Fa3Fa2Model             = FaModelClass("Fa3Fa2")
+#WidthModel              = FaModelClass("Width")
+
         
         
     
