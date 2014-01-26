@@ -1,0 +1,53 @@
+K 25
+svn:wc:ra_dav:version-url
+V 26
+/!svn/ver/384/pyyaml/trunk
+END
+announcement.msg
+K 25
+svn:wc:ra_dav:version-url
+V 43
+/!svn/ver/382/pyyaml/trunk/announcement.msg
+END
+LICENSE
+K 25
+svn:wc:ra_dav:version-url
+V 33
+/!svn/ver/63/pyyaml/trunk/LICENSE
+END
+setup.py
+K 25
+svn:wc:ra_dav:version-url
+V 35
+/!svn/ver/384/pyyaml/trunk/setup.py
+END
+CHANGES
+K 25
+svn:wc:ra_dav:version-url
+V 34
+/!svn/ver/380/pyyaml/trunk/CHANGES
+END
+MANIFEST.in
+K 25
+svn:wc:ra_dav:version-url
+V 38
+/!svn/ver/337/pyyaml/trunk/MANIFEST.in
+END
+Makefile
+K 25
+svn:wc:ra_dav:version-url
+V 35
+/!svn/ver/330/pyyaml/trunk/Makefile
+END
+README
+K 25
+svn:wc:ra_dav:version-url
+V 33
+/!svn/ver/336/pyyaml/trunk/README
+END
+setup.cfg
+K 25
+svn:wc:ra_dav:version-url
+V 36
+/!svn/ver/384/pyyaml/trunk/setup.cfg
+END

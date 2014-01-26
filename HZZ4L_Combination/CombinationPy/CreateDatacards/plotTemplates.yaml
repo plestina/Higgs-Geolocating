@@ -1,0 +1,131 @@
+# default: &DEFAULT
+#   URL:          stooges.com
+#   throw_pies?:  true  
+#   stooges:  &stooge_list
+#     larry:  first_stooge
+#     moe:    second_stooge
+#     curly:  third_stooge
+#   
+# development:
+#   <<: *DEFAULT
+#   URL:      stooges.local
+#   stooges: 
+#     shemp: fourth_stooge
+#     
+# test:
+#   <<: *DEFAULT
+#   URL:    test.stooges.qa
+#   stooges: 
+#     <<: *stooge_list
+#     shemp: fourth_stooge
+
+
+
+All_plots:
+ - TH2: &Sandbox_templates_compare2Pedja_LF_GEN_8TeV_Templates2D_D0M_Dint13_DSignal_D0M_Dint13
+     file: Sandbox/templates_compare2Pedja/LF_GEN_8TeV/Templates2D_D0M_Dint13/DSignal_D0M_Dint13
+     histos: [ggH_shape,gg0M_shape, ggInt_13P_shape, ggInt_13N_shape] 
+#      style:  {linecolor : kViolet,  linestyle : kDashed}
+#      legend: 
+#         text : 2D unfolded w/o int. (4l@14TeV) + bkg, 2e2\mu templates, new den., scale arXiv:1310.1397
+#         opt : l
+#      draw_opt: surf
+     draw_opt: colz
+     
+ - TH2: &Sandbox_templates_compare2Pedja_LF_GEN_8TeV_Templates2D_D0M_Dint13_Dbackground_qqZZ
+     file: Sandbox/templates_compare2Pedja/LF_GEN_8TeV/Templates2D_D0M_Dint13/Dbackground_qqZZ
+     histos: [qqZZ_shape] 
+#      style:  {linecolor : kViolet,  linestyle : kDashed}
+#      legend: 
+#         text : 2D unfolded w/o int. (4l@14TeV) + bkg, 2e2\mu templates, new den., scale arXiv:1310.1397
+#         opt : l
+#      draw_opt: surf
+     draw_opt: colz
+     
+     
+     
+ - TH2: &Sandbox_templates_compare2Pedja_LF_GEN_8TeV_Templates2D_D0Ph_Dint12_DSignal_D0Ph_Dint12
+     file: Sandbox/templates_compare2Pedja/LF_GEN_8TeV/Templates2D_D0Ph_Dint12/DSignal_D0Ph_Dint12
+     histos: [ggH_shape,gg0Ph_shape, ggInt_12N_shape] 
+     POI: {k2k1_ratio : 0}
+     
+#      style:  {linecolor : kViolet,  linestyle : kDashed}
+#      legend: 
+#         text : 2D unfolded w/o int. (4l@14TeV) + bkg, 2e2\mu templates, new den., scale arXiv:1310.1397
+#         opt : l
+#      draw_opt: surf
+     draw_opt: colz     
+
+     
+     
+ - TH2: &Sandbox_templates_compare2Pedja_LF_RECO_8TeV_Templates2D_D0Ph_Dint12_DSignal_D0Ph_Dint12
+     file: Sandbox/templates_compare2Pedja/LF_RECO_8TeV/Templates2D_D0Ph_Dint12/DSignal_D0Ph_Dint12
+     histos: [ggH_shape,gg0Ph_shape, ggInt_12N_shape] 
+     POI: {k2k1_ratio : 0 }
+     
+#      style:  {linecolor : kViolet,  linestyle : kDashed}
+#      legend: 
+#         text : 2D unfolded w/o int. (4l@14TeV) + bkg, 2e2\mu templates, new den., scale arXiv:1310.1397
+#         opt : l
+#      draw_opt: surf
+     draw_opt: colz     
+
+     
+# /***************************/
+# /*  ____  _       _        */
+# /* |  _ \| | ___ | |_ ___  */
+# /* | |_) | |/ _ \| __/ __| */
+# /* |  __/| | (_) | |_\__ \ */
+# /* |_|   |_|\___/ \__|___/ */
+# /*                         */
+# /***************************/
+
+     
+templates_compare2Pedja:
+
+ content:
+#      - *Sandbox_templates_compare2Pedja_LF_GEN_8TeV_Templates2D_D0M_Dint13_DSignal_D0M_Dint13
+#      - *Sandbox_templates_compare2Pedja_LF_GEN_8TeV_Templates2D_D0M_Dint13_Dbackground_qqZZ
+     - *Sandbox_templates_compare2Pedja_LF_GEN_8TeV_Templates2D_D0Ph_Dint12_DSignal_D0Ph_Dint12
+
+ setup : &setup_templates_compare2Pedja
+     final_states: [4mu,4e,2e2mu]
+     x_axis:
+        title : X
+        range : [-10,10]
+        log   : 0
+
+     y_axis : 
+        title : Y
+        range : [-10,10]
+        log   : 0 
+        
+#      legend :
+#          position: [0.1, 0.1,0.7, 0.5]  # NDC coordinates
+#          title :  Asimov dataset k_{3}/k_{1}=0
+         
+     grid : 0
+     
+     size : [800,800]
+     
+     title : "Template"
+     
+     save_ext: [root, png, pdf, eps, C]
+     
+     add_text:
+         - text: CMS Preliminary, \sqrt{s} = 8 TeV
+           position : [0.16,0.95]
+           size: 0.025
+           font: 62
+           align: 10
+           color : kBlack
+           
+#          - text: more text here
+#            position : [0.1,0.6, NDC]
+             
+     
+ 
+list_of_plots_to_do:
+ - templates_compare2Pedja
+
+ 

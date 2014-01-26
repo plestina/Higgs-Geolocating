@@ -1,0 +1,596 @@
+# default: &DEFAULT
+#   URL:          stooges.com
+#   throw_pies?:  true  
+#   stooges:  &stooge_list
+#     larry:  first_stooge
+#     moe:    second_stooge
+#     curly:  third_stooge
+#   
+# development:
+#   <<: *DEFAULT
+#   URL:      stooges.local
+#   stooges: 
+#     shemp: fourth_stooge
+#     
+# test:
+#   <<: *DEFAULT
+#   URL:    test.stooges.qa
+#   stooges: 
+#     <<: *stooge_list
+#     shemp: fourth_stooge
+
+
+
+All_plots:
+ - TGraph: &k3k1_PedjaIn_InterferenceTermsOff_D0M_mix90
+     table:  k3k1_PedjaIn_InterferenceTermsOff_D0M_mix90
+     style:  {linecolor : 1,  linestyle : 2}
+     legend: {text : 1D D0M discriminant, opt : l}
+     
+ - TGraph: &2D_k3k1_PedjaIn_InterferenceTermsOff_D0M_Dint13_projectedToD0M
+     table: 12 2D_k3k1_PedjaIn_InterferenceTermsOff_D0M_Dint13_projectedToD0M
+     style:  {linecolor: 1, linestyle: 2}
+     legend: {text: 2D projected to D0M w/o interferenceterms, opt: l }
+
+ - TGraph: &2D_k3k1_PedjaIn_InterferenceTermsOn_D0M_Dint13_projectedToD0M
+     table: 2D_k3k1_PedjaIn_InterferenceTermsOn_D0M_Dint13_projectedToD0M
+     style: {linecolor: 1, linestyle: 1}
+     legend: {text: 2D projected to D0M w/ interferenceterms,opt: l }
+    
+ - TGraph: &2D_k3k1_PedjaIn_InterferenceTermsOn_D0M_Dint13_unfolded_asimov_k3k1_5_13
+     table: 2D_k3k1_PedjaIn_InterferenceTermsOn_D0M_Dint13_unfolded_asimov_k3k1_5_13
+     style: {linecolor: 4, linestyle: 1}
+     legend: {text: 2D unfolded w/o int., opt: l}
+     
+#  - TGraph: &ul95_k3k1_0_interference2Dunfold  = {{linecolor: 2, linestyle: 1,legend: 2D unfolded w/ int. }}
+#from projection
+# 2D_k3k1_PedjaIn_InterferenceTermsOn_D0M_Dint13_projectedToD0M
+# 2D_k3k1_PedjaIn_InterferenceTermsOff_D0M_Dint13_projectedToD0M
+
+# 2D_k3k1_PedjaIn_InterferenceTermsOff_D0M_Dint13_unfolded_asimov_k3k1_5_13
+
+ - TGraph: &2D_k3k1_PedjaIn_InterferenceTermsOn_D0M_Dint13_unfolded
+     table:  2D_k3k1_PedjaIn_InterferenceTermsOn_D0M_Dint13_unfolded
+     style:  {linecolor : 1,  linestyle : 1}
+     legend: {text : 2D unfolded w/ int. (2e2mu@8TeV), opt : l}
+     draw_opt: LP
+     
+ - TGraph: &2D_k3k1_PedjaIn_InterferenceTermsOff_D0M_Dint13_unfolded
+     table:  2D_k3k1_PedjaIn_InterferenceTermsOff_D0M_Dint13_unfolded
+     style:  {linecolor : 1,  linestyle : 2}
+     legend: {text : 2D unfolded w/o int. (2e2mu@8TeV), opt : l}
+     draw_opt: LP
+     
+#      2e2mu channel@14 TeV
+ - TGraph: &2D_k3k1_PedjaIn_InterferenceTermsOn_D0M_Dint13_unfolded_14TeV_asimov_k3k1_0
+     table:  2D_k3k1_PedjaIn_InterferenceTermsOn_D0M_Dint13_unfolded_14TeV_asimov_k3k1_0
+     style:  {linecolor : 2,  linestyle : 1}
+     legend: {text : 2D unfolded w/ int. (2e2mu@14TeV), opt : l}
+     draw_opt: LP
+     
+ - TGraph: &2D_k3k1_PedjaIn_InterferenceTermsOff_D0M_Dint13_unfolded_14TeV_asimov_k3k1_0
+     table:  2D_k3k1_PedjaIn_InterferenceTermsOff_D0M_Dint13_unfolded_14TeV_asimov_k3k1_0
+     style:  {linecolor : 2,  linestyle : 2}
+     legend: {text : 2D unfolded w/o int. (2e2mu@14TeV), opt : l}
+     draw_opt: LP
+     
+#14 TeV w/o background
+ - TGraph: &2D_k3k1_PedjaIn_InterferenceTermsOn_D0M_Dint13_unfolded_14TeV_4l_asimov_k3k1_0
+     table:  2D_k3k1_PedjaIn_InterferenceTermsOn_D0M_Dint13_unfolded_14TeV_4l_asimov_k3k1_0
+     style:  {linecolor : 2,  linestyle : 1}
+     legend: {text : 2D unfolded w/ int. (4l@14TeV), opt : l}
+     draw_opt: LP
+
+ - TGraph: &2D_k3k1_PedjaIn_InterferenceTermsOff_D0M_Dint13_unfolded_14TeV_4l_asimov_k3k1_0
+     table:  2D_k3k1_PedjaIn_InterferenceTermsOff_D0M_Dint13_unfolded_14TeV_4l_asimov_k3k1_0
+     style:  {linecolor : 2,  linestyle : 2}
+     legend: {text : 2D unfolded w/o int. (4l@14TeV), opt : l}
+     draw_opt: LP
+    
+# 14TeV + Bkg
+
+ - TGraph: &2D_k3k1_PedjaIn_UniformBkg_InterferenceTermsOn_D0M_Dint13_unfolded_14TeV_4l_asimov_k3k1_0
+     table:  2D_k3k1_PedjaIn_UniformBkg_InterferenceTermsOn_D0M_Dint13_unfolded_14TeV_4l_asimov_k3k1_0
+     style:  {linecolor : 3,  linestyle : 1}
+     legend: {text : 2D unfolded w/ int. (4l@14TeV) + bkg, opt : l}
+     draw_opt: LP
+     
+ - TGraph: &2D_k3k1_PedjaIn_UniformBkg_InterferenceTermsOff_D0M_Dint13_unfolded_14TeV_4l_asimov_k3k1_0
+     table:  2D_k3k1_PedjaIn_UniformBkg_InterferenceTermsOff_D0M_Dint13_unfolded_14TeV_4l_asimov_k3k1_0
+     style:  {linecolor : 3,  linestyle : 2}
+     legend: {text : 2D unfolded w/o int. (4l@14TeV) + bkg, opt : l}
+     draw_opt: LP
+ 
+ - TGraph: &2D_k3k1_PedjaIn_UniformBkg_InterferenceTermsOff_D0M_Dint13_unfolded_14TeV_tmpPerChan_4l_asimov_k3k1_0
+     table: 2D_k3k1_PedjaIn_UniformBkg_InterferenceTermsOff_D0M_Dint13_unfolded_14TeV_tmpPerChan_4l_asimov_k3k1_0
+     style:  {linecolor : kBlue,  linestyle : kDashed}
+     legend: 
+        text : 2D unfolded w/o int. (4l@14TeV) + bkg, f. s. templates 
+        opt : l
+     draw_opt: LP
+     
+     
+ - TGraph: &2D_k3k1_PedjaIn_UniformBkg_InterferenceTermsOn_D0M_Dint13_unfolded_14TeV_tmpPerChan_4l_asimov_k3k1_0
+     table: 2D_k3k1_PedjaIn_UniformBkg_InterferenceTermsOn_D0M_Dint13_unfolded_14TeV_tmpPerChan_4l_asimov_k3k1_0
+     style:  {linecolor : kBlue,  linestyle : kSolid}
+     legend: 
+        text : 2D unfolded w int. (4l@14TeV) + bkg, f. s. templates 
+        opt : l
+     draw_opt: LP
+     
+  
+
+ - TGraph: &2D_k3k1_PedjaIn_UniformBkg_InterferenceTermsOff_D0M_Dint13_unfolded_14TeV_tmpPerChan_noDenominator_4l_asimov_k3k1_0
+     table: 2D_k3k1_PedjaIn_UniformBkg_InterferenceTermsOff_D0M_Dint13_unfolded_14TeV_tmpPerChan_noDenominator_4l_asimov_k3k1_0
+     style:  {linecolor : kMagenta,  linestyle : kDashed}
+     legend: 
+        text : 2D unfolded w/o int. (4l@14TeV) + bkg, f. s. templates, no den. 
+        opt : l
+     draw_opt: LP
+     
+ - TGraph: &2D_k3k1_PedjaIn_UniformBkg_InterferenceTermsOn_D0M_Dint13_unfolded_14TeV_tmpPerChan_noDenominator_4l_asimov_k3k1_0
+     table: 2D_k3k1_PedjaIn_UniformBkg_InterferenceTermsOn_D0M_Dint13_unfolded_14TeV_tmpPerChan_noDenominator_4l_asimov_k3k1_0
+     style:  {linecolor : kMagenta,  linestyle : kSolid}
+     legend: 
+        text : 2D unfolded w int. (4l@14TeV) + bkg, f. s. templates, no den. 
+        opt : l
+     draw_opt: LP
+
+ - TGraph: &2D_k3k1_PedjaIn_UniformBkg_InterferenceTermsOff_D0M_Dint13_unfolded_14TeV_tmpPerChan_fixWS_4l_asimov_k3k1_0
+     table: 2D_k3k1_PedjaIn_UniformBkg_InterferenceTermsOff_D0M_Dint13_unfolded_14TeV_tmpPerChan_fixWS_4l_asimov_k3k1_0
+     style:  {linecolor : kBlue+3,  linestyle : kDashed}
+     legend: 
+        text : 2D unfolded w/o int. (4l@14TeV) + bkg, f. s. templates, fixed WS
+        opt : l
+     draw_opt: LP
+     
+     
+ - TGraph: &2D_k3k1_PedjaIn_UniformBkg_InterferenceTermsOn_D0M_Dint13_unfolded_14TeV_tmpPerChan_fixWS_4l_asimov_k3k1_0
+     table: 2D_k3k1_PedjaIn_UniformBkg_InterferenceTermsOn_D0M_Dint13_unfolded_14TeV_tmpPerChan_fixWS_4l_asimov_k3k1_0
+     style:  {linecolor : kBlue+3,  linestyle : kSolid}
+     legend: 
+        text : 2D unfolded w/ int. (4l@14TeV) + bkg, f. s. templates, fixed WS 
+        opt : l
+     draw_opt: LP
+     
+ 
+ - TGraph: &2D_k3k1_PedjaIn_UniformBkg_InterferenceTermsOff_D0M_Dint13_unfolded_14TeV_tmpPerChan_NewDenominator_fixWS_4l_asimov_k3k1_0
+     table: 2D_k3k1_PedjaIn_UniformBkg_InterferenceTermsOff_D0M_Dint13_unfolded_14TeV_tmpPerChan_NewDenominator_fixWS_4l_asimov_k3k1_0
+     style:  {linecolor : kOrange,  linestyle : kDashed}
+     legend: 
+        text : 2D unfolded w/o int_ (4l@14TeV) + bkg, f. s. templates, new den., fixed WS
+        opt : l
+     draw_opt: LP
+     
+ - TGraph: &2D_k3k1_PedjaIn_UniformBkg_InterferenceTermsOn_D0M_Dint13_unfolded_14TeV_tmpPerChan_NewDenominator_fixWS_4l_asimov_k3k1_0
+     table: 2D_k3k1_PedjaIn_UniformBkg_InterferenceTermsOn_D0M_Dint13_unfolded_14TeV_tmpPerChan_NewDenominator_fixWS_4l_asimov_k3k1_0
+     style:  {linecolor : kOrange,  linestyle : kSolid}
+     legend: 
+        text : 2D unfolded w/o int. (4l@14TeV) + bkg, f. s. templates, new den., fixed WS
+        opt : l
+     draw_opt: LP
+     
+ 
+ - TGraph: &2D_k3k1_PedjaIn_UniformBkg_InterferenceTermsOff_D0M_Dint13_unfolded_14TeV_tmpPerChan_NewDenominator_scaleFactors_fixWS_4l_asimov_k3k1_0
+     table: 2D_k3k1_PedjaIn_UniformBkg_InterferenceTermsOff_D0M_Dint13_unfolded_14TeV_tmpPerChan_NewDenominator_scaleFactors_fixWS_4l_asimov_k3k1_0
+     style:  {linecolor : kViolet,  linestyle : kDashed}
+     legend: 
+        text : 2D unfolded w/o int. (4l@14TeV) + bkg, f. s. templates, new den., fixed WS, fixed scale
+        opt : l
+     draw_opt: LP
+     
+ - TGraph: &2D_k3k1_PedjaIn_UniformBkg_InterferenceTermsOn_D0M_Dint13_unfolded_14TeV_tmpPerChan_NewDenominator_scaleFactors_fixWS_4l_asimov_k3k1_0
+     table: 2D_k3k1_PedjaIn_UniformBkg_InterferenceTermsOn_D0M_Dint13_unfolded_14TeV_tmpPerChan_NewDenominator_scaleFactors_fixWS_4l_asimov_k3k1_0
+     style:  {linecolor : kViolet,  linestyle : kSolid}
+     legend: 
+        text : 2D unfolded w/o int. (4l@14TeV) + bkg, f. s. templates, new den., fixed WS, fixed scale
+        opt : l
+     draw_opt: LP
+     
+
+ - TGraph: &2D_k3k1_PedjaIn_UniformBkg_InterferenceTermsOn_D0M_Dint13_unfolded_14TeV_NewDenominator_scaleFactorsToPedja_fixWS_4l_asimov_k3k1_0
+     table: 2D_k3k1_PedjaIn_UniformBkg_InterferenceTermsOn_D0M_Dint13_unfolded_14TeV_NewDenominator_scaleFactorsToPedja_fixWS_4l_asimov_k3k1_0
+     style:  {linecolor : kViolet,  linestyle : kSolid}
+     legend: 
+        text : 2D unfolded w/ int. (4l@14TeV) + bkg, 2e2\mu templates, new den., scale arXiv:1310.1397
+        opt : l
+     draw_opt: LP
+
+ - TGraph: &2D_k3k1_PedjaIn_UniformBkg_InterferenceTermsOff_D0M_Dint13_unfolded_14TeV_NewDenominator_scaleFactorsToPedja_fixWS_4l_asimov_k3k1_0
+     table: 2D_k3k1_PedjaIn_UniformBkg_InterferenceTermsOff_D0M_Dint13_unfolded_14TeV_NewDenominator_scaleFactorsToPedja_fixWS_4l_asimov_k3k1_0
+     style:  {linecolor : kViolet,  linestyle : kDashed}
+     legend: 
+        text : 2D unfolded w/o int. (4l@14TeV) + bkg, 2e2\mu templates, new den., scale arXiv:1310.1397
+        opt : l
+     draw_opt: LP
+     
+
+     
+ - TGraph: &2D_k3k1_PedjaIn_UniformBkg_InterferenceTermsOn_D0M_Dint13_unfolded_14TeV_NewDenominator_scaleFactorsToPedjaOff_fixWS_4l_asimov_k3k1_0
+     table: 2D_k3k1_PedjaIn_UniformBkg_InterferenceTermsOn_D0M_Dint13_unfolded_14TeV_NewDenominator_scaleFactorsToPedjaOff_fixWS_4l_asimov_k3k1_0
+     style:  {linecolor : kBlue,  linestyle : kSolid}
+     legend: 
+        text : 2D unfolded w/ int. (4l@14TeV), flat bkg, 2e2\mu templates, new den.
+        opt : l
+     draw_opt: LP
+
+ - TGraph: &2D_k3k1_PedjaIn_UniformBkg_InterferenceTermsOff_D0M_Dint13_unfolded_14TeV_NewDenominator_scaleFactorsToPedjaOff_fixWS_4l_asimov_k3k1_0
+     table: 2D_k3k1_PedjaIn_UniformBkg_InterferenceTermsOff_D0M_Dint13_unfolded_14TeV_NewDenominator_scaleFactorsToPedjaOff_fixWS_4l_asimov_k3k1_0
+     style:  {linecolor : kGreen+2,  linestyle : kDashed}
+     legend: 
+        text : 2D unfolded w/o int. (4l@14TeV), flat bkg, 2e2\mu templates, new den.
+        opt : l
+     draw_opt: LP
+     
+# # # #      New stuff since 2014
+#  ____  _____ ____ ___  
+# |  _ \| ____/ ___/ _ \ 
+# | |_) |  _|| |  | | | |
+# |  _ <| |__| |__| |_| |
+# |_| \_\_____\____\___/ 
+#                        
+
+ - TGraph: &2D_k3k1_0_0_PedjaIn_UniformBkg_IntOff_D0M_Dint13_14TeV_M4l131to141_RECO_4l_asimov_k3k1_0
+     table: 2D_k3k1_0_0_PedjaIn_UniformBkg_IntOff_D0M_Dint13_14TeV_M4l131to141_RECO_4l_asimov_k3k1_0
+     style:  {linecolor : kBlue,  linestyle : kDashed}
+     legend: 
+        text : 1D templates w/o int. (4l@14TeV)
+        opt : l
+     draw_opt: LP
+
+     
+ - TGraph: &2D_k3k1_0_0_PedjaIn_UniformBkg_IntOn_D0M_Dint13_14TeV_M4l131to141_RECO_4l_asimov_k3k1_0
+     table: 2D_k3k1_0_0_PedjaIn_UniformBkg_IntOn_D0M_Dint13_14TeV_M4l131to141_RECO_4l_asimov_k3k1_0
+     style:  {linecolor : kBlue,  linestyle : kSolid}
+     legend: 
+        text : 2D templates w/ int. (4l@14TeV)
+        opt : l
+     draw_opt: LP
+     
+# 2D_k3k1_0_0_PedjaIn_UniformBkg_IntOff_D0M_Dint13_8TeV_M4l131to141_RECO
+# 2D_k3k1_0_0_PedjaIn_UniformBkg_IntOn_D0M_Dint13_8TeV_M4l131to141_RECO
+# 2D_k3k1_1_7_PedjaIn_UniformBkg_IntOff_D0M_Dint13_8TeV_M4l131to141_RECO
+# 2D_k3k1_1_7_PedjaIn_UniformBkg_IntOn_D0M_Dint13_8TeV_M4l131to141_RECO
+# 2D_k3k1_m3_3_PedjaIn_UniformBkg_IntOff_D0M_Dint13_8TeV_M4l131to141_RECO
+# 2D_k3k1_m3_3_PedjaIn_UniformBkg_IntOn_D0M_Dint13_8TeV_M4l131to141_RECO
+# 2D_k3k1_m3_3_PedjaIn_UniformBkg_IntOn_D0M_Dint13_8TeV_M4l131to141_RECO_2e2mu
+# 2D_k3k1_m5_13_PedjaIn_UniformBkg_IntOn_D0M_Dint13_8TeV_M4l131to141_RECO
+# 2D_k3k1_5_13_PedjaIn_UniformBkg_IntOn_D0M_Dint13_8TeV_M4l131to141_RECO     
+     
+     
+     
+# /***************************/
+# /*  ____  _       _        */
+# /* |  _ \| | ___ | |_ ___  */
+# /* | |_) | |/ _ \| __/ __| */
+# /* |  __/| | (_) | |_\__ \ */
+# /* |_|   |_|\___/ \__|___/ */
+# /*                         */
+# /***************************/
+
+     
+plot_4l_unfolding_withandwitout_bkg_14Tev:     
+
+ content:
+#      - *2D_k3k1_PedjaIn_InterferenceTermsOn_D0M_Dint13_unfolded_14TeV_4l_asimov_k3k1_0
+#      - *2D_k3k1_PedjaIn_InterferenceTermsOff_D0M_Dint13_unfolded_14TeV_4l_asimov_k3k1_0
+#      - *2D_k3k1_PedjaIn_UniformBkg_InterferenceTermsOn_D0M_Dint13_unfolded_14TeV_4l_asimov_k3k1_0
+#      - *2D_k3k1_PedjaIn_UniformBkg_InterferenceTermsOff_D0M_Dint13_unfolded_14TeV_4l_asimov_k3k1_0
+     - *2D_k3k1_PedjaIn_UniformBkg_InterferenceTermsOn_D0M_Dint13_unfolded_14TeV_tmpPerChan_4l_asimov_k3k1_0
+     - *2D_k3k1_PedjaIn_UniformBkg_InterferenceTermsOff_D0M_Dint13_unfolded_14TeV_tmpPerChan_4l_asimov_k3k1_0
+#      - *2D_k3k1_PedjaIn_UniformBkg_InterferenceTermsOn_D0M_Dint13_unfolded_14TeV_tmpPerChan_noDenominator_4l_asimov_k3k1_0
+#      - *2D_k3k1_PedjaIn_UniformBkg_InterferenceTermsOff_D0M_Dint13_unfolded_14TeV_tmpPerChan_noDenominator_4l_asimov_k3k1_0
+#      - *2D_k3k1_PedjaIn_UniformBkg_InterferenceTermsOn_D0M_Dint13_unfolded_14TeV_tmpPerChan_NewDenominator_scaleFactors_fixNorm_4l_asimov_k3k1_0
+#      - *2D_k3k1_PedjaIn_UniformBkg_InterferenceTermsOff_D0M_Dint13_unfolded_14TeV_tmpPerChan_NewDenominator_scaleFactors_fixNorm_4l_asimov_k3k1_0
+#      - *2D_k3k1_PedjaIn_UniformBkg_InterferenceTermsOn_D0M_Dint13_unfolded_14TeV_tmpPerChan_NewDenominator_scaleFactors_fixNorm_oldLumiSetting_4l_asimov_k3k1_0
+#      - *2D_k3k1_PedjaIn_UniformBkg_InterferenceTermsOff_D0M_Dint13_unfolded_14TeV_tmpPerChan_NewDenominator_scaleFactors_fixNorm_oldLumiSetting_4l_asimov_k3k1_0
+
+
+ setup : &setup_plot_4l_unfolding_withandwitout_bkg_14Tev
+     x_axis:
+        title : L (fb^{-1})
+        range : [25,3000]
+        log   : 1
+
+     y_axis : 
+        title : U.L. @95% for |k_{3}/k_{1}|
+        range : [0.1,9]
+        log   : 1 
+        
+     legend :
+         position: [0.1, 0.1,0.7, 0.5]  # NDC coordinates
+         title :  Asimov dataset k_{3}/k_{1}=0
+         
+     grid : 1
+     
+     size : [800,800]
+     
+     title : "Title of the canvas"
+     
+     save_ext: [root, png, pdf, eps, C]
+     
+     add_text:
+         - text: "CMS Preliminary, #sqrt{s} = 14 TeV, all final states"
+           position : [0.16,0.95]
+           size: 0.025
+           font: 62
+           align: 10
+           color : kBlack
+           
+#          - text: more text here
+#            position : [0.1,0.6, NDC]
+             
+     
+ 
+# plot_4l_unfolding_withandwitout_bkg_14Tev:      
+# plot_bkg_14Tev:     
+#  - *2D_k3k1_PedjaIn_UniformBkg_InterferenceTermsOff_D0M_Dint13_unfolded_14TeV_4l_asimov_k3k1_0
+#  - *ul95_k3k1_0_nointerference2Dproj
+plot_4l_unfolding_with_bkg_14Tev_int_effect:     
+ content:
+#      - *2D_k3k1_PedjaIn_UniformBkg_InterferenceTermsOn_D0M_Dint13_unfolded_14TeV_4l_asimov_k3k1_0
+#      - *2D_k3k1_PedjaIn_UniformBkg_InterferenceTermsOff_D0M_Dint13_unfolded_14TeV_4l_asimov_k3k1_0
+#      - *2D_k3k1_PedjaIn_InterferenceTermsOn_D0M_Dint13_unfolded_14TeV_4l_asimov_k3k1_0
+#      - *2D_k3k1_PedjaIn_InterferenceTermsOff_D0M_Dint13_unfolded_14TeV_4l_asimov_k3k1_0
+     - *2D_k3k1_PedjaIn_UniformBkg_InterferenceTermsOff_D0M_Dint13_unfolded_14TeV_tmpPerChan_4l_asimov_k3k1_0
+     - *2D_k3k1_PedjaIn_UniformBkg_InterferenceTermsOn_D0M_Dint13_unfolded_14TeV_tmpPerChan_4l_asimov_k3k1_0 
+     - *2D_k3k1_PedjaIn_UniformBkg_InterferenceTermsOn_D0M_Dint13_unfolded_14TeV_tmpPerChan_noDenominator_4l_asimov_k3k1_0
+     - *2D_k3k1_PedjaIn_UniformBkg_InterferenceTermsOff_D0M_Dint13_unfolded_14TeV_tmpPerChan_noDenominator_4l_asimov_k3k1_0
+     
+     
+ setup: *setup_plot_4l_unfolding_withandwitout_bkg_14Tev
+ 
+ 
+    
+plot_4l_unfolding_withBkg_newDenominator_14Tev:     
+ content:
+#      - *2D_k3k1_PedjaIn_InterferenceTermsOn_D0M_Dint13_unfolded_14TeV_4l_asimov_k3k1_0
+#      - *2D_k3k1_PedjaIn_InterferenceTermsOff_D0M_Dint13_unfolded_14TeV_4l_asimov_k3k1_0
+#      - *2D_k3k1_PedjaIn_UniformBkg_InterferenceTermsOn_D0M_Dint13_unfolded_14TeV_4l_asimov_k3k1_0
+#      - *2D_k3k1_PedjaIn_UniformBkg_InterferenceTermsOff_D0M_Dint13_unfolded_14TeV_4l_asimov_k3k1_0
+#      - *2D_k3k1_PedjaIn_UniformBkg_InterferenceTermsOn_D0M_Dint13_unfolded_14TeV_tmpPerChan_4l_asimov_k3k1_0
+#      - *2D_k3k1_PedjaIn_UniformBkg_InterferenceTermsOff_D0M_Dint13_unfolded_14TeV_tmpPerChan_4l_asimov_k3k1_0
+     - *2D_k3k1_PedjaIn_UniformBkg_InterferenceTermsOn_D0M_Dint13_unfolded_14TeV_tmpPerChan_fixWS_4l_asimov_k3k1_0
+     - *2D_k3k1_PedjaIn_UniformBkg_InterferenceTermsOff_D0M_Dint13_unfolded_14TeV_tmpPerChan_fixWS_4l_asimov_k3k1_0
+#      - *2D_k3k1_PedjaIn_UniformBkg_InterferenceTermsOn_D0M_Dint13_unfolded_14TeV_tmpPerChan_noDenominator_4l_asimov_k3k1_0
+#      - *2D_k3k1_PedjaIn_UniformBkg_InterferenceTermsOff_D0M_Dint13_unfolded_14TeV_tmpPerChan_noDenominator_4l_asimov_k3k1_0
+#      - *2D_k3k1_PedjaIn_UniformBkg_InterferenceTermsOn_D0M_Dint13_unfolded_14TeV_tmpPerChan_NewDenominator_scaleFactors_fixNorm_4l_asimov_k3k1_0
+#      - *2D_k3k1_PedjaIn_UniformBkg_InterferenceTermsOff_D0M_Dint13_unfolded_14TeV_tmpPerChan_NewDenominator_scaleFactors_fixNorm_4l_asimov_k3k1_0
+#      - *2D_k3k1_PedjaIn_UniformBkg_InterferenceTermsOn_D0M_Dint13_unfolded_14TeV_tmpPerChan_NewDenominator_scaleFactors_fixNorm_oldLumiSetting_4l_asimov_k3k1_0
+#      - *2D_k3k1_PedjaIn_UniformBkg_InterferenceTermsOff_D0M_Dint13_unfolded_14TeV_tmpPerChan_NewDenominator_scaleFactors_fixNorm_oldLumiSetting_4l_asimov_k3k1_0
+#      - *2D_k3k1_PedjaIn_UniformBkg_InterferenceTermsOn_D0M_Dint13_unfolded_14TeV_tmpPerChan_NewDenominator_fixWS_4l_asimov_k3k1_0
+#      - *2D_k3k1_PedjaIn_UniformBkg_InterferenceTermsOff_D0M_Dint13_unfolded_14TeV_tmpPerChan_NewDenominator_fixWS_4l_asimov_k3k1_0
+     - *2D_k3k1_PedjaIn_UniformBkg_InterferenceTermsOn_D0M_Dint13_unfolded_14TeV_tmpPerChan_NewDenominator_scaleFactors_fixWS_4l_asimov_k3k1_0
+     - *2D_k3k1_PedjaIn_UniformBkg_InterferenceTermsOff_D0M_Dint13_unfolded_14TeV_tmpPerChan_NewDenominator_scaleFactors_fixWS_4l_asimov_k3k1_0
+
+ setup : 
+     x_axis:
+        title : L (fb^{-1})
+        range : [25,3000]
+        log   : 1
+
+     y_axis : 
+        title : U.L. @95% for |k_{3}/k_{1}|
+        range : [0.1,12]
+        log   : 1 
+        
+     legend :
+         position: [0.1, 0.1,0.7, 0.5]  # NDC coordinates
+         title :  Asimov dataset k_{3}/k_{1}=0
+         
+     grid : 1
+     
+     size : [800,800]
+     
+     title : "Title of the canvas"
+     
+     save_ext: [root, png, pdf, eps, C]
+     
+     add_text:
+         - text: "CMS Preliminary, #sqrt{s} = 14 TeV, all final states"
+           position : [0.16,0.95]
+           size: 0.025
+           font: 62
+           align: 10
+           color : kBlack
+           
+#          - text: more text here
+#            position : [0.1,0.6, NDC]
+   
+   
+plot_4l_unfolding_withBkg_newDenominator_14Tev_fixWS:     
+ content:
+#      - *2D_k3k1_PedjaIn_InterferenceTermsOn_D0M_Dint13_unfolded_14TeV_4l_asimov_k3k1_0
+#      - *2D_k3k1_PedjaIn_InterferenceTermsOff_D0M_Dint13_unfolded_14TeV_4l_asimov_k3k1_0
+#      - *2D_k3k1_PedjaIn_UniformBkg_InterferenceTermsOn_D0M_Dint13_unfolded_14TeV_4l_asimov_k3k1_0
+#      - *2D_k3k1_PedjaIn_UniformBkg_InterferenceTermsOff_D0M_Dint13_unfolded_14TeV_4l_asimov_k3k1_0
+#      - *2D_k3k1_PedjaIn_UniformBkg_InterferenceTermsOn_D0M_Dint13_unfolded_14TeV_tmpPerChan_4l_asimov_k3k1_0
+#      - *2D_k3k1_PedjaIn_UniformBkg_InterferenceTermsOff_D0M_Dint13_unfolded_14TeV_tmpPerChan_4l_asimov_k3k1_0
+     - *2D_k3k1_PedjaIn_UniformBkg_InterferenceTermsOn_D0M_Dint13_unfolded_14TeV_tmpPerChan_fixWS_4l_asimov_k3k1_0
+#      - *2D_k3k1_PedjaIn_UniformBkg_InterferenceTermsOff_D0M_Dint13_unfolded_14TeV_tmpPerChan_fixWS_4l_asimov_k3k1_0
+#      - *2D_k3k1_PedjaIn_UniformBkg_InterferenceTermsOn_D0M_Dint13_unfolded_14TeV_tmpPerChan_noDenominator_4l_asimov_k3k1_0
+#      - *2D_k3k1_PedjaIn_UniformBkg_InterferenceTermsOff_D0M_Dint13_unfolded_14TeV_tmpPerChan_noDenominator_4l_asimov_k3k1_0
+#      - *2D_k3k1_PedjaIn_UniformBkg_InterferenceTermsOn_D0M_Dint13_unfolded_14TeV_tmpPerChan_NewDenominator_scaleFactors_fixNorm_4l_asimov_k3k1_0
+#      - *2D_k3k1_PedjaIn_UniformBkg_InterferenceTermsOff_D0M_Dint13_unfolded_14TeV_tmpPerChan_NewDenominator_scaleFactors_fixNorm_4l_asimov_k3k1_0
+#      - *2D_k3k1_PedjaIn_UniformBkg_InterferenceTermsOn_D0M_Dint13_unfolded_14TeV_tmpPerChan_NewDenominator_scaleFactors_fixNorm_oldLumiSetting_4l_asimov_k3k1_0
+#      - *2D_k3k1_PedjaIn_UniformBkg_InterferenceTermsOff_D0M_Dint13_unfolded_14TeV_tmpPerChan_NewDenominator_scaleFactors_fixNorm_oldLumiSetting_4l_asimov_k3k1_0
+#      - *2D_k3k1_PedjaIn_UniformBkg_InterferenceTermsOn_D0M_Dint13_unfolded_14TeV_tmpPerChan_NewDenominator_fixWS_4l_asimov_k3k1_0
+#      - *2D_k3k1_PedjaIn_UniformBkg_InterferenceTermsOff_D0M_Dint13_unfolded_14TeV_tmpPerChan_NewDenominator_fixWS_4l_asimov_k3k1_0
+     - *2D_k3k1_PedjaIn_UniformBkg_InterferenceTermsOn_D0M_Dint13_unfolded_14TeV_tmpPerChan_NewDenominator_scaleFactors_fixWS_4l_asimov_k3k1_0
+#      - *2D_k3k1_PedjaIn_UniformBkg_InterferenceTermsOff_D0M_Dint13_unfolded_14TeV_tmpPerChan_NewDenominator_scaleFactors_fixWS_4l_asimov_k3k1_0
+
+ setup : 
+     x_axis:
+        title : L (fb^{-1})
+        range : [25,3000]
+        log   : 1
+
+     y_axis : 
+        title : U.L. @95% for |k_{3}/k_{1}|
+        range : [0.1,12]
+        log   : 1 
+        
+     legend :
+         position: [0.1, 0.1,0.7, 0.5]  # NDC coordinates
+         title :  Asimov dataset k_{3}/k_{1}=0
+         
+     grid : 1
+     
+     size : [800,800]
+     
+     title : "Title of the canvas"
+     
+     save_ext: [root, png, pdf, eps, C]
+     
+     add_text:
+         - text: "CMS Preliminary, #sqrt{s} = 14 TeV, all final states"
+           position : [0.16,0.95]
+           size: 0.025
+           font: 62
+           align: 10
+           color : kBlack
+           
+#          - text: more text here
+#            position : [0.1,0.6, NDC]
+
+
+   
+plot_4l_unfolding_withBkg_newDenominator_14Tev_fixWS_v2:     
+ content:
+     - *2D_k3k1_PedjaIn_UniformBkg_InterferenceTermsOn_D0M_Dint13_unfolded_14TeV_tmpPerChan_fixWS_4l_asimov_k3k1_0
+#      - *2D_k3k1_PedjaIn_UniformBkg_InterferenceTermsOff_D0M_Dint13_unfolded_14TeV_tmpPerChan_fixWS_4l_asimov_k3k1_0
+     - *2D_k3k1_PedjaIn_UniformBkg_InterferenceTermsOn_D0M_Dint13_unfolded_14TeV_tmpPerChan_NewDenominator_scaleFactors_fixWS_4l_asimov_k3k1_0
+#      - *2D_k3k1_PedjaIn_UniformBkg_InterferenceTermsOff_D0M_Dint13_unfolded_14TeV_tmpPerChan_NewDenominator_scaleFactors_fixWS_4l_asimov_k3k1_0
+#      - *2D_k3k1_PedjaIn_UniformBkg_InterferenceTermsOn_D0M_Dint13_unfolded_14TeV_NewDenominator_scaleFactorsToPedja_fixWS_4l_asimov_k3k1_0
+#      - *2D_k3k1_PedjaIn_UniformBkg_InterferenceTermsOff_D0M_Dint13_unfolded_14TeV_NewDenominator_scaleFactorsToPedja_fixWS_4l_asimov_k3k1_0
+ setup : 
+     x_axis:
+        title : L (fb^{-1})
+        range : [25,3000]
+        log   : 1
+
+     y_axis : 
+        title : U.L. @95% for |k_{3}/k_{1}|
+        range : [0.1,12]
+        log   : 1 
+        
+     legend :
+         position: [0.1, 0.1,0.7, 0.5]  # NDC coordinates
+         title :  Asimov dataset k_{3}/k_{1}=0
+         
+     grid : 1
+     
+     size : [800,800]
+     
+     title : "Title of the canvas"
+     
+     save_ext: [root, png, pdf, eps, C]
+     
+     add_text:
+         - text: "CMS Preliminary, #sqrt{s} = 14 TeV, all final states"
+           position : [0.16,0.95]
+           size: 0.025
+           font: 62
+           align: 10
+           color : kBlack
+           
+#          - text: more text here
+#            position : [0.1,0.6, NDC]
+
+
+
+plot_4l_unfolding_withBkg_newDenominator_14Tev_fixWS_scaleToPaper_templ2e2mu:     
+ content:
+#      - *2D_k3k1_PedjaIn_UniformBkg_InterferenceTermsOn_D0M_Dint13_unfolded_14TeV_NewDenominator_scaleFactorsToPedja_fixWS_4l_asimov_k3k1_0
+#      - *2D_k3k1_PedjaIn_UniformBkg_InterferenceTermsOff_D0M_Dint13_unfolded_14TeV_NewDenominator_scaleFactorsToPedja_fixWS_4l_asimov_k3k1_0
+     - *2D_k3k1_PedjaIn_UniformBkg_InterferenceTermsOn_D0M_Dint13_unfolded_14TeV_NewDenominator_scaleFactorsToPedjaOff_fixWS_4l_asimov_k3k1_0
+     - *2D_k3k1_PedjaIn_UniformBkg_InterferenceTermsOff_D0M_Dint13_unfolded_14TeV_NewDenominator_scaleFactorsToPedjaOff_fixWS_4l_asimov_k3k1_0
+ setup : 
+     x_axis:
+        title : L (fb^{-1})
+        range : [8,3000]
+        log   : 1
+
+     y_axis : 
+        title : U.L. @95% for |k_{3}/k_{1}|
+        range : [0.1,18]
+        log   : 1 
+        
+     legend :
+         position: [0.1, 0.1,0.7, 0.5]  # NDC coordinates
+         title :  Asimov dataset k_{3}/k_{1}=0
+         
+     grid : 1
+     
+     size : [800,800]
+     
+     title : "Title of the canvas"
+     
+     save_ext: [root, png, pdf, eps, C]
+     
+     add_text:
+         - text: "CMS Preliminary, #sqrt{s} = 14 TeV, all final states"
+           position : [0.16,0.95]
+           size: 0.025
+           font: 62
+           align: 10
+           color : kBlack
+           
+#          - text: more text here
+#            position : [0.1,0.6, NDC]
+
+
+
+
+
+plot_4l_RECO_14Tev_scaleToPaper:     
+ content:
+     - *2D_k3k1_0_0_PedjaIn_UniformBkg_IntOff_D0M_Dint13_14TeV_M4l131to141_RECO_4l_asimov_k3k1_0
+     - *2D_k3k1_0_0_PedjaIn_UniformBkg_IntOn_D0M_Dint13_14TeV_M4l131to141_RECO_4l_asimov_k3k1_0
+ setup : 
+     x_axis:
+        title : L (fb^{-1})
+        range : [8,3000]
+        log   : 1
+
+     y_axis : 
+        title : U.L. @95% for |k_{3}/k_{1}|
+        range : [0.1,18]
+        log   : 1 
+        
+     legend :
+         position: [0.1, 0.1,0.7, 0.5]  # NDC coordinates
+         title :  Expectation for \frac{k_{3}}{k_{1}} = 0
+         
+     grid : 1
+     
+     size : [800,800]
+     
+     title : "Title of the canvas"
+     
+     save_ext: [root, png, pdf, eps, C]
+     
+     add_text:
+         - text: "CMS Preliminary, #sqrt{s} = 14 TeV, final states 4e, 4#mu, 2e2#mu"
+           position : [0.16,0.95]
+           size: 0.025
+           font: 62
+           align: 10
+           color : kBlack
+           
+#          - text: more text here
+#            position : [0.1,0.6, NDC]
+
+
+
+list_of_plots_to_do:
+#  - plot_4l_unfolding_withandwitout_bkg_14Tev     
+# # #  - plot_4l_unfolding_withandwitout_bkg_14Tev    
+# # #  - plot_bkg_14Tev     
+#  - plot_4l_unfolding_with_bkg_14Tev_int_effect     
+# # #  - plot_4l_unfolding_withBkg_newDenominator_14Tev     
+#  - plot_4l_unfolding_withBkg_newDenominator_14Tev_fixWS
+#  - plot_4l_unfolding_withBkg_newDenominator_14Tev_fixWS_v2
+#  - plot_4l_unfolding_withBkg_newDenominator_14Tev_fixWS_scaleToPaper_templ2e2mu
+ - plot_4l_RECO_14Tev_scaleToPaper
+ 
