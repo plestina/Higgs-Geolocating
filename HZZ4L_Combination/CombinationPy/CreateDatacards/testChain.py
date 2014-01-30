@@ -104,7 +104,7 @@ class ChainProcessor(object):
             self.poi_ranges_string_t2w = "--PO range_k3k1_ratio={0} --PO range_k2k1_ratio={1}".format(self.poi["k3k1_ratio"]['range'],self.poi["k2k1_ratio"]['range'] )
             _set_POI_range(self,"k3k1_ratio")
             _set_POI_range(self,"k2k1_ratio")
-            self.poi_ranges_string_fit = "k3k1_ratio={0},k2k1_ratio={1}".format(self.poi["k3k1_ratio"]['range'],self.poi["k2k1_ratio"]['range'])
+            self.poi_ranges_string_fit = "k3k1_ratio={0}:k2k1_ratio={1}".format(self.poi["k3k1_ratio"]['range'],self.poi["k2k1_ratio"]['range'])
             self.poi_name_value_plot = "{0}={2} {1}={3}".format(self.poi["k3k1_ratio"]['nice_name'],self.poi["k2k1_ratio"]['nice_name'],self.poi["k3k1_ratio"]['value'], self.poi["k2k1_ratio"]['value'])
             self.poi_name_value = "k3k1_ratio={0},k2k1_ratio={1}".format(self.poi["k3k1_ratio"]['value'],self.poi["k2k1_ratio"]['value'])
             self.poi_name_value_filename = "k3k1_ratio_{0}_k2k1_ratio_{1}".format(self.poi["k3k1_ratio"]['value'],self.poi["k2k1_ratio"]['value'])
@@ -153,7 +153,7 @@ class ChainProcessor(object):
         self.setup_POI_related_stuff()
 
         import lib.util.MiscTools as misc
-        print self.__dict__
+        #print self.__dict__
         self.fs_expanded = self.fs
         if self.fs.lower() == "4l":
             self.fs_expanded = "4e,4#mu,2e2#mu"

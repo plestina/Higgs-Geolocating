@@ -37,7 +37,7 @@ class kParamDiscriminantClass(datacardClass):
 
 	
     def setSuperKD(self):
-	self.isTemplate2D=True
+	self.isTemplate2D=False
 	self.killBackground=True
 	self.isRokoTest=True
 	#self.DEBUG=False
