@@ -46,8 +46,8 @@ class LimitVsLumi(PlotPolisher,RootPlottersBase):
       
       try:
 	  data['content']
-      except:
-	  raise ValueError, "Canvas \'content\' dictionary is not provided in config file."
+      except KeyError:
+	  raise KeyError, "Canvas \'content\' dictionary is not provided in config file."
 	  
       try:
 	  data['setup']
@@ -68,7 +68,7 @@ class LimitVsLumi(PlotPolisher,RootPlottersBase):
       
       try:
 	  data['setup']['add_text']
-      except AttributeError:
+      except KeyError:
 	  self.add_text_exist=False
       else:
 	  self.add_text_exist=True
@@ -95,7 +95,7 @@ class LimitVsLumi(PlotPolisher,RootPlottersBase):
 		self.leg.AddEntry(theGraph['graph'],theGraph['legend']['text'],theGraph['legend']['opt']);
 	    try:
 		theGraph['draw_opt']
-	    except ValueError:
+	    except KeyError:
 		draw_opt = "LP"
 	    else:
 		draw_opt = str(theGraph['draw_opt'])
@@ -114,7 +114,7 @@ class LimitVsLumi(PlotPolisher,RootPlottersBase):
       self.save_extensions = ['png','pdf','eps']
       try:
 	  data['setup']['save_ext']
-      except ValueError:
+      except KeyError:
 	  self.log.info("No extensions are provided in setup. Using default: ", self.save_extensions)
       else:
 	  self.save_extensions = list(data['setup']['save_ext'])

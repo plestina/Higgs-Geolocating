@@ -9,7 +9,10 @@ from lib.util.Logger import *
 import lib.util.MiscTools as misctools
 
 class RootPlottersBase(object):  
-  def __init__(self,name = "templates" ):
+  """Class as a base class for many plotters containing the structure, common functions...
+  """
+  
+  def __init__(self,name = "plotters_base_functionality" ):
         self.log = Logger().getLogger(self.__class__.__name__, 10)
         self.name = name
         #ROOT.gSystem.AddIncludePath("-I$ROOFITSYS/include/");
@@ -29,7 +32,12 @@ class RootPlottersBase(object):
   def makePlot(self, data):
         print "This is a default method for plotters. It has to be implemented in derived classes"
         pass
-      
+    
+  def   get_TTree(tree_name, file_name):
+        rootfile = ROOT.TFile.Open(root_file_name,'READ')
+        t = rootfile.Get('limit')
+        return t
+        
   def setCopyToWebDir(self,doCopy=False,webdir=""):
         if doCopy:
             self.copy_to_web_dir = True

@@ -51,7 +51,11 @@ class Logger(object):
     COLOR_FORMAT = formatter_message(FORMAT, True)
     
     def setVerbose(self,logger, vebose=0):
-        if verbose<0 : verbose = 0
+        """Set level of verbosity with integer:
+           <1  = very quiet
+           >4  = a lot of bla bla
+        """
+        if verbose<=0 : verbose = 0
         if verbose>5  : verbose = 5
         my_level = 50 - int(verbose*10)      
         self.logger.setLevel(my_level)

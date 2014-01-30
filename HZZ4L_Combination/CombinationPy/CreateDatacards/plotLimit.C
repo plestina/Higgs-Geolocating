@@ -33,6 +33,7 @@ void plotLimit(TString file, TString POI,TString title=""){
 
   TCanvas *c1=new TCanvas("cc1","CANVAS1",600,600);
   c1->cd();
+//   c1->SetLogy();
   gPad->SetRightMargin(0.0085);
   TString ytitle;
   if (parameter=="k3k1_ratio") ytitle = "k_{3}/k_{1}";
@@ -192,6 +193,9 @@ struct FitResult_t{
   Double_t ul68;
   Double_t ul95;
 } ;
+
+
+
 
 FitResult_t default_fr = {-99999,-99999,-99999,99999,99999,-99999,-99999 };
 

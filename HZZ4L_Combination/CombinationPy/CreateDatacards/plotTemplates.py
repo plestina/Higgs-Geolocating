@@ -95,12 +95,12 @@ class TemplatesPlotter(PlotPolisher):
       
       try:
 	  data['content']
-      except:
-	  raise ValueError, "Canvas \'content\' dictionary is not provided in config file."
+      except KeyError:
+	  raise KeyError, "Canvas \'content\' dictionary is not provided in config file."
 	  
       try:
 	  data['setup']
-      except:
+      except KeyError:
 	  print "@@@@ Canvas \'setup\' dictionary is not provided. "
 	  self.setup_exist=False
       else:
@@ -117,7 +117,7 @@ class TemplatesPlotter(PlotPolisher):
       print data['setup']['add_text']
       try:
 	  data['setup']['add_text']
-      except AttributeError:
+      except KeyError:
 	  self.add_text_exist=False
       else:
 	  self.add_text_exist=True
@@ -129,7 +129,7 @@ class TemplatesPlotter(PlotPolisher):
       for plot in data['content']:
         try:
             plot['POI']
-        except AttributeError:
+        except KeyError:
             self.plot_total_pdf=False
         else:
             self.plot_total_pdf=True  
@@ -199,7 +199,7 @@ class TemplatesPlotter(PlotPolisher):
                     self.leg.AddEntry(plot['th2'],plot['legend']['text'],plot['legend']['opt']);
                 try:
                     plot['draw_opt']
-                except ValueError:
+                except KeyError:
                     draw_opt = "COLZ"
                 else:
                     draw_opt = str(plot['draw_opt'])
@@ -238,7 +238,7 @@ class TemplatesPlotter(PlotPolisher):
                 self.save_extensions = ['png','pdf','eps']
                 try:
                     data['setup']['save_ext']
-                except ValueError:
+                except KeyError:
                     self.log.info("No extensions are provided in setup. Using default: ", self.save_extensions)
                 else:
                     self.save_extensions = list(data['setup']['save_ext'])

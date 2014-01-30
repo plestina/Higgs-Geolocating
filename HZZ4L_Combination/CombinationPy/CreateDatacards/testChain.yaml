@@ -294,7 +294,7 @@ k3k1.PedjaIn.InterferenceTermsOn.D0M.mix45 :
 # |  _ <| |__| |__| |_| | | |__   _| |  __/\ V /  
 # |_| \_\_____\____\___/  |_|  |_| |_|\___| \_/   
 
-2D.k3k1.0.0.PedjaIn.UniformBkg.IntOff.D0M.Dint13.14TeV.M4l131to141.RECO:
+2D.k3k1.0.0.PedjaIn.UniformBkg.IntOff.D0M.Dint13.14TeV.M4l121to131.RECO:
     termNames : ggH,gg0M  
     templatedir : Sandbox/templates_compare2Pedja/LF_RECO_8TeV/Templates2D_D0M_Dint13/projected 
     discriminant_name : D_{0-}^{int(13)} 
@@ -305,7 +305,7 @@ k3k1.PedjaIn.InterferenceTermsOn.D0M.mix45 :
           8 TeV datacards with only qqZZ background, 14 TeV rescale
           Asimov dataset k3k1=0 -> Corresponds to fa3=0
           
-2D.k3k1.0.0.PedjaIn.UniformBkg.IntOn.D0M.Dint13.14TeV.M4l131to141.RECO:
+2D.k3k1.0.0.PedjaIn.UniformBkg.IntOn.D0M.Dint13.14TeV.M4l121to131.RECO:
     termNames : ggH,gg0M,ggInt_13P,ggInt_13N  
     templatedir : Sandbox/templates_compare2Pedja/LF_RECO_8TeV/Templates2D_D0M_Dint13/unfolded 
     discriminant_name : D_{0-}^{int(13)} 
@@ -324,7 +324,7 @@ k3k1.PedjaIn.InterferenceTermsOn.D0M.mix45 :
 # |  _ <| |__| |__| |_| | | (_) || |  __/\ V /  
 # |_| \_\_____\____\___/   \___/ |_|\___| \_/   
     
-2D.k3k1.0.0.PedjaIn.UniformBkg.IntOff.D0M.Dint13.8TeV.M4l131to141.RECO:
+2D.k3k1.0.0.PedjaIn.UniformBkg.IntOff.D0M.Dint13.8TeV.M4l121to131.RECO:
     termNames : ggH,gg0M  
     templatedir : Sandbox/templates_compare2Pedja/LF_RECO_8TeV/Templates2D_D0M_Dint13/projected 
     discriminant_name : D_{0-}^{int(13)} 
@@ -338,7 +338,7 @@ k3k1.PedjaIn.InterferenceTermsOn.D0M.mix45 :
           RECO level templates
           Asimov dataset k3k1=0 -> Corresponds to fa3=0
 
-2D.k3k1.0.0.PedjaIn.UniformBkg.IntOn.D0M.Dint13.8TeV.M4l131to141.RECO:
+2D.k3k1.0.0.PedjaIn.UniformBkg.IntOn.D0M.Dint13.8TeV.M4l121to131.RECO:
     termNames : ggH,gg0M,ggInt_13P,ggInt_13N  
     templatedir : Sandbox/templates_compare2Pedja/LF_RECO_8TeV/Templates2D_D0M_Dint13/unfolded 
     discriminant_name : D_{0-}^{int(13)} 
@@ -362,7 +362,7 @@ k3k1.PedjaIn.InterferenceTermsOn.D0M.mix45 :
 #                     |_|\_\____/|_|\_\_|         |_(_)_/   
     
     
-2D.k3k1.1.7.PedjaIn.UniformBkg.IntOff.D0M.Dint13.8TeV.M4l131to141.RECO:
+2D.k3k1.1.7.PedjaIn.UniformBkg.IntOff.D0M.Dint13.8TeV.M4l121to131.RECO:
     termNames : ggH,gg0M  
     templatedir : Sandbox/templates_compare2Pedja/LF_RECO_8TeV/Templates2D_D0M_Dint13/projected 
     discriminant_name : D_{0-}^{int(13)} 
@@ -376,7 +376,7 @@ k3k1.PedjaIn.InterferenceTermsOn.D0M.mix45 :
           RECO level templates
           Asimov dataset k3k1=1.7 -> Corresponds to fa3=0.1
 
-2D.k3k1.1.7.PedjaIn.UniformBkg.IntOn.D0M.Dint13.8TeV.M4l131to141.RECO:
+2D.k3k1.1.7.PedjaIn.UniformBkg.IntOn.D0M.Dint13.8TeV.M4l121to131.RECO:
     termNames : ggH,gg0M,ggInt_13P,ggInt_13N  
     templatedir : Sandbox/templates_compare2Pedja/LF_RECO_8TeV/Templates2D_D0M_Dint13/unfolded 
     discriminant_name : D_{0-}^{int(13)} 
@@ -398,7 +398,7 @@ k3k1.PedjaIn.InterferenceTermsOn.D0M.mix45 :
 #                     |_|\_\____/|_|\_\_|              |____(_)____/ 
   
 #k3k1=3.3
-2D.k3k1.m3.3.PedjaIn.UniformBkg.IntOff.D0M.Dint13.8TeV.M4l131to141.RECO:
+2D.k3k1.m3.3.PedjaIn.UniformBkg.IntOff.D0M.Dint13.8TeV.M4l121to131.RECO:
     termNames : ggH,gg0M  
     templatedir : Sandbox/templates_compare2Pedja/LF_RECO_8TeV/Templates2D_D0M_Dint13/projected 
     discriminant_name : D_{0-}^{int(13)} 
@@ -412,7 +412,7 @@ k3k1.PedjaIn.InterferenceTermsOn.D0M.mix45 :
           RECO level templates
           Asimov dataset k3k1=-3.3 -> Corresponds to fa3=-0.3      
           
-2D.k3k1.m3.3.PedjaIn.UniformBkg.IntOn.D0M.Dint13.8TeV.M4l131to141.RECO:
+2D.k3k1.m3.3.PedjaIn.UniformBkg.IntOn.D0M.Dint13.8TeV.M4l121to131.RECO:
     termNames : ggH,gg0M,ggInt_13P,ggInt_13N  
     templatedir : Sandbox/templates_compare2Pedja/LF_RECO_8TeV/Templates2D_D0M_Dint13/unfolded 
     discriminant_name : D_{0-}^{int(13)} 
@@ -427,7 +427,7 @@ k3k1.PedjaIn.InterferenceTermsOn.D0M.mix45 :
           Asimov dataset k3k1=-3.3 -> Corresponds to fa3=-0.3      
 
 #2e2mu to compare withJHU
-2D.k3k1.m3.3.PedjaIn.UniformBkg.IntOn.D0M.Dint13.8TeV.M4l131to141.RECO.2e2mu:
+2D.k3k1.m3.3.PedjaIn.UniformBkg.IntOn.D0M.Dint13.8TeV.M4l121to131.RECO.2e2mu:
     termNames : ggH,gg0M,ggInt_13P,ggInt_13N  
     templatedir : Sandbox/templates_compare2Pedja/LF_RECO_8TeV/Templates2D_D0M_Dint13/unfolded 
     discriminant_name : D_{0-}^{int(13)} 
@@ -442,7 +442,7 @@ k3k1.PedjaIn.InterferenceTermsOn.D0M.mix45 :
           Asimov dataset k3k1=-3.3 -> Corresponds to fa3=-0.3
           
           
-2D.k3k1.m5.13.PedjaIn.UniformBkg.IntOn.D0M.Dint13.8TeV.M4l131to141.RECO:
+2D.k3k1.m5.13.PedjaIn.UniformBkg.IntOn.D0M.Dint13.8TeV.M4l121to131.RECO:
     termNames : ggH,gg0M,ggInt_13P,ggInt_13N  
     templatedir : Sandbox/templates_compare2Pedja/LF_RECO_8TeV/Templates2D_D0M_Dint13/unfolded 
     discriminant_name : D_{0-}^{int(13)} 
@@ -458,7 +458,7 @@ k3k1.PedjaIn.InterferenceTermsOn.D0M.mix45 :
 
 
                     
-2D.k3k1.5.13.PedjaIn.UniformBkg.IntOn.D0M.Dint13.8TeV.M4l131to141.RECO:
+2D.k3k1.5.13.PedjaIn.UniformBkg.IntOn.D0M.Dint13.8TeV.M4l121to131.RECO:
     termNames : ggH,gg0M,ggInt_13P,ggInt_13N  
     templatedir : Sandbox/templates_compare2Pedja/LF_RECO_8TeV/Templates2D_D0M_Dint13/unfolded 
     discriminant_name : D_{0-}^{int(13)} 
@@ -486,7 +486,7 @@ test_2Dtemplates:
           Testing new framework
           - really the 2D templates are used
     
-2D.k2k1.0.PedjaIn.IntOff.D0Ph.Dint12.8TeV.M4l131to141.GEN:
+2D.k2k1.0.PedjaIn.IntOff.D0Ph.Dint12.8TeV.M4l121to131.GEN:
     termNames : ggH,gg0Ph
     templatedir : Sandbox/templates_compare2Pedja/LF_GEN_8TeV/Templates2D_D0Ph_Dint12/projected
     discriminant_name : D_{0-}^{int(12)} 
@@ -498,7 +498,7 @@ test_2Dtemplates:
     info: | 
            Testing new framework with k2k1_ratio
           
-2D.k2k1.0.PedjaIn.IntOn.D0Ph.Dint12.8TeV.M4l131to141.RECO:
+2D.k2k1.0.PedjaIn.IntOn.D0Ph.Dint12.8TeV.M4l121to131.RECO:
     termNames : ggH,gg0Ph,ggInt_12N
     templatedir : Sandbox/templates_compare2Pedja/LF_RECO_8TeV/Templates2D_D0Ph_Dint12/unfolded
     discriminant_name : D_{0-}^{int(12)} 
@@ -511,7 +511,7 @@ test_2Dtemplates:
            Testing new framework with k2k1_ratio
           
 
-2D.k2k1.0.PedjaIn.IntOn.D0Ph.Dint12.14TeV.M4l131to141.RECO:
+2D.k2k1.0.PedjaIn.IntOn.D0Ph.Dint12.14TeV.M4l121to131.RECO:
     termNames : ggH,gg0Ph,ggInt_12N
     templatedir : Sandbox/templates_compare2Pedja/LF_RECO_8TeV/Templates2D_D0Ph_Dint12/unfolded
     discriminant_name : D_{0-}^{int(12)} 
@@ -524,7 +524,7 @@ test_2Dtemplates:
             Testing new framework with k2k1_ratio at 14 TeV
             The denominator contains factor 2 for mixed terms (basicaly for gamma12*k2/k1)
 
-2D.k2k1.0.PedjaIn.IntOff.D0Ph.Dint12.14TeV.M4l131to141.RECO:
+2D.k2k1.0.PedjaIn.IntOff.D0Ph.Dint12.14TeV.M4l121to131.RECO:
     termNames : ggH,gg0Ph
     templatedir : Sandbox/templates_compare2Pedja/LF_RECO_8TeV/Templates2D_D0Ph_Dint12/projected
     discriminant_name : D_{0-}^{int(12)} 
@@ -550,12 +550,12 @@ COMMON:
     sqrts_plot : 14   # the energy used only for plots, doesn't change anything in calculation
     POI: k3k1_ratio,k2k1_ratio
     POI_setup: 
-        k2k1_ratio: {range: "-8,8", n_scan_points: 10, nice_name: "k_{2}/k_{1}", value: 0, range_vs_lumi : "not_implemented"} 
+        k2k1_ratio: {range: "-5,12", n_scan_points: 1000, nice_name: "k_{2}/k_{1}", value: 0, range_vs_lumi : "not_implemented"} 
         k3k1_ratio: {range: "-100,100", n_scan_points: 1000,  nice_name: "k_{3}/k_{1}", value: 0, range_vs_lumi : "not_implemented"} 
         
     k3k1_ratio : 0
-    lumi_list : [25]
-#     lumi_list : [25,100,300,1000, 3000]
+#     lumi_list : [25]
+    lumi_list : [25,100,300,1000, 3000]
 #     lumi_list : [8,10,25,300,3000]
 #     lumi_list : [8, 10]
     

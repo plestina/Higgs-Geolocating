@@ -113,8 +113,8 @@ class TotalPdfPlotter(PlotPolisher, RootPlottersBase):
         
         try:
             data['content']
-        except:
-            raise ValueError, "Canvas \'content\' dictionary is not provided in config file."
+        except KeyError:
+            raise KeyError, "Canvas \'content\' dictionary is not provided in config file."
             
         try:
             data['setup']
@@ -135,7 +135,7 @@ class TotalPdfPlotter(PlotPolisher, RootPlottersBase):
         print data['setup']['add_text']
         try:
             data['setup']['add_text']
-        except AttributeError:
+        except KeyError:
             self.add_text_exist=False
         else:
             self.add_text_exist=True
@@ -228,7 +228,7 @@ class TotalPdfPlotter(PlotPolisher, RootPlottersBase):
                                 self.leg.AddEntry(self.total_pdf,plot['legend']['text'],plot['legend']['opt']);
                             try:
                                 plot['draw_opt']
-                            except ValueError:
+                            except KeyError:
                                 draw_opt = "COLZ"
                             else:
                                 draw_opt = str(plot['draw_opt'])
@@ -277,7 +277,7 @@ class TotalPdfPlotter(PlotPolisher, RootPlottersBase):
                                         self.leg.AddEntry(pdf_components[comp],plot['legend']['text'],plot['legend']['opt']);
                                     try:
                                         plot['draw_opt']
-                                    except ValueError:
+                                    except KeyError:
                                         draw_opt = "COLZ"
                                     else:
                                         draw_opt = str(plot['draw_opt'])
