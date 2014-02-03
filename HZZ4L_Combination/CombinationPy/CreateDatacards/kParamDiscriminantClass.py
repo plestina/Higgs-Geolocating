@@ -440,8 +440,8 @@ class kParamDiscriminantClass(datacardClass):
         #termNames = ['ggH','gg0M','ggInt_13P','ggInt_13N']
            
         for term in self.termNames:
-	    self.sigCB2d[term].SetNameTitle("ORIG{0}".format(term),"ORIG{0}".format(term))
-	    getattr(self.w,'import')(self.sigCB2d[term], ROOT.RooFit.RecycleConflictNodes())
+	    #self.sigCB2d[term].SetNameTitle("ORIG{0}".format(term),"ORIG{0}".format(term))
+	    #getattr(self.w,'import')(self.sigCB2d[term], ROOT.RooFit.RecycleConflictNodes())
 	    
 	    self.sigTemplateMorphPdf[term].SetNameTitle(term,term)  #maybe they don't have SetNameTitle Mmethod
 	    getattr(self.w,'import')(ROOT.RooArgSet(self.sigTemplateMorphPdf[term]), ROOT.RooFit.RecycleConflictNodes())
@@ -498,7 +498,8 @@ class kParamDiscriminantClass(datacardClass):
 	self.rfvGeoLocNorms = self._getGeolocationNormalization(self.termNames)
 		      
 	for term in self.termNames:
-	    self.rfvSigRate[term] = ROOT.RooFormulaVar("{0}_norm".format(term),"@0*@1",ROOT.RooArgList(self.rfvSigRate_all,self.rfvGeoLocNorms[term] ))  #mod-roko -- multiply by gama lambda dependant factor
+	    #self.rfvSigRate[term] = ROOT.RooFormulaVar("{0}_norm".format(term),"@0*@1",ROOT.RooArgList(self.rfvSigRate_all,self.rfvGeoLocNorms[term] ))  #mod-roko -- multiply by gama lambda dependant factor
+	    self.rfvSigRate[term] = ROOT.RooFormulaVar("{0}_norm".format(term),"{0}/{1}*@0*@1".format(self.rfvSigRate_all.getVal(), self.rrvLumi.getVal()),ROOT.RooArgList(self.rrvLumi,self.rfvGeoLocNorms[term] ))  #mod-roko -- multiply by gama lambda dependant factor
 	    if self.DEBUG : self.rfvSigRate[term].Print()
 	    getattr(self.w,'import')(self.rfvSigRate[term], ROOT.RooFit.RecycleConflictNodes())
 	    
@@ -511,9 +512,9 @@ class kParamDiscriminantClass(datacardClass):
 	    #else:
 		#self.rates[term] = self.rrvJHUgen_SMggH.getVal()*self.rrv_SMggH_ratio.getVal() #the same as for ggH 
 		
-	self.bkg2d_ggzz_norm  =  ROOT.RooFormulaVar("bkg2d_ggzz_norm","@0/{0}".format(self.inputs['lumi']),ROOT.RooArgList(self.rrvLumi))  #mod-roko -- multiply by gama lambda dependant factor
-	self.bkg2d_qqzz_norm  =  ROOT.RooFormulaVar("bkg2d_qqzz_norm","@0/{0}".format(self.inputs['lumi']),ROOT.RooArgList(self.rrvLumi))  #mod-roko -- multiply by gama lambda dependant factor
-	self.bkg2d_zjets_norm =  ROOT.RooFormulaVar("bkg2d_zjets_norm","@0/{0}".format(self.inputs['lumi']),ROOT.RooArgList(self.rrvLumi))  #mod-roko -- multiply by gama lambda dependant factor
+	self.bkg2d_ggzz_norm  =  ROOT.RooFormulaVar("bkg2d_ggzz_norm","@0/{0}".format(self.rrvLumi.getVal()),ROOT.RooArgList(self.rrvLumi))  #mod-roko -- multiply by gama lambda dependant factor
+	self.bkg2d_qqzz_norm  =  ROOT.RooFormulaVar("bkg2d_qqzz_norm","@0/{0}".format(self.rrvLumi.getVal()),ROOT.RooArgList(self.rrvLumi))  #mod-roko -- multiply by gama lambda dependant factor
+	self.bkg2d_zjets_norm =  ROOT.RooFormulaVar("bkg2d_zjets_norm","@0/{0}".format(self.rrvLumi.getVal()),ROOT.RooArgList(self.rrvLumi))  #mod-roko -- multiply by gama lambda dependant factor
 	self.log.debug('Importing the background scaling with luminosity...')
 	getattr(self.w,'import')(self.bkg2d_ggzz_norm, ROOT.RooFit.RecycleConflictNodes())
 	getattr(self.w,'import')(self.bkg2d_qqzz_norm, ROOT.RooFit.RecycleConflictNodes())
