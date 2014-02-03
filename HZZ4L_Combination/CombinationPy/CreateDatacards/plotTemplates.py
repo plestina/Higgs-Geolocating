@@ -87,7 +87,7 @@ class TemplatesPlotter(PlotPolisher):
         self.total_pdf = total_pdf    
         self.log.debug('TOTAL_PDF -> Added all terms and now the histo is TH2:{0} ... returning the value.'.format(isinstance(self.total_pdf,TH2)))
         
-  def makePlot(self, data):
+  def make_plot(self, data):
 
       self.c1 =ROOT.TCanvas("cc1","Templates",1000,800)
       self.c1.cd()
@@ -317,7 +317,7 @@ if __name__ == "__main__":
     for plot_name in plots_data['list_of_plots_to_do']:
 	print 'Make plot: ',plot_name
 	plotter.setName(plot_name)
-	plotter.makePlot(plots_data[plot_name])
+	plotter.make_plot(plots_data[plot_name])
    
     
     

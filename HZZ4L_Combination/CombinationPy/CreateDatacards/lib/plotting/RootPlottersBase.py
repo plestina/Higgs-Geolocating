@@ -29,19 +29,27 @@ class RootPlottersBase(object):
       
   def setName(self, newname): self.name = newname
         
-  def makePlot(self, data):
+  def make_plot(self, data):
         print "This is a default method for plotters. It has to be implemented in derived classes"
         pass
     
-  def   get_TTree(tree_name, file_name):
-        rootfile = ROOT.TFile.Open(root_file_name,'READ')
+  def get_TTree(self, tree_name, file_name):
+        rootfile = self.TFile_safe_open(root_file_name,'READ')
         t = rootfile.Get('limit')
         return t
+        
+  def TFile_safe_open(self, file_name, access = 'READ'):
+        self.log.debug('Opening ROOT file: {0}'.format(file_name))
+        rootfile = TFile.Open(file_name,access)
+        if not rootfile:
+            raise IOError, 'The file {0} either doesn\'t exist or cannot be open'.format(file_name)      
+        return rootfile
+        
         
   def setCopyToWebDir(self,doCopy=False,webdir=""):
         if doCopy:
             self.copy_to_web_dir = True
-            if webdir!="":
+            if webdir:
                 self.webdir = webdir
             else:
                 raise ValueError, "You have to provide a webdir path if you want to copy the files."
@@ -54,9 +62,10 @@ class RootPlottersBase(object):
   def doCopyToWebDir(self,plot_name, newname=""):
         if newname=="":
             newname = plot_name
-        if self.webdir!="" :
+        if self.webdir :
             misctools.make_sure_path_exists(self.webdir)
-            if not os.path.exists("{0}/index.php".format(self.webdir)) : shutil.copy("/afs/cern.ch/user/r/roko/www/html/index.php",self.webdir)
+            if not os.path.exists("{0}/index.php".format(self.webdir)) : 
+                shutil.copy("/afs/cern.ch/user/r/roko/www/html/index.php",self.webdir)
             shutil.copy(plot_name,self.webdir+"/"+newname)
             self.log.info("Copied {0} to webdir {1}".format(plot_name,self.webdir+"/"+newname))
         else :

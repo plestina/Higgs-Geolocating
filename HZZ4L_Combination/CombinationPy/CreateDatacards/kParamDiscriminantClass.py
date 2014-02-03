@@ -35,9 +35,16 @@ class kParamDiscriminantClass(datacardClass):
 	    self.termNames = ['ggH','gg0M','ggInt_13P','ggInt_13N']
 	    print "@@@@ Setting termNames collection to default = "+str(self.termNames)
 
-	
+    def TFile_safe_open(self, file_name, access='READ'):
+        rootfile = ROOT.TFile.Open(file_name,access)
+        if not rootfile:
+            raise IOError, 'The file {0} either doesn\'t exist or cannot be open'.format(file_name)
+        return rootfile
+        
+        
+        
     def setSuperKD(self):
-	self.isTemplate2D=False
+	self.isTemplate2D=True
 	self.killBackground=True
 	self.isRokoTest=True
 	#self.DEBUG=False
@@ -49,7 +56,8 @@ class kParamDiscriminantClass(datacardClass):
         print '>>>>>> Discriminant 1D PDFS using discriminat named :',self.discVarName
         
         templateSigName = "{0}/Dsignal_{1}.root".format(self.templateDir ,self.appendName)
-        self.sigTempFile = ROOT.TFile(templateSigName)
+        self.sigTempFile = self.TFile_safe_open(templateSigName)
+        
         
         try:
 	    self.termNames
@@ -135,7 +143,7 @@ class kParamDiscriminantClass(datacardClass):
             self.dataFileName = "Sandbox/data_obs.random.2D.root"
         
         if (self.DEBUG): print self.dataFileName," ",self.dataTreeName 
-        self.data_obs_file = ROOT.TFile(self.dataFileName)
+        self.data_obs_file = self.TFile_safe_open(self.dataFileName)
         
         print self.data_obs_file.Get(self.dataTreeName)
         
@@ -149,7 +157,7 @@ class kParamDiscriminantClass(datacardClass):
         self.datasetName = "data_obs_{0}".format(self.appendName)
                        
 	self.data_obs = ROOT.RooDataSet(self.datasetName,self.datasetName,self.data_obs_tree,
-					ROOT.RooArgSet(self.CMS_zz4l_mass,self.D),'CMS_zz4l_mass>106.0&&CMS_zz4l_mass<141.0').reduce(ROOT.RooArgSet(self.D))
+					ROOT.RooArgSet(self.CMS_zz4l_mass,self.D),'CMS_zz4l_mass>121.0&&CMS_zz4l_mass<131.0').reduce(ROOT.RooArgSet(self.D))
 	
 	if self.isRokoTest:
 	    self.data_obs = ROOT.RooDataSet(self.datasetName,self.datasetName,self.data_obs_tree,ROOT.RooArgSet(self.D)).reduce(ROOT.RooArgSet(self.D))
@@ -160,7 +168,7 @@ class kParamDiscriminantClass(datacardClass):
 	    #quit()    
 	
         if self.isTemplate2D: 
-	    self.data_obs = ROOT.RooDataSet(self.datasetName,self.datasetName,self.data_obs_tree,ROOT.RooArgSet(self.CMS_zz4l_mass,self.SD,self.D),'CMS_zz4l_mass>106.0&&CMS_zz4l_mass<141.0').reduce(ROOT.RooArgSet(self.SD,self.D))
+	    self.data_obs = ROOT.RooDataSet(self.datasetName,self.datasetName,self.data_obs_tree,ROOT.RooArgSet(self.CMS_zz4l_mass,self.SD,self.D),'CMS_zz4l_mass>121.0&&CMS_zz4l_mass<131.0').reduce(ROOT.RooArgSet(self.SD,self.D))
                 
 
     def makeSuperKDAnalysis(self):
@@ -257,7 +265,7 @@ class kParamDiscriminantClass(datacardClass):
 	    
         ## ----------------- SuperKD 2D BACKGROUND SHAPES --------------- ##
         templateBkgName = "{0}/Dbackground_qqZZ_{1}.root".format(self.templateDir ,self.appendName)
-        self.bkgTempFile = ROOT.TFile(templateBkgName)
+        self.bkgTempFile = self.TFile_safe_open(templateBkgName)
         self.bkgTemplate = self.bkgTempFile.Get("qqZZ_shape")  #mod-roko
         self.bkgTemplateqqZZ = self.bkgTempFile.Get("qqZZ_shape")
         
@@ -281,7 +289,7 @@ class kParamDiscriminantClass(datacardClass):
         
 
             templateBkgName = "{0}/Dbackground_ZJetsCR_AllChans.root".format(self.templateDir)
-            self.zjetsTempFile = ROOT.TFile(templateBkgName)
+            self.zjetsTempFile = self.TFile_safe_open(templateBkgName)
             
             self.zjetsTemplate = self.zjetsTempFile.Get("zjets_shape")
             #if not self.isRokoTest : self.zjetsTemplate = self.zjetsTempFile.Get("zjets_shape")
@@ -317,7 +325,7 @@ class kParamDiscriminantClass(datacardClass):
 
             #Down Z+X
             templateBkgName = "{0}/Dbackground_ZJetsCR_AllChans.root".format(self.templateDir)
-            self.zjetsTempFile = ROOT.TFile(templateBkgName)
+            self.zjetsTempFile = self.TFile_safe_open(templateBkgName)
             
             #self.zjetsTemplateDown = self.zjetsTempFile.Get("h_superDpsD")
             self.zjetsTemplateDown = self.zjetsTempFile.Get("zjets_shape")
@@ -333,7 +341,7 @@ class kParamDiscriminantClass(datacardClass):
 
 
         templateggBkgName = "{0}/Dbackground_ggZZ_{1}.root".format(self.templateDir ,self.appendName)
-        self.ggbkgTempFile = ROOT.TFile(templateggBkgName)
+        self.ggbkgTempFile = self.TFile_safe_open(templateggBkgName)
         #self.ggbkgTemplate = self.ggbkgTempFile.Get("h_superDpsD")
         self.ggbkgTemplate = self.ggbkgTempFile.Get("ggZZ_shape")
 	#if not self.isRokoTest : self.ggbkgTemplate = self.ggbkgTempFile.Get("ggZZ_shape")
@@ -715,7 +723,7 @@ class kParamDiscriminantClass(datacardClass):
 	    if len(termNames)==0 : 
 		raise RuntimeError, "_getGeolocationNormalization:: You have to provide a list of terms for which I can calculate the normalization."
 	    
-	    sigTempFile = ROOT.TFile(file_name)
+	    sigTempFile = self.TFile_safe_open(file_name)
 	    factorNames= ['gamma11','gamma22','gamma33','gamma12','gamma13','gamma23',
 		      'lambda13_cosP','lambda13_cosN','lambda13_sinP','lambda13_sinN',
 		      'lambda12_cosP','lambda12_cosN','lambda12_sinP','lambda12_sinN',
@@ -775,7 +783,7 @@ class kParamDiscriminantClass(datacardClass):
 	    #pass
 	    #f.s.==self.appendName
 	    #r = N(f.s.)/N_TOT
-	    #normFile = ROOT.TFile("ws_norm.root")
+	    #normFile = self.TFile_safe_open("ws_norm.root")
 	    #all_norm = {}
 	    #tot_norm = 0
 	    #self.log.debug('getFinalStateYieldRatio -> getting total normalization for the 3 final states')

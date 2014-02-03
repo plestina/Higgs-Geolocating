@@ -20,7 +20,6 @@ class LimitVsLumi(PlotPolisher,RootPlottersBase):
   def __init__(self,name = "limitVsLumi_plot" ):
       self.log = Logger().getLogger(self.__class__.__name__, 10)
       self.name = name
-      #ROOT.gSystem.AddIncludePath("-I$ROOFITSYS/include/");
       ROOT.gROOT.ProcessLine(".L tdrstyle.cc")
       from ROOT import setTDRStyle
       ROOT.setTDRStyle(True)
@@ -31,12 +30,10 @@ class LimitVsLumi(PlotPolisher,RootPlottersBase):
       #self.webdir = ""
       self.pp = pprint.PrettyPrinter(indent=4)
       
-      
-      
-  def setName(self, newname): self.name = newname
-
+  def setName(self, newname): 
+      self.name = newname
    
-  def makePlot(self, data):
+  def make_plot(self, data):
       #self.ytitle = "U.L. @95% for |k_{3}/k_{1}|" 
       #self.xtitle = "L (fb^{-1})"
 
@@ -192,19 +189,19 @@ if __name__ == "__main__":
     plotter.setCopyToWebDir(True,"/afs/cern.ch/user/r/roko/www/html/Geoloc/")
     ##1str plot
     #plotter.setName("plot_4l_unfolding_withandwitout_bkg_14Tev")
-    #plotter.makePlot(plots_data['plot_4l_unfolding_withandwitout_bkg_14Tev'])
+    #plotter.make_plot(plots_data['plot_4l_unfolding_withandwitout_bkg_14Tev'])
     #plotter.setName("plot_4l_unfolding_with_bkg_14Tev_int_effect")
-    #plotter.makePlot(plots_data['plot_4l_unfolding_with_bkg_14Tev_int_effect'])
+    #plotter.make_plot(plots_data['plot_4l_unfolding_with_bkg_14Tev_int_effect'])
     #plotter.setName("plot_4l_unfolding_withBkg_newDenominator_14Tev")
-    #plotter.makePlot(plots_data['plot_4l_unfolding_withBkg_newDenominator_14Tev'])
+    #plotter.make_plot(plots_data['plot_4l_unfolding_withBkg_newDenominator_14Tev'])
     
     #plotter.setName("plot_4l_unfolding_withBkg_newDenominator_14Tev_fixWS")
-    #plotter.makePlot(plots_data['plot_4l_unfolding_withBkg_newDenominator_14Tev_fixWS'])
+    #plotter.make_plot(plots_data['plot_4l_unfolding_withBkg_newDenominator_14Tev_fixWS'])
     
     for plot_name in plots_data['list_of_plots_to_do']:
 	print 'Make plot: ',plot_name
 	plotter.setName(plot_name)
-	plotter.makePlot(plots_data[plot_name])
+	plotter.make_plot(plots_data[plot_name])
    
     
     

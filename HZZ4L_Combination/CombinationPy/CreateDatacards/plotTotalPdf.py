@@ -102,7 +102,7 @@ class TotalPdfPlotter(PlotPolisher, RootPlottersBase):
         misctools.processCmd("convert -delay {2} {0}{3} {1} ".format(" ".join("%s"%(one_gif) for one_gif in list_for_animated_gif), name_animated_gif, delay, loop_string))    
         self.doCopyToWebDir(name_animated_gif)
         
-  def makePlot(self, data):
+  def make_plot(self, data):
 
         #self.c_big = ROOT.TCanvas("c_big","Template Components",1200,1200)
         #self.c_big.Divide(len())
@@ -363,7 +363,7 @@ if __name__ == "__main__":
     for plot_name in plots_data['list_of_plots_to_do']:
 	print 'Make plot: ',plot_name
 	plotter.setName(plot_name)
-	plotter.makePlot(plots_data[plot_name])
+	plotter.make_plot(plots_data[plot_name])
    
     
     

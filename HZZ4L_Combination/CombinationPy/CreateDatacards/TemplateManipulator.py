@@ -437,9 +437,9 @@ if __name__ == "__main__":
       'Dbackground_ZJetsCR_AllChans.root'
       ]
     dir_2D = [
-        '/afs/cern.ch/work/r/roko/Stat/CMSSW_611_JCP/src/HZZ4L_Combination/CombinationPy/CreateDatacards/Sandbox/templates_compare2Pedja/LF_RECO_8TeV/Templates2D_D0M_Dint13/',
+        #'/afs/cern.ch/work/r/roko/Stat/CMSSW_611_JCP/src/HZZ4L_Combination/CombinationPy/CreateDatacards/Sandbox/templates_compare2Pedja/LF_RECO_8TeV/Templates2D_D0M_Dint13/',
         #'/afs/cern.ch/work/r/roko/Stat/CMSSW_611_JCP/src/HZZ4L_Combination/CombinationPy/CreateDatacards/Sandbox/templates_compare2Pedja/LF_GEN_8TeV/Templates2D_D0Ph_Dint12/',
-        #'/afs/cern.ch/work/r/roko/Stat/CMSSW_611_JCP/src/HZZ4L_Combination/CombinationPy/CreateDatacards/Sandbox/templates_compare2Pedja/LF_RECO_8TeV/Templates2D_D0Ph_Dint12/',
+        '/afs/cern.ch/work/r/roko/Stat/CMSSW_611_JCP/src/HZZ4L_Combination/CombinationPy/CreateDatacards/Sandbox/templates_compare2Pedja/LF_RECO_8TeV/Templates2D_D0Ph_Dint12/',
 #'/afs/cern.ch/work/r/roko/Stat/CMSSW_611_JCP/src/HZZ4L_Combination/CombinationPy/CreateDatacards/Sandbox/templates_compare2Pedja/LF_RECO_8TeV/Templates2D_D0M_Dint13_for_k2k1/',
 #'/afs/cern.ch/work/r/roko/Stat/CMSSW_611_JCP/src/HZZ4L_Combination/CombinationPy/CreateDatacards/Sandbox/templates_compare2Pedja/LF_GEN_8TeV/Templates2D_D0M_Dint13_test_copy_tree/',
         #'/afs/cern.ch/work/r/roko/Stat/CMSSW_611_JCP/src/HZZ4L_Combination/CombinationPy/CreateDatacards/Sandbox/templates_compare2Pedja/LF_GEN_8TeV/Templates2D_D0M_Dint13/'
@@ -459,9 +459,9 @@ if __name__ == "__main__":
     for theDir in dir_2D:
         for file_name in files_for_DC:
             print "------------------------------ INPUT FILE:", file_name
-            #make_unfolded_hist(file_name, theDir)
+            make_unfolded_hist(file_name, theDir)
             #make_projected_hist(file_name, theDir)
-            make_refurbished_hist(file_name, theDir)
+            #make_refurbished_hist(file_name, theDir)
 	
     #make_unfolded_hist_bkg()
     #sys.exit()

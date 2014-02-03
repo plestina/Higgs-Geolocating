@@ -10,6 +10,8 @@ import shutil
 import pprint
 from array import array
 from lib.util.Logger import *
+from plotLimit import *
+
 
 def parseOptions():
 
@@ -37,7 +39,7 @@ class ChainProcessor(object):
     def __init__(self, run_data_name, run_dict):
         """Set the values from configuration"""
         
-        self.log = Logger().getLogger(self.__class__.__name__, 10)
+        self.log = Logger().getLogger(self.__class__.__name__, 10, 'testChain.log')
         self.run_dict = run_dict
         self.create_cards_dir="/afs/cern.ch/work/r/roko/Stat/CMSSW_611_JCP/src/HZZ4L_Combination/CombinationPy/CreateDatacards/"
         self.version= "v1"
@@ -56,6 +58,10 @@ class ChainProcessor(object):
         self.templatedir = self.run_dict['templatedir']
         self.discriminant = self.run_dict['discriminant_name']
         self.additional_options = self.run_dict['additional_options']
+        if 'unfolded' in self.templatedir or 'projected' in self.templatedir:
+            self.log.warn('Adding --unfolded option to makeDCsandWSs.py so that the 2D templates will not be used indeed.')
+            self.additional_options+=' --unfolded'    
+        
         self.fs  = self.run_dict['final_state']
         self.www_dir = "/afs/cern.ch/user/r/roko/www/html/Geoloc/{0}".format(self.MY_CUR_WWW_SUBDIR)
         self.do_copy_to_webdir = True
@@ -64,7 +70,9 @@ class ChainProcessor(object):
         #self.poi= {"k2k1_ratio":{"switch":0, "range":"-100,100", "name":"k2k1", "nice_name":"k_{2}/k_{1}", "value":"0"}, 
               #"k3k1_ratio":{"switch":0, "range":"-100,100", "name":"k3k1", "nice_name":"k_{3}/k_{1}", "value":"0"}}
         self.setup_POI_related_stuff()
-            
+        self.cmd_file_name = 'testChain.cmds'
+        self.cmd_file = open(self.cmd_file_name,'w')
+        self.cmd_file.close()
         
         
     def setup_POI_related_stuff(self):
@@ -151,7 +159,9 @@ class ChainProcessor(object):
     def process(self, do_cmd=""):
         self.do_cmd = do_cmd
         self.setup_POI_related_stuff()
-
+        
+        
+        
         import lib.util.MiscTools as misc
         #print self.__dict__
         self.fs_expanded = self.fs
@@ -168,6 +178,11 @@ class ChainProcessor(object):
         cmd['fit'] 		= "combine -M MultiDimFit workspaceWithAsimov_%(poi_name_value_filename)s_lumi_%(lumi)s.root --algo=grid --points %(poi_n_points)s  -m 126 -n .asimov.%(fs)s.%(poi_name_value_filename)s.lumi_%(lumi_zfill)s -D toys/toy_asimov -S 0 --setPhysicsModelParameters cmshzz4l_lumi=%(lumi)s --setPhysicsModelParameterRanges %(poi_ranges_string_fit)s" %self.__dict__
         cmd['plot'] 	       = "root -l -b -q %(create_cards_dir)s/plotLimit.C\(\\\"higgsCombine.asimov.%(fs)s.%(poi_name_value_filename)s.lumi_%(lumi_zfill)s.MultiDimFit.mH126.root\\\",\\\"%(pois)s\\\",\\\"environ PLOT_TAG\\\" \)" %self.__dict__
         
+        with open('testChain.cmds','a') as cmd_file: 
+            for my_cmd in self.do_cmd.split(','):
+                self.log.info('Adding the command in testChain.cmds file: {0}'.format(cmd[my_cmd.strip()]))
+                cmd_file.write(cmd[my_cmd.strip()]+'\n')
+        
         if "createCards" in do_cmd:
             print "--------------------------------------------------------"
             print "Cards for Lumi=%(lumi)s and tag=%(append_name_base)s terms=%(termNames)s template=%(templatedir)s discriminant=%(discriminant)s additional_options=%(additional_options)s" %self.__dict__
@@ -179,19 +194,41 @@ class ChainProcessor(object):
         if "addasimov" in do_cmd: misc.processCmd(cmd['addasimov']) 
         if "fit" in do_cmd: misc.processCmd(cmd['fit']) 
         if "plot" in do_cmd: 
-            misc.processCmd(cmd['plot']) 
-            import lib.util.MiscTools as misc
-            misc.make_sure_path_exists(self.www_dir)
-            shutil.copy("/afs/cern.ch/user/r/roko/www/html/index.php",self.www_dir)
-            for self.x in ['AxisK3K1', 'AxisArctanGamK3K1', 'AxisArctanK3K1', 'AxisFa3', 'AxisK2K1']:
-                #print "cp higgsCombine.asimov.{fs}.{poi_name_value}.MultiDimFit.mH126.root*png {www_dir}/exp.{fs}.{poi_name_value_filename}.mH126.{x}.png".format(**self.__dict__)
-                #shutil.copy("higgsCombine.asimov.{fs}.{poi_name_value_filename}.lumi_{lumi_zfill}.MultiDimFit.mH126.root.{x}.png".format(**self.__dict__), \
-                            #"{www_dir}/exp.{fs}.{poi_name_value_filename}.mH126.{x}.{lumi_zfill}ifb.png".format(**self.__dict__))
-                file_2_copy = "higgsCombine.asimov.{fs}.{poi_name_value_filename}.lumi_{lumi_zfill}.MultiDimFit.mH126.root.{x}.png".format(**self.__dict__)            
-                if os.path.exists(file_2_copy):
-                    shutil.copy(file_2_copy,"{www_dir}/exp.{fs}.{poi_name_value_filename}.mH126.{x}.{lumi_zfill}ifb.png".format(**self.__dict__))
-            print "{www_dir}/?match=exp.{fs}.{poi_name_value_filename}.mH126.*.png".format(**self.__dict__).replace("/afs/cern.ch/user/r/roko/www/html/","https://roko.web.cern.ch/roko/")
+            #misc.processCmd(cmd['plot']) 
+            #from plotLimit import *
+            plotter = LikelihoodFitContourPlot()
+            plotter.setCopyToWebDir(True,self.www_dir)
+            #print "higgsCombine.asimov.%(fs)s.%(poi_name_value_filename)s.lumi_%(lumi_zfill)s.MultiDimFit.mH126.root with pois = %(pois)s" %self.__dict__
+            limits_file_name = "higgsCombine.asimov.%(fs)s.%(poi_name_value_filename)s.lumi_%(lumi_zfill)s.MultiDimFit.mH126.root" %self.__dict__
+            title = "Asimov data %(poi_name_value_plot)s | Discrim. %(discriminant)s | L=%(lumi)s fb^{-1} @ %(sqrts_plot)s TeV | Fin. state = %(fs_expanded)s" %self.__dict__
+            plotter.make_plot(limits_file_name,self.pois,title)
+            self.limits_dict = plotter.get_limits_dict()
+            #"higgsCombine.asimov.%(fs)s.%(poi_name_value_filename)s.lumi_%(lumi_zfill)s.MultiDimFit.mH126.root\\\",\\\"%(pois)s\\\",\\\"environ PLOT_TAG\\\" \)" %self.__dict__
+
             
+            #import lib.util.MiscTools as misc
+            #misc.make_sure_path_exists(self.www_dir)
+            #shutil.copy("/afs/cern.ch/user/r/roko/www/html/index.php",self.www_dir)
+            #for self.x in ['AxisK3K1', 'AxisArctanGamK3K1', 'AxisArctanK3K1', 'AxisFa3', 'AxisK2K1']:
+                ##print "cp higgsCombine.asimov.{fs}.{poi_name_value}.MultiDimFit.mH126.root*png {www_dir}/exp.{fs}.{poi_name_value_filename}.mH126.{x}.png".format(**self.__dict__)
+                ##shutil.copy("higgsCombine.asimov.{fs}.{poi_name_value_filename}.lumi_{lumi_zfill}.MultiDimFit.mH126.root.{x}.png".format(**self.__dict__), \
+                            ##"{www_dir}/exp.{fs}.{poi_name_value_filename}.mH126.{x}.{lumi_zfill}ifb.png".format(**self.__dict__))
+                #file_2_copy = "higgsCombine.asimov.{fs}.{poi_name_value_filename}.lumi_{lumi_zfill}.MultiDimFit.mH126.root.{x}.png".format(**self.__dict__)            
+                #if os.path.exists(file_2_copy):
+                    #shutil.copy(file_2_copy,"{www_dir}/exp.{fs}.{poi_name_value_filename}.mH126.{x}.{lumi_zfill}ifb.png".format(**self.__dict__))
+            #print "{www_dir}/?match=exp.{fs}.{poi_name_value_filename}.mH126.*.png".format(**self.__dict__).replace("/afs/cern.ch/user/r/roko/www/html/","https://roko.web.cern.ch/roko/")
+            
+        
+        
+        
+    def get_limits_dict(self):
+        try:
+            self.limits_dict 
+        except:
+            raise RuntimeError, 'There is now limits dictionary available. It has to be produced by external script (plotLimit.py) and called from there.'
+       
+        return self.limits_dict 
+        
     def get_table_row(self, col_names=False) :
         if col_names: 
             return "LUMI BF UL68 UL95 WF\n".lower()
@@ -310,22 +347,33 @@ if __name__ == "__main__":
     finfo.close()
     
     f = open(tab_name, "w")
-    f.write(chain_process.get_table_row(col_names=1))
-    
+    #f.write(chain_process.get_table_row(col_names=1))
+    tab_dict = {}
     for lumi in lumi_list:
-        chain_process.set_lumi(lumi, 4)
+        chain_process.set_lumi(lumi, n_digits=4)
         
         os.chdir(cards_dir)
         log.debug("Current dir = {0}".format(os.getcwd()))
-        chain_process.process("gen,addasimov,fit,plot")
-        #chain_process.process("plot")
-        table_raw = chain_process.get_table_row()
+        #chain_process.process("gen,addasimov,fit,plot")
+        chain_process.process("plot")
+        #table_raw = chain_process.get_table_row()
+        tab_dict['{0}'.format(lumi)] = chain_process.get_limits_dict()
         os.chdir(this_dir)
         log.debug("Current dir = {0}".format(os.getcwd()))        
-        f.write(table_raw)
+        #f.write(table_raw)
         #print "%({lumi} %({bf} %({ul68} %({ul95} %({wf}" >> %(tab_name
+    
+    with open(tab_name, 'w') as f:
+        #f.write(yaml.dump(tab_dict, default_flow_style=False))
+        import json
+        json.dump(tab_dict,f)
         
-    f.close()
+        log.info('Writing lumi and limits to {0}'.format(tab_name))
+    
+    
+    
+    #f.write(tab_dict)
+    #f.close()
     #copy info, table and DC to webdir
     shutil.copy("{0}/{1}".format(this_dir,tab_name),"{0}/{1}".format(cards_dir, tab_name))
     shutil.copy("{0}/{1}".format(this_dir,info_name),"{0}/{1}".format(cards_dir, info_name))

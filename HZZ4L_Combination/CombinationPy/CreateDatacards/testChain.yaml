@@ -511,6 +511,18 @@ test_2Dtemplates:
            Testing new framework with k2k1_ratio
           
 
+2D.k2k1.0.PedjaIn.IntOn.D0Ph.Dint12.8TeV.M4l131to141.RECO:
+    termNames : ggH,gg0Ph,ggInt_12N
+    templatedir : Sandbox/templates_compare2Pedja/LF_RECO_8TeV/Templates2D_D0Ph_Dint12/unfolded
+    discriminant_name : D_{0-}^{int(12)} 
+    additional_options : --user_option UniformBkg
+    final_state : 4l
+    sqrts_plot : 8   # the energy used only for plots, doesn't change anything in calculation
+    k2k1_ratio : 0
+    POI: k2k1_ratio
+    info: | 
+           Testing new framework with k2k1_ratio
+
 2D.k2k1.0.PedjaIn.IntOn.D0Ph.Dint12.14TeV.M4l121to131.RECO:
     termNames : ggH,gg0Ph,ggInt_12N
     templatedir : Sandbox/templates_compare2Pedja/LF_RECO_8TeV/Templates2D_D0Ph_Dint12/unfolded
@@ -536,7 +548,62 @@ test_2Dtemplates:
     info: | 
             Testing new framework with k2k1_ratio at 14 TeV
             The denominator contains factor 2 for mixed terms (basicaly for gamma12*k2/k1)
-                   
+
+2D.k2k1.0.PedjaIn.IntOff.D0Ph.Dint12.8TeV.M4l121to131.RECO:
+    termNames : ggH,gg0Ph
+    templatedir : Sandbox/templates_compare2Pedja/LF_RECO_8TeV/Templates2D_D0Ph_Dint12/projected
+    discriminant_name : D_{0-}^{int(12)} 
+    additional_options : --user_option UniformBkg
+    final_state : 4l
+    sqrts_plot : 8   # the energy used only for plots, doesn't change anything in calculation
+    k2k1_ratio : 0
+    POI: k2k1_ratio
+    info: | 
+            Testing new framework with k2k1_ratio at 14 TeV
+            The denominator contains factor 2 for mixed terms (basicaly for gamma12*k2/k1)
+            
+
+2D.k3k1.0.0.PedjaIn.UniformBkg.IntOn.D0M.Dint13.8TeV.M4l121to131.RECO.TEST:
+    termNames : ggH,gg0M,ggInt_13P,ggInt_13N  
+    templatedir : Sandbox/templates_compare2Pedja/LF_RECO_8TeV/Templates2D_D0M_Dint13/unfolded 
+    discriminant_name : D_{0-}^{int(13)} 
+    additional_options : --user_option UniformBkg 
+    final_state : 4l 
+    sqrts_plot : 8   # the energy used only for plots, doesn't change anything in calculation
+    k3k1_ratio : 0
+    POI : k3k1_ratio
+    info: |
+          Unfolded templates used with interference information
+          8 TeV datacards with only qqZZ background
+          RECO level templates
+
+         
+2D.k2k1.0.PedjaIn.IntOn.D0Ph.Dint12.8TeV.M4l121to131.RECO.TEST:
+    termNames : ggH,gg0Ph,ggInt_12N
+    templatedir : Sandbox/templates_compare2Pedja/LF_RECO_8TeV/Templates2D_D0Ph_Dint12/unfolded
+    discriminant_name : D_{0-}^{int(12)} 
+    additional_options : --user_option UniformBkg
+    final_state : 4l
+    sqrts_plot : 8   # the energy used only for plots, doesn't change anything in calculation
+    k2k1_ratio : 0
+    POI: k2k1_ratio
+    info: | 
+           Testing new framework with k2k1_ratio
+                      
+2D.k2k1.0.0.PedjaIn.IntOn.D0Ph.Dint12.8TeV.M4l121to131.RECO:
+    termNames : ggH,gg0Ph,ggInt_12N
+    templatedir : Sandbox/templates_compare2Pedja/LF_RECO_8TeV/Templates2D_D0Ph_Dint12/refurbished
+    discriminant_name : D_{0-}^{int(12)} 
+    additional_options : --user_option UniformBkg
+    final_state : 4l
+    sqrts_plot : 8   # the energy used only for plots, doesn't change anything in calculation
+    k2k1_ratio : 0
+    POI: k2k1_ratio
+    info: | 
+           - Testing new framework with k2k1_ratio
+           - fully 2D templates
+           
+            
           
 # # # # # # # # # # # # # # # # # # # # # 
 #   ____ ___  __  __ __  __  ___  _   _ 
@@ -548,9 +615,9 @@ test_2Dtemplates:
 COMMON:
     sqrts_dc : 8TeV   #the energy for DC
     sqrts_plot : 14   # the energy used only for plots, doesn't change anything in calculation
-    POI: k3k1_ratio,k2k1_ratio
+    POI: [k3k1_ratio,k2k1_ratio]
     POI_setup: 
-        k2k1_ratio: {range: "-5,12", n_scan_points: 1000, nice_name: "k_{2}/k_{1}", value: 0, range_vs_lumi : "not_implemented"} 
+        k2k1_ratio: {range: "-10,15", n_scan_points: 1000, nice_name: "k_{2}/k_{1}", value: 0, range_vs_lumi : "not_implemented"} 
         k3k1_ratio: {range: "-100,100", n_scan_points: 1000,  nice_name: "k_{3}/k_{1}", value: 0, range_vs_lumi : "not_implemented"} 
         
     k3k1_ratio : 0

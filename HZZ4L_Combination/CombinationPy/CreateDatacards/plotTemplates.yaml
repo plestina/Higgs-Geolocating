@@ -46,7 +46,7 @@ All_plots:
      
  - TH2: &Sandbox_templates_compare2Pedja_LF_GEN_8TeV_Templates2D_D0Ph_Dint12_DSignal_D0Ph_Dint12
      file: Sandbox/templates_compare2Pedja/LF_GEN_8TeV/Templates2D_D0Ph_Dint12/DSignal_D0Ph_Dint12
-     histos: [ggH_shape,gg0Ph_shape, ggInt_12N_shape] 
+     histos: [ggH_shape,gg0Ph_shape, ggInt_12N_shape]
      POI: {k2k1_ratio : 0}
      
 #      style:  {linecolor : kViolet,  linestyle : kDashed}
@@ -60,7 +60,8 @@ All_plots:
      
  - TH2: &Sandbox_templates_compare2Pedja_LF_RECO_8TeV_Templates2D_D0Ph_Dint12_DSignal_D0Ph_Dint12
      file: Sandbox/templates_compare2Pedja/LF_RECO_8TeV/Templates2D_D0Ph_Dint12/DSignal_D0Ph_Dint12
-     histos: [ggH_shape,gg0Ph_shape, ggInt_12N_shape] 
+#      histos: [ggH_shape,gg0Ph_shape, ggInt_12N_shape]
+     histos: [ggH_shape,gg0Ph_shape, ggInt_12N_shape, ggInt_13P_shape] 
      POI: {k2k1_ratio : 0 }
      
 #      style:  {linecolor : kViolet,  linestyle : kDashed}
@@ -86,7 +87,9 @@ templates_compare2Pedja:
  content:
 #      - *Sandbox_templates_compare2Pedja_LF_GEN_8TeV_Templates2D_D0M_Dint13_DSignal_D0M_Dint13
 #      - *Sandbox_templates_compare2Pedja_LF_GEN_8TeV_Templates2D_D0M_Dint13_Dbackground_qqZZ
-     - *Sandbox_templates_compare2Pedja_LF_GEN_8TeV_Templates2D_D0Ph_Dint12_DSignal_D0Ph_Dint12
+#      - *Sandbox_templates_compare2Pedja_LF_GEN_8TeV_Templates2D_D0Ph_Dint12_DSignal_D0Ph_Dint12
+     - *Sandbox_templates_compare2Pedja_LF_RECO_8TeV_Templates2D_D0Ph_Dint12_DSignal_D0Ph_Dint12
+     
 
  setup : &setup_templates_compare2Pedja
      final_states: [4mu,4e,2e2mu]
