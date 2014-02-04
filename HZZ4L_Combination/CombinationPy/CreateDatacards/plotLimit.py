@@ -104,8 +104,10 @@ class LikelihoodFitContourPlot(PlotPolisher,RootPlottersBase):
         llul_pairs = self._get_limit_intervals(fit_result_dict['LL68'], fit_result_dict['UL68'],x_min, x_max )
         for pair in llul_pairs:
             line.DrawLine(pair[0],deltaNLL,pair[1],deltaNLL)
-            line.DrawLine(pair[0],0,pair[0],deltaNLL)
-            line.DrawLine(pair[1],0,pair[1],deltaNLL)
+            if not AreSame(pair[0],x_min):
+                line.DrawLine(pair[0],0,pair[0],deltaNLL)
+            if not AreSame(pair[1],x_max):
+                line.DrawLine(pair[1],0,pair[1],deltaNLL)
         
         #95 %CL
         line.SetLineColor(kBlue)
@@ -113,8 +115,10 @@ class LikelihoodFitContourPlot(PlotPolisher,RootPlottersBase):
         llul_pairs = self._get_limit_intervals(fit_result_dict['LL95'], fit_result_dict['UL95'],x_min, x_max )
         for pair in llul_pairs:
             line.DrawLine(pair[0],deltaNLL,pair[1],deltaNLL)
-            line.DrawLine(pair[0],0,pair[0],deltaNLL)
-            line.DrawLine(pair[1],0,pair[1],deltaNLL)
+            if not AreSame(pair[0],x_min):
+                line.DrawLine(pair[0],0,pair[0],deltaNLL)
+            if not AreSame(pair[1],x_max):
+                line.DrawLine(pair[1],0,pair[1],deltaNLL)
 
           
     def putBrasilianFlagsOnPlot(self, fit_result_dict, c):
@@ -134,13 +138,13 @@ class LikelihoodFitContourPlot(PlotPolisher,RootPlottersBase):
         x_max = gra_x.GetXmax()
         gra_y = c.GetPrimitive('Graph').GetYaxis()
         #y_max = gra_y.GetXmax()
-        y_max = 5
+        y_max = 4.99
         
         
         box = TBox()
         
         #95 %CL
-        box.SetFillStyle(3002)
+        #box.SetFillStyle(3002)
         box.SetLineColor(kBlue)
         box.SetFillColor(kYellow)
         llul_pairs = self._get_limit_intervals(fit_result_dict['LL95'], fit_result_dict['UL95'],x_min, x_max )
@@ -151,9 +155,9 @@ class LikelihoodFitContourPlot(PlotPolisher,RootPlottersBase):
         llul_pairs = self._get_limit_intervals(fit_result_dict['LL68'], fit_result_dict['UL68'],x_min, x_max )
         for pair in llul_pairs:
             box.DrawBox(pair[0],0,pair[1],y_max)
-            
+        
         gr = c.GetPrimitive('Graph')
-        gr.Draw('Psame')
+        gr.Draw('Lsame')
         
 
 
@@ -256,12 +260,13 @@ class LikelihoodFitContourPlot(PlotPolisher,RootPlottersBase):
         #   
 
         #
-        gr_xnll.Draw("AP")
+        gr_xnll.SetLineWidth(3)
+        gr_xnll.Draw("AL")
         self.putBrasilianFlagsOnPlot(self.limits_dict, c1)
         self.putLimitLinesOnPlot(self.limits_dict, c1)
         self.putInformationOnPlot(self.limits_dict,c1, gr_xnll.GetXaxis(), gr_xnll.GetYaxis(), self.axis_nice_names[POI][0])
-        #gr_xnll.Draw('same')
-        
+        gPad.RedrawAxis()
+        #gr_xnll.Draw("AL")
          #plot_name = "limitVsLumi_2D_k3k1_0_logy"
         plot_name = self.name
         self.save_extensions = ['png','gif', 'root']
@@ -615,8 +620,9 @@ class FitResultReader(object):
         """
         self.log.info('Compiling the fit results dictionary...')
         if option.lower()=='standard':
-            import collections
-            self.limits_dict = collections.OrderedDict()
+            #import collections
+            #self.limits_dict = collections.OrderedDict()
+            self.limits_dict={}
             self.limits_dict['BF']  = self.best_fit(POI)
             self.limits_dict['LL68']= self.ll_values(POI, 0.68)
             self.limits_dict['LL95']= self.ll_values(POI, 0.95)
