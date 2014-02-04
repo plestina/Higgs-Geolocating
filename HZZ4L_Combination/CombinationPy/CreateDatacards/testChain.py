@@ -19,10 +19,11 @@ def parseOptions():
              + '%prog -h for help')
     parser = optparse.OptionParser(usage)
     parser.add_option('-c', '--cfg', dest='config_filename', type='string', default="testChain.yaml",    help='Name of the file with full configuration')
-    parser.add_option('-D','--datacard', dest='datacard', type='int', default=1, help='Toggle the datacard creation (0 or 1). Deafault [1]')
+    parser.add_option('-D','--datacard', dest='datacard', type='int', default=1, help='Toggle the datacard creation (0 or 1). Default [1]')
     parser.add_option('-r', '--run', dest='run_data_name', type='string', default="",    help='Name of the section to be run')
     parser.add_option('-p', '--print', action='store_true', dest='print_config_and_exit', default=False ,help='Just print the configuration and exit')
-    parser.add_option('-w', '--www', action='store_true', dest='do_copy_to_webdir', default=False, help='Copy plots and relevant stuff to a webdir')
+    parser.add_option('-w', '--www', action='store_true', dest='do_copy_to_webdir', default=True, help='Copy plots and relevant stuff to a webdir')
+    parser.add_option('-v','--verbosity', dest='verbosity', type='int', default=10, help='Set the levelof output for all the subscripts. Default [10] = very verbose')
     # store options and arguments as global variables
     global opt, args
     (opt, args) = parser.parse_args()
@@ -40,6 +41,7 @@ class ChainProcessor(object):
         """Set the values from configuration"""
         
         self.log = Logger().getLogger(self.__class__.__name__, 10, 'testChain.log')
+        
         self.run_dict = run_dict
         self.create_cards_dir="/afs/cern.ch/work/r/roko/Stat/CMSSW_611_JCP/src/HZZ4L_Combination/CombinationPy/CreateDatacards/"
         self.version= "v1"
@@ -272,12 +274,14 @@ if __name__ == "__main__":
     global opt, args
     parseOptions()
     
+    os.environ['PYTHON_LOGGER_VERBOSITY'] =  str(opt.verbosity)
+    
     log = Logger().getLogger(__name__, 10)
 
     #read configuration
     import lib.util.UniversalConfigParser as ucp
     cfg_reader = ucp.UniversalConfigParser(cfg_type="YAML",file_list = opt.config_filename)
-    cfg_reader.setLogLevel(10)
+    #cfg_reader.setLogLevel(10)
     full_config = cfg_reader.get_dict()
     run_data = full_config["COMMON"]
     run_data.update(full_config[opt.run_data_name])
@@ -342,9 +346,8 @@ if __name__ == "__main__":
     log.debug("Current dir = {0}".format(os.getcwd()))        
     print "--------------------------------------------------------"
     
-    finfo = open(info_name, "w")
-    finfo.write(run_data['info'])
-    finfo.close()
+    with open(info_name, "w") as finfo:
+        finfo.write(run_data['info'])
     
     f = open(tab_name, "w")
     #f.write(chain_process.get_table_row(col_names=1))
@@ -354,10 +357,11 @@ if __name__ == "__main__":
         
         os.chdir(cards_dir)
         log.debug("Current dir = {0}".format(os.getcwd()))
-        #chain_process.process("gen,addasimov,fit,plot")
-        chain_process.process("plot")
+        chain_process.process("gen,addasimov,fit,plot")
+        #chain_process.process("plot")
         #table_raw = chain_process.get_table_row()
-        tab_dict['{0}'.format(lumi)] = chain_process.get_limits_dict()
+        tab_dict['{0}'.format(str(lumi).zfill(4))] = chain_process.get_limits_dict()
+        #tab_dict[int(lumi)] = chain_process.get_limits_dict()
         os.chdir(this_dir)
         log.debug("Current dir = {0}".format(os.getcwd()))        
         #f.write(table_raw)
@@ -366,9 +370,9 @@ if __name__ == "__main__":
     with open(tab_name, 'w') as f:
         #f.write(yaml.dump(tab_dict, default_flow_style=False))
         import json
-        json.dump(tab_dict,f)
-        
+        json.dump(tab_dict,f,sort_keys=True,indent=4, separators=(',', ': '))
         log.info('Writing lumi and limits to {0}'.format(tab_name))
+        print json.dumps(tab_dict, sort_keys=True,indent=4, separators=(',', ': '))
     
     
     

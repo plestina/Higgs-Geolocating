@@ -50,15 +50,16 @@ class Logger(object):
     FORMAT = "------- $BOLD%(name)-12s$RESET : %(levelname)-8s : %(message)s ------- (in file $BOLD%(filename)s$RESET : %(lineno)d)"
     COLOR_FORMAT = formatter_message(FORMAT, True)
     
-    def setVerbose(self,logger, vebose=0):
+    def setVerbose(self, logger, verbose=0):
         """Set level of verbosity with integer:
            <1  = very quiet
            >4  = a lot of bla bla
         """
         if verbose<=0 : verbose = 0
         if verbose>5  : verbose = 5
-        my_level = 50 - int(verbose*10)      
-        self.logger.setLevel(my_level)
+        my_level = 51 - int(verbose*10)
+        self.level = my_level
+        logger.setLevel(my_level)
         
       
     def getLevel(self, level):
@@ -87,8 +88,14 @@ class Logger(object):
         ## Create logger
         #print logger_name, level,log_file
         self.logger = logging.getLogger(logger_name)
-        level = self.getLevel(level)
-        self.logger.setLevel(level)
+        import os
+        if os.getenv('PYTHON_LOGGER_VERBOSITY'):
+            #print "PYTHON_LOGGER_VERBOSITY is set to :", int(os.getenv('PYTHON_LOGGER_VERBOSITY'))
+            self.setVerbose(self.logger, int(os.getenv('PYTHON_LOGGER_VERBOSITY')) )
+            
+        else:
+            self.level = self.getLevel(level)
+            self.logger.setLevel(level)
         self.formatter = ColoredFormatter(self.COLOR_FORMAT)
         
         # Add FileHandler
@@ -98,7 +105,7 @@ class Logger(object):
             #fh.level = logging.WARNING
             self.fh.formatter = self.formatter
             self.logger.addHandler(self.fh)
-        if level is not None:
+        if self.level is not None:
             self.ch = logging.StreamHandler()
             self.ch.name = 'Console Logger'
             #ch.level = level

@@ -16,10 +16,14 @@ class kParamDiscriminantClass(datacardClass):
   
     
     def __init__(self):
-        self.DEBUG=True
-	if self.DEBUG: level = 10
-	else: level = 20
+        #self.DEBUG=True
+	#if self.DEBUG: level = 10
+	#else: level = 20
+	level = 10
 	self.log = Logger().getLogger(self.__class__.__name__,level)
+	self.DEBUG = (self.log.getEffectiveLevel()<20)
+	print "++++++++++++++++++++++++++++++++++++++++++++++++++++ DEBUG = ", self.DEBUG
+	
 
     def setTermNames(self, termNames=[]):
 	self.allowedTermNames = ['ggH','gg0Ph','gg0M' ,'ggInt_12P','ggInt_12N','ggInt_13P','ggInt_13N','ggInt_23P','ggInt_23N']
@@ -29,11 +33,11 @@ class kParamDiscriminantClass(datacardClass):
 	      if term in self.allowedTermNames: self.termNames.append(term)
 	      else :
 		  raise RuntimeError,"Term {0} is not allowed for these datacards. Please check for typos but also in the allowedTermNames".format(term)
-	  print "@@@@ Setting termNames collection to user provided = "+str(self.termNames)
+	  self.log.info("Setting termNames collection to user provided = {0}".format(self.termNames))
 	  
 	else :
-	    self.termNames = ['ggH','gg0M','ggInt_13P','ggInt_13N']
-	    print "@@@@ Setting termNames collection to default = "+str(self.termNames)
+	  self.termNames = ['ggH','gg0M','ggInt_13P','ggInt_13N']
+	  self.log.info("Setting termNames collection to default = {0}".format(self.termNames))
 
     def TFile_safe_open(self, file_name, access='READ'):
         rootfile = ROOT.TFile.Open(file_name,access)
@@ -85,10 +89,7 @@ class kParamDiscriminantClass(datacardClass):
 	    
 	    
 		
-	    
-        print '>>>>>> Signal Templates File: ',templateSigName
-        
-        
+	self.log.info('Signal Templates File: {0}'.format(templateSigName))
         
         #### Set Proper Binning
         if self.DEBUG:
@@ -142,13 +143,14 @@ class kParamDiscriminantClass(datacardClass):
         if self.isRokoTest : 
             self.dataFileName = "Sandbox/data_obs.random.2D.root"
         
-        if (self.DEBUG): print self.dataFileName," ",self.dataTreeName 
+        if (self.DEBUG): 
+            print self.dataFileName," ",self.dataTreeName 
         self.data_obs_file = self.TFile_safe_open(self.dataFileName)
         
         print self.data_obs_file.Get(self.dataTreeName)
         
         if not (self.data_obs_file.Get(self.dataTreeName)):
-            print "File, \"",self.dataFileName,"\", or tree, \"",self.dataTreeName,"\", not found" 
+            self.log.error("File, \"{0}\", or tree, \"{1}\", not found".format(self.dataFileName,self.dataTreeName))
             print "Exiting..."
             sys.exit()
             
@@ -163,9 +165,7 @@ class kParamDiscriminantClass(datacardClass):
 	    self.data_obs = ROOT.RooDataSet(self.datasetName,self.datasetName,self.data_obs_tree,ROOT.RooArgSet(self.D)).reduce(ROOT.RooArgSet(self.D))
 	  
 	
-	if self.DEBUG:
-	    print "DEBUG: Tree entries after reweighting= {0}: {1} : {2}".format(self.data_obs.isWeighted(), self.data_obs.sumEntries(), self.data_obs.numEntries())
-	    #quit()    
+        self.log.debug("Tree entries after reweighting= {0}: {1} : {2}".format(self.data_obs.isWeighted(), self.data_obs.sumEntries(), self.data_obs.numEntries()))
 	
         if self.isTemplate2D: 
 	    self.data_obs = ROOT.RooDataSet(self.datasetName,self.datasetName,self.data_obs_tree,ROOT.RooArgSet(self.CMS_zz4l_mass,self.SD,self.D),'CMS_zz4l_mass>121.0&&CMS_zz4l_mass<131.0').reduce(ROOT.RooArgSet(self.SD,self.D))
@@ -201,11 +201,10 @@ class kParamDiscriminantClass(datacardClass):
 	for term in self.termNames:
 	    postfix[term] = "{2}_{0:.0f}_{1:.0f}".format(self.channel,self.sqrts,term)
 	    
-	if self.DEBUG : 
-	    print "DEBUG: Postfixes for RooDataHist and RooHistPdf = " + str(postfix)
+        self.log.debug("Postfixes for RooDataHist and RooHistPdf = {0}".format(postfix))
 	
 	for term in self.termNames:
-	    if self.DEBUG : print "@@@@ Making signal template for ", term
+	    self.log.debug("Making signal template for {0}".format(term))
 	    #create RooDataHist
 	    self.sigTempDataHist[term] 	       = ROOT.RooDataHist("sigTempDataHist_{0}".format(postfix[term]),"sigTempDataHist_{0}".format(postfix[term]),self.ralTemplDimensions,ROOT.RooFit.Import(self.sigTemplate[term],kFALSE))
 	    self.sigTempDataHist_syst1Up[term]   = ROOT.RooDataHist("sigTempDataHist_syst1Up_{0}".format(postfix[term]),"sigTempDataHist_syst1Up_{0}".format(postfix[term]),self.ralTemplDimensions,ROOT.RooFit.Import(self.sigTemplate_syst1Up[term],kFALSE))
@@ -432,7 +431,7 @@ class kParamDiscriminantClass(datacardClass):
         try:
 	    self.data_obs
 	except:
-	    print "@@@@@ No dataset \"data_obs\' will be imported to workspace."
+	    self.log.warn("No dataset \'data_obs\' will be imported to workspace.")
 	else:    
 	    getattr(self.w,'import')(self.data_obs,ROOT.RooFit.Rename("data_obs"))
         
@@ -448,7 +447,7 @@ class kParamDiscriminantClass(datacardClass):
 	    
 	    #getattr(self.w,'import')(self.sigTemplatePdf[term], ROOT.RooFit.RecycleConflictNodes())
 
-	if self.DEBUG: print "DEBUG: Ended importing signal pdfs for terms:"+str(self.termNames)
+	self.log.debug("Ended importing signal pdfs for terms: {0}".format(self.termNames))
 	
         #save syst templates individually
         #todo: 
@@ -500,7 +499,8 @@ class kParamDiscriminantClass(datacardClass):
 	for term in self.termNames:
 	    #self.rfvSigRate[term] = ROOT.RooFormulaVar("{0}_norm".format(term),"@0*@1",ROOT.RooArgList(self.rfvSigRate_all,self.rfvGeoLocNorms[term] ))  #mod-roko -- multiply by gama lambda dependant factor
 	    self.rfvSigRate[term] = ROOT.RooFormulaVar("{0}_norm".format(term),"{0}/{1}*@0*@1".format(self.rfvSigRate_all.getVal(), self.rrvLumi.getVal()),ROOT.RooArgList(self.rrvLumi,self.rfvGeoLocNorms[term] ))  #mod-roko -- multiply by gama lambda dependant factor
-	    if self.DEBUG : self.rfvSigRate[term].Print()
+	    if self.DEBUG : 
+                self.rfvSigRate[term].Print()
 	    getattr(self.w,'import')(self.rfvSigRate[term], ROOT.RooFit.RecycleConflictNodes())
 	    
 	    #fix for JHUGen rates
@@ -549,20 +549,24 @@ class kParamDiscriminantClass(datacardClass):
             name_Shape = "{0}/HCG/{1:.1f}/hzz4l_{2}S_{3:.0f}TeV{4}.txt".format(self.outputDir,self.mH,self.appendName,self.sqrts,self.appendHypType)
         else:
             name_Shape = "{0}/HCG/{1:.0f}/hzz4l_{2}S_{3:.0f}TeV{4}.txt".format(self.outputDir,self.mH,self.appendName,self.sqrts,self.appendHypType)
-        fo = open( name_Shape, "wb")
-	self.WriteDatacardSuperKD(fo, self.name_ShapeWS2, self.rates, self.data_obs.numEntries())
-        #self.systematics.WriteSystematics(fo, self.inputs)
-        #self.systematics.WriteShapeSystematics(fo,self.inputs)
-        #self.systematics.WriteSuperKDShapeSystematics(fo,self.inputs)
-        
-        fo.close()
+        with open( name_Shape, "wb") as fo:
+            self.log.info('Writing textual datacards...')
+            self.WriteDatacardSuperKD(fo, self.name_ShapeWS2, self.rates, self.data_obs.numEntries())
+            #self.systematics.WriteSystematics(fo, self.inputs)
+            #self.systematics.WriteShapeSystematics(fo,self.inputs)
+            #self.systematics.WriteSuperKDShapeSystematics(fo,self.inputs)
+        if self.DEBUG:    
+            #read the datacard again and dump its contents 
+            self.log.debug('Dumpoing the contents of datacard {0}'.format(name_Shape))
+            with open( name_Shape, "r") as fo:
+                print fo.read()
 
 
         
     def WriteDatacardSuperKD(self,file,nameWS,theRates,obsEvents):
 
         numberSig = self.numberOfSigChan(self.inputs)
-	numberSig = len(self.termNames)  #mod-roko --> this is temporary
+        numberSig = len(self.termNames)  #mod-roko --> this is temporary
         numberBg  = self.numberOfBgChan(self.inputs)
         numberBg  = 3 #mod-roko --> this is temporary before changing the sumation fucnction
         numberBg  = 1 #mod-roko --> this is temporary before changing the sumation fucnction
@@ -677,8 +681,10 @@ class kParamDiscriminantClass(datacardClass):
 		scale_sig=1
 		scale_bkg=1
 	
-	    if "UniformBkg" in self.inputs['user_option'] : self.killBackground = False
-	    if "NoDenominator"in self.inputs['user_option'] : self.removeGeolocDenominator = True
+	    if "UniformBkg" in self.inputs['user_option'] : 
+                self.killBackground = False
+	    if "NoDenominator"in self.inputs['user_option'] : 
+                self.removeGeolocDenominator = True
         
         for chan in channelList:
             if self.inputs[chan] or self.inputs["all"]:
@@ -833,7 +839,8 @@ class kParamDiscriminantClass(datacardClass):
 	factors = _readFactorsFromFile(templateSigName, termNames, self.channel)
 	self.log.debug('Factors from file {0}: {1}'.format(templateSigName, str(factors)))
 	if self.DEBUG: 
-	    for fn in factors.keys(): print "{0} = {1}".format(fn, factors[fn])
+	    for fn in factors.keys(): 
+                print "{0} = {1}".format(fn, factors[fn])
 	
 	
 	
@@ -858,16 +865,19 @@ class kParamDiscriminantClass(datacardClass):
 	
 	
 	removeGeolocDenominator = False								
-	try: self.inputs['user_option']
+	try: 
+            self.inputs['user_option']
 	except:
 	    print "No user option defined... Will not remove Geolocating denominator."
 	    removeGeolocDenominator = False    
 	else: 
-	    if "NoDenominator" in self.inputs['user_option'] : removeGeolocDenominator = True
+	    if "NoDenominator" in self.inputs['user_option'] : 
+                removeGeolocDenominator = True
 	
-	if removeGeolocDenominator: denominator = "1"
+	if removeGeolocDenominator: 
+            denominator = "1"
 	
-	print "@@@@ Geolocating Denomiator  = ", denominator
+	self.log.debug("Geolocating Denomiator = {0}".format(denominator))
 	
 	#r_fs  = self._getFinalStateYieldRatios(self.rfvSigRate_all)
 	r_fs  = yield_ratios[self.channel]
@@ -903,11 +913,12 @@ class kParamDiscriminantClass(datacardClass):
 
                                                                     
     def reflectSystematics(self,nomShape,altShape):
-
-        if(nomShape.GetNbinsX()!=altShape.GetNbinsX() or nomShape.GetNbinsY()!=altShape.GetNbinsY()):
-            print nomShape.GetNbinsX(),altShape.GetNbinsX(),nomShape.GetNbinsY(),altShape.GetNbinsY()
-            print "AHHHHHHHHHHH, templates don't have the same binning!!!!"
-            return 0
+        assert (nomShape.GetNbinsX()==altShape.GetNbinsX()) and  (nomShape.GetNbinsY()==altShape.GetNbinsY()),\
+                "AHHHHHHHHHHH, templates don't have the same binning!!!! X: {0} vs {1} and Y: {2} vs {3}".format(nomShape.GetNbinsX(),altShape.GetNbinsX(),nomShape.GetNbinsY(),altShape.GetNbinsY())
+        #if(nomShape.GetNbinsX()!=altShape.GetNbinsX() or nomShape.GetNbinsY()!=altShape.GetNbinsY()):
+            #print nomShape.GetNbinsX(),altShape.GetNbinsX(),nomShape.GetNbinsY(),altShape.GetNbinsY()
+            #print "AHHHHHHHHHHH, templates don't have the same binning!!!!"
+            #return 0
         
         newAltShape = ROOT.TH2D(altShape)
         
