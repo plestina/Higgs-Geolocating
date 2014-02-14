@@ -56,8 +56,8 @@ class kParamDiscriminantClass(datacardClass):
 	self.sigMorph = False
 	if self.inputs['unfolded']: self.isTemplate2D=False
 	
-        self.discVarName = "CMS_zz4l_Djcp"
-        print '>>>>>> Discriminant 1D PDFS using discriminat named :',self.discVarName
+        self.pureStateDiscVarName = "CMS_zz4l_Djcp"
+        print '>>>>>> Discriminant 1D PDFS using discriminat named :',self.pureStateDiscVarName
         
         templateSigName = "{0}/Dsignal_{1}.root".format(self.templateDir ,self.appendName)
         self.sigTempFile = self.TFile_safe_open(templateSigName)
@@ -77,9 +77,9 @@ class kParamDiscriminantClass(datacardClass):
 	    self.sigTemplate[term] 		= self.sigTempFile.Get("{0}_shape".format(term))
 	    #now we don't have systematic, so we provide the same templates
 	    if self.isRokoTest:
-		self.sigTemplate_syst1Up[term] 		= self.sigTempFile.Get("{0}_shape".format(term))
+		self.sigTemplate_syst1Up[term] 	= self.sigTempFile.Get("{0}_shape".format(term))
 		self.sigTemplate_syst1Down[term] 	= self.sigTempFile.Get("{0}_shape".format(term))
-		self.sigTemplate_syst2Up[term] 		= self.sigTempFile.Get("{0}_shape".format(term))
+		self.sigTemplate_syst2Up[term] 	= self.sigTempFile.Get("{0}_shape".format(term))
 		self.sigTemplate_syst2Down[term] 	= self.sigTempFile.Get("{0}_shape".format(term))
 	    else:
 		self.sigTemplate_syst1Up[term] 	= self.sigTempFile.Get("{0}_shape_LeptScaleUp".format(term))
@@ -106,10 +106,10 @@ class kParamDiscriminantClass(datacardClass):
         dBins = self.sigTemplate['ggH'].GetXaxis().GetNbins()
         dLow = self.sigTemplate['ggH'].GetXaxis().GetXmin()
         dHigh = self.sigTemplate['ggH'].GetXaxis().GetXmax()
-        self.D = ROOT.RooRealVar(self.discVarName,self.discVarName,dLow,dHigh)
-        self.D.setBins(dBins)
-        self.D.setBinning(self.xbins_sig)
-        self.log.info('discVarName: {0} and bins [low,high]: {1} [{2},{3}]'.format(self.discVarName, dBins,dLow,dHigh))
+        self.D0 = ROOT.RooRealVar(self.pureStateDiscVarName,self.pureStateDiscVarName,dLow,dHigh)
+        self.D0.setBins(dBins)
+        self.D0.setBinning(self.xbins_sig)
+        self.log.info('pureStateDiscVarName: {0} and bins [low,high]: {1} [{2},{3}]'.format(self.pureStateDiscVarName, dBins,dLow,dHigh))
         if self.DEBUG:
             self.xbins_sig.Print()
 
@@ -118,15 +118,15 @@ class kParamDiscriminantClass(datacardClass):
         #################################
         if self.isTemplate2D : 
 	    #todo: this has to be changed dependant on 2nd dimension in templates
-	    self.superDiscVarName = "CMS_zz4l_Djcp_int"
+	    self.interferenceDiscVarName = "CMS_zz4l_Djcp_int"
 	    dBins = self.sigTemplate['ggH'].GetYaxis().GetNbins()
 	    dLow = self.sigTemplate['ggH'].GetYaxis().GetXmin()
 	    dHigh = self.sigTemplate['ggH'].GetYaxis().GetXmax()
-	    self.SD = ROOT.RooRealVar(self.superDiscVarName,self.superDiscVarName,dLow,dHigh)
-	    self.SD.setBins(dBins)
-	    self.SD.setBinning(self.ybins_sig)
+	    self.D1 = ROOT.RooRealVar(self.interferenceDiscVarName,self.interferenceDiscVarName,dLow,dHigh)
+	    self.D1.setBins(dBins)
+	    self.D1.setBinning(self.ybins_sig)
 	    
-	    self.log.info('superDiscVarName: {0} and bins [low,high]: {1} [{2},{3}]'.format(self.superDiscVarName, dBins,dLow,dHigh))
+	    self.log.info('interferenceDiscVarName: {0} and bins [low,high]: {1} [{2},{3}]'.format(self.interferenceDiscVarName, dBins,dLow,dHigh))
 	    if self.DEBUG:
                 self.ybins_sig.Print()
 
@@ -159,25 +159,26 @@ class kParamDiscriminantClass(datacardClass):
         self.datasetName = "data_obs_{0}".format(self.appendName)
                        
 	self.data_obs = ROOT.RooDataSet(self.datasetName,self.datasetName,self.data_obs_tree,
-					ROOT.RooArgSet(self.CMS_zz4l_mass,self.D),'CMS_zz4l_mass>121.0&&CMS_zz4l_mass<131.0').reduce(ROOT.RooArgSet(self.D))
+					ROOT.RooArgSet(self.CMS_zz4l_mass,self.D0),'CMS_zz4l_mass>121.0&&CMS_zz4l_mass<131.0').reduce(ROOT.RooArgSet(self.D0))
 	
 	if self.isRokoTest:
-	    self.data_obs = ROOT.RooDataSet(self.datasetName,self.datasetName,self.data_obs_tree,ROOT.RooArgSet(self.D)).reduce(ROOT.RooArgSet(self.D))
+	    self.data_obs = ROOT.RooDataSet(self.datasetName,self.datasetName,self.data_obs_tree,ROOT.RooArgSet(self.D0)).reduce(ROOT.RooArgSet(self.D0))
 	  
 	
         self.log.debug("Tree entries after reweighting= {0}: {1} : {2}".format(self.data_obs.isWeighted(), self.data_obs.sumEntries(), self.data_obs.numEntries()))
 	
         if self.isTemplate2D: 
-	    self.data_obs = ROOT.RooDataSet(self.datasetName,self.datasetName,self.data_obs_tree,ROOT.RooArgSet(self.CMS_zz4l_mass,self.SD,self.D),'CMS_zz4l_mass>121.0&&CMS_zz4l_mass<131.0').reduce(ROOT.RooArgSet(self.SD,self.D))
+	    self.data_obs = ROOT.RooDataSet(self.datasetName,self.datasetName,self.data_obs_tree,ROOT.RooArgSet(self.CMS_zz4l_mass,self.D1,self.D0),'CMS_zz4l_mass>121.0&&CMS_zz4l_mass<131.0').reduce(ROOT.RooArgSet(self.D1,self.D0))
                 
 
     def makeSuperKDAnalysis(self):
 
-	self.ralTemplDimensions= ROOT.RooArgList(self.D)
-	self.rasTemplDimensions = ROOT.RooArgSet(self.D)
+	self.ralTemplDimensions= ROOT.RooArgList(self.D0)
+	self.rasTemplDimensions = ROOT.RooArgSet(self.D0)
 	if self.isTemplate2D : 
-	    self.ralTemplDimensions= ROOT.RooArgList(self.SD,self.D)
-	    self.rasTemplDimensions = ROOT.RooArgSet(self.SD,self.D)
+	    self.ralTemplDimensions= ROOT.RooArgList(self.D0,self.D1)
+            self.rasTemplDimensions = ROOT.RooArgSet(self.D0,self.D1)
+            
 	    
 	#termNames = ['ggH','gg0M','ggInt_13P','ggInt_13N']
 	
@@ -206,11 +207,20 @@ class kParamDiscriminantClass(datacardClass):
 	for term in self.termNames:
 	    self.log.debug("Making signal template for {0}".format(term))
 	    #create RooDataHist
-	    self.sigTempDataHist[term] 	       = ROOT.RooDataHist("sigTempDataHist_{0}".format(postfix[term]),"sigTempDataHist_{0}".format(postfix[term]),self.ralTemplDimensions,ROOT.RooFit.Import(self.sigTemplate[term],kFALSE))
+	    self.sigTempDataHist[term] 	   = ROOT.RooDataHist("sigTempDataHist_{0}".format(postfix[term]),"sigTempDataHist_{0}".format(postfix[term]),self.ralTemplDimensions,ROOT.RooFit.Import(self.sigTemplate[term],kFALSE))
 	    self.sigTempDataHist_syst1Up[term]   = ROOT.RooDataHist("sigTempDataHist_syst1Up_{0}".format(postfix[term]),"sigTempDataHist_syst1Up_{0}".format(postfix[term]),self.ralTemplDimensions,ROOT.RooFit.Import(self.sigTemplate_syst1Up[term],kFALSE))
 	    self.sigTempDataHist_syst1Down[term] = ROOT.RooDataHist("sigTempDataHist_syst1Down_{0}".format(postfix[term]),"sigTempDataHist_syst1Down_{0}".format(postfix[term]),self.ralTemplDimensions,ROOT.RooFit.Import(self.sigTemplate_syst1Down[term],kFALSE))
 	    self.sigTempDataHist_syst2Up[term]   = ROOT.RooDataHist("sigTempDataHist_syst2Up_{0}".format(postfix[term]),"sigTempDataHist_syst2Up_{0}".format(postfix[term]),self.ralTemplDimensions,ROOT.RooFit.Import(self.sigTemplate_syst1Up[term],kFALSE))
 	    self.sigTempDataHist_syst2Down[term] = ROOT.RooDataHist("sigTempDataHist_syst2Down_{0}".format(postfix[term]),"sigTempDataHist_syst2Down_{0}".format(postfix[term]),self.ralTemplDimensions,ROOT.RooFit.Import(self.sigTemplate_syst1Down[term],kFALSE))
+
+            #self.sigTempDataHist[term]     = ROOT.RooDataHist("sigTempDataHist_{0}".format(postfix[term]),"sigTempDataHist_{0}".format(postfix[term]),self.ralTemplDimensions,ROOT.RooFit.Import(self.sigTemplate[term],kTRUE))
+            #self.sigTempDataHist_syst1Up[term]   = ROOT.RooDataHist("sigTempDataHist_syst1Up_{0}".format(postfix[term]),"sigTempDataHist_syst1Up_{0}".format(postfix[term]),self.ralTemplDimensions,ROOT.RooFit.Import(self.sigTemplate_syst1Up[term],kTRUE))
+            #self.sigTempDataHist_syst1Down[term] = ROOT.RooDataHist("sigTempDataHist_syst1Down_{0}".format(postfix[term]),"sigTempDataHist_syst1Down_{0}".format(postfix[term]),self.ralTemplDimensions,ROOT.RooFit.Import(self.sigTemplate_syst1Down[term],kTRUE))
+            #self.sigTempDataHist_syst2Up[term]   = ROOT.RooDataHist("sigTempDataHist_syst2Up_{0}".format(postfix[term]),"sigTempDataHist_syst2Up_{0}".format(postfix[term]),self.ralTemplDimensions,ROOT.RooFit.Import(self.sigTemplate_syst1Up[term],kTRUE))
+            #self.sigTempDataHist_syst2Down[term] = ROOT.RooDataHist("sigTempDataHist_syst2Down_{0}".format(postfix[term]),"sigTempDataHist_syst2Down_{0}".format(postfix[term]),self.ralTemplDimensions,ROOT.RooFit.Import(self.sigTemplate_syst1Down[term],kTRUE))
+            
+	    
+	    
 	    
 	    #create RooDataHistPdf
 	    self.sigTemplatePdf[term] 		 = ROOT.RooHistPdf("sigTemplatePdf_{0}".format(postfix[term]),"sigTemplatePdf_{0}".format(postfix[term]),self.rasTemplDimensions,self.sigTempDataHist[term])
@@ -253,9 +263,10 @@ class kParamDiscriminantClass(datacardClass):
 		self.syst2MorphSig.setConstant(True)
 
 	    if self.isTemplate2D: 
-		self.sigTemplateMorphPdf[term] = ROOT.FastVerticalInterpHistPdf2D("sigTemplateMorphPdf_{0}".format(postfix[term]),"sigTemplateMorphPdf_{0}".format(postfix[term]),self.SD,self.D,False,self.funcList[term],self.morphVarListSig1,1.0,1)
+		#self.sigTemplateMorphPdf[term] = ROOT.FastVerticalInterpHistPdf2D("sigTemplateMorphPdf_{0}".format(postfix[term]),"sigTemplateMorphPdf_{0}".format(postfix[term]),self.D1,self.D0,False,self.funcList[term],self.morphVarListSig1,1.0,1)
+		self.sigTemplateMorphPdf[term] = ROOT.FastVerticalInterpHistPdf2D("sigTemplateMorphPdf_{0}".format(postfix[term]),"sigTemplateMorphPdf_{0}".format(postfix[term]),self.D0,self.D1,False,self.funcList[term],self.morphVarListSig1,1.0,1)
 	    else :
-		self.sigTemplateMorphPdf[term] = ROOT.FastVerticalInterpHistPdf("sigTemplateMorphPdf_{0}".format(postfix[term]),"sigTemplateMorphPdf_{0}".format(postfix[term]),self.D,self.funcList[term],self.morphVarListSig1,1.0,1)
+		self.sigTemplateMorphPdf[term] = ROOT.FastVerticalInterpHistPdf("sigTemplateMorphPdf_{0}".format(postfix[term]),"sigTemplateMorphPdf_{0}".format(postfix[term]),self.D0,self.funcList[term],self.morphVarListSig1,1.0,1)
 		
 	    self.sigCB2d[term] = self.signalCB_ggH.Clone("sigCB2d_{0}".format(term))
 
@@ -372,20 +383,20 @@ class kParamDiscriminantClass(datacardClass):
             
 	if self.isTemplate2D: 
 	    TemplateName = "bkgTemplateMorphPdf_qqzz_{0:.0f}_{1:.0f}".format(self.channel,self.sqrts)
-	    self.bkgTemplateMorphPdf_qqzz = ROOT.FastVerticalInterpHistPdf2D(TemplateName,TemplateName,self.SD,self.D,False,ROOT.RooArgList(self.bkgTemplatePdf_qqzz),ROOT.RooArgList(),1.0,1)
+	    self.bkgTemplateMorphPdf_qqzz = ROOT.FastVerticalInterpHistPdf2D(TemplateName,TemplateName,self.D1,self.D0,False,ROOT.RooArgList(self.bkgTemplatePdf_qqzz),ROOT.RooArgList(),1.0,1)
 	    TemplateName = "bkgTemplateMorphPdf_ggzz_{0:.0f}_{1:.0f}".format(self.channel,self.sqrts)
-	    self.bkgTemplateMorphPdf_ggzz = ROOT.FastVerticalInterpHistPdf2D(TemplateName,TemplateName,self.SD,self.D,False,ROOT.RooArgList(self.bkgTemplatePdf_ggzz),ROOT.RooArgList(),1.0,1)
+	    self.bkgTemplateMorphPdf_ggzz = ROOT.FastVerticalInterpHistPdf2D(TemplateName,TemplateName,self.D1,self.D0,False,ROOT.RooArgList(self.bkgTemplatePdf_ggzz),ROOT.RooArgList(),1.0,1)
 	    
 	    TemplateName = "bkgTemplateMorphPdf_zjets_{0:.0f}_{1:.0f}".format(self.channel,self.sqrts)
-	    self.bkgTemplateMorphPdf_zjets = ROOT.FastVerticalInterpHistPdf2D(TemplateName,TemplateName,self.SD,self.D,False,self.funcList_zjets,self.morphVarListBkg,1.0,1)
+	    self.bkgTemplateMorphPdf_zjets = ROOT.FastVerticalInterpHistPdf2D(TemplateName,TemplateName,self.D1,self.D0,False,self.funcList_zjets,self.morphVarListBkg,1.0,1)
         else :
 	    TemplateName = "bkgTemplateMorphPdf_qqzz_{0:.0f}_{1:.0f}".format(self.channel,self.sqrts)
-	    self.bkgTemplateMorphPdf_qqzz = ROOT.FastVerticalInterpHistPdf(TemplateName,TemplateName,self.D,ROOT.RooArgList(self.bkgTemplatePdf_qqzz),ROOT.RooArgList(),1.0,1)
+	    self.bkgTemplateMorphPdf_qqzz = ROOT.FastVerticalInterpHistPdf(TemplateName,TemplateName,self.D0,ROOT.RooArgList(self.bkgTemplatePdf_qqzz),ROOT.RooArgList(),1.0,1)
 	    TemplateName = "bkgTemplateMorphPdf_ggzz_{0:.0f}_{1:.0f}".format(self.channel,self.sqrts)
-	    self.bkgTemplateMorphPdf_ggzz = ROOT.FastVerticalInterpHistPdf(TemplateName,TemplateName,self.D,ROOT.RooArgList(self.bkgTemplatePdf_ggzz),ROOT.RooArgList(),1.0,1)
+	    self.bkgTemplateMorphPdf_ggzz = ROOT.FastVerticalInterpHistPdf(TemplateName,TemplateName,self.D0,ROOT.RooArgList(self.bkgTemplatePdf_ggzz),ROOT.RooArgList(),1.0,1)
 	    
 	    TemplateName = "bkgTemplateMorphPdf_zjets_{0:.0f}_{1:.0f}".format(self.channel,self.sqrts)
-	    self.bkgTemplateMorphPdf_zjets = ROOT.FastVerticalInterpHistPdf(TemplateName,TemplateName,self.D,self.funcList_zjets,self.morphVarListBkg,1.0,1)
+	    self.bkgTemplateMorphPdf_zjets = ROOT.FastVerticalInterpHistPdf(TemplateName,TemplateName,self.D0,self.funcList_zjets,self.morphVarListBkg,1.0,1)
 	    
         self.bkg1d_qqzz  = self.bkg_qqzz.Clone("bkg1d_qqzz")
         self.bkg1d_ggzz  = self.bkg_ggzz.Clone("bkg1d_ggzz")
@@ -498,7 +509,8 @@ class kParamDiscriminantClass(datacardClass):
 		      
 	for term in self.termNames:
 	    #self.rfvSigRate[term] = ROOT.RooFormulaVar("{0}_norm".format(term),"@0*@1",ROOT.RooArgList(self.rfvSigRate_all,self.rfvGeoLocNorms[term] ))  #mod-roko -- multiply by gama lambda dependant factor
-	    self.rfvSigRate[term] = ROOT.RooFormulaVar("{0}_norm".format(term),"{0}/{1}*@0*@1".format(self.rfvSigRate_all.getVal(), self.rrvLumi.getVal()),ROOT.RooArgList(self.rrvLumi,self.rfvGeoLocNorms[term] ))  #mod-roko -- multiply by gama lambda dependant factor
+	    #to avoid putting all the SM norms per production channel into WS, we just put the final value as number. 
+	    self.rfvSigRate[term] = ROOT.RooFormulaVar("{0}_norm".format(term),"{0}/{1}*@0*@1".format(self.rfvSigRate_all.getVal(), self.rrvLumi.getVal()),ROOT.RooArgList(self.rrvLumi,self.rfvGeoLocNorms[term] ))  
 	    if self.DEBUG : 
                 self.rfvSigRate[term].Print()
 	    getattr(self.w,'import')(self.rfvSigRate[term], ROOT.RooFit.RecycleConflictNodes())
@@ -512,9 +524,9 @@ class kParamDiscriminantClass(datacardClass):
 	    #else:
 		#self.rates[term] = self.rrvJHUgen_SMggH.getVal()*self.rrv_SMggH_ratio.getVal() #the same as for ggH 
 		
-	self.bkg2d_ggzz_norm  =  ROOT.RooFormulaVar("bkg2d_ggzz_norm","@0/{0}".format(self.rrvLumi.getVal()),ROOT.RooArgList(self.rrvLumi))  #mod-roko -- multiply by gama lambda dependant factor
-	self.bkg2d_qqzz_norm  =  ROOT.RooFormulaVar("bkg2d_qqzz_norm","@0/{0}".format(self.rrvLumi.getVal()),ROOT.RooArgList(self.rrvLumi))  #mod-roko -- multiply by gama lambda dependant factor
-	self.bkg2d_zjets_norm =  ROOT.RooFormulaVar("bkg2d_zjets_norm","@0/{0}".format(self.rrvLumi.getVal()),ROOT.RooArgList(self.rrvLumi))  #mod-roko -- multiply by gama lambda dependant factor
+	self.bkg2d_ggzz_norm  =  ROOT.RooFormulaVar("bkg2d_ggzz_norm","@0/{0}".format(self.rrvLumi.getVal()),ROOT.RooArgList(self.rrvLumi))  
+	self.bkg2d_qqzz_norm  =  ROOT.RooFormulaVar("bkg2d_qqzz_norm","@0/{0}".format(self.rrvLumi.getVal()),ROOT.RooArgList(self.rrvLumi))  
+	self.bkg2d_zjets_norm =  ROOT.RooFormulaVar("bkg2d_zjets_norm","@0/{0}".format(self.rrvLumi.getVal()),ROOT.RooArgList(self.rrvLumi)) 
 	self.log.debug('Importing the background scaling with luminosity...')
 	getattr(self.w,'import')(self.bkg2d_ggzz_norm, ROOT.RooFit.RecycleConflictNodes())
 	getattr(self.w,'import')(self.bkg2d_qqzz_norm, ROOT.RooFit.RecycleConflictNodes())
@@ -557,7 +569,7 @@ class kParamDiscriminantClass(datacardClass):
             #self.systematics.WriteSuperKDShapeSystematics(fo,self.inputs)
         if self.DEBUG:    
             #read the datacard again and dump its contents 
-            self.log.debug('Dumpoing the contents of datacard {0}'.format(name_Shape))
+            self.log.debug('Dumping the contents of datacard {0}'.format(name_Shape))
             with open( name_Shape, "r") as fo:
                 print fo.read()
 
@@ -568,8 +580,8 @@ class kParamDiscriminantClass(datacardClass):
         numberSig = self.numberOfSigChan(self.inputs)
         numberSig = len(self.termNames)  #mod-roko --> this is temporary
         numberBg  = self.numberOfBgChan(self.inputs)
-        numberBg  = 3 #mod-roko --> this is temporary before changing the sumation fucnction
-        numberBg  = 1 #mod-roko --> this is temporary before changing the sumation fucnction
+        numberBg  = 3 #mod-roko --> this is temporary before changing the sumation function
+        numberBg  = 1 #mod-roko --> this is temporary before changing the sumation function
         
 
         file.write("imax 1\n")
@@ -708,26 +720,37 @@ class kParamDiscriminantClass(datacardClass):
         #test systematics mod-roko
         file.write("\n")
             
-        processLine = "test_sys lnN "
+        #processLine = "test_sys lnN "
 
-        for x in range(-numberSig+1,1):
-            processLine += "1.00001 "
+        #for x in range(-numberSig+1,1):
+            #processLine += "1.00001 "
 
-        for y in range(1,numberBg+1):
-            processLine += "1.00001 "
+        #for y in range(1,numberBg+1):
+            #processLine += "1.00001 "
 
-        file.write(processLine)
-        file.write("\n")
+        #file.write(processLine)
+        #file.write("\n")
+        
+        
+        #Channel list will be asked in systematicsClass.py
+        #currently we are putting all the signal terms to 
+        #have the same systematic as ggH
+        self.inputs['terms_for_systematics'] = channelList  
+        
+        
             
   
-    def _getGeolocationNormalization(self, termNames=[]):
+    def _getGeolocationNormalization(self, termNames=None):
 	"""
 	Normalizatoin in front of terms in parametrization a la Geolocating paper.
 	It depends on k1,k3,lambda, gamma and channel(thru acceptance)
 	"""
-	def _readFactorsFromFile(file_name, termNames=[], channel = self.channel):
+	if termNames==None:
+            termNames=[]
+	
+	def _readFactorsFromFile(file_name, termNames, channel = self.channel):
 		    
-	    if len(termNames)==0 : 
+	    if len(termNames)==0 or not isinstance(termNames, list): 
 		raise RuntimeError, "_getGeolocationNormalization:: You have to provide a list of terms for which I can calculate the normalization."
 	    
 	    sigTempFile = self.TFile_safe_open(file_name)
@@ -777,10 +800,14 @@ class kParamDiscriminantClass(datacardClass):
 	      factors['gamma33']=0.034
 	      
 	    #providional until 
-	    self.log.warn('Current values used for interference 12 are provisional. Change them when you get templates from Pedja.')
+	    #self.log.warn('Current values used for interference 12 are provisional. Change them when you get templates from Pedja.')
 	    #factors['gamma11']=1  
             #factors['gamma22']=0.090
+            #if channel==3:
+            #factors['lambda12_cosN']*=0.9
+            #factors['gamma22']*=1.1
             factors['gamma12'] = -factors['lambda12_cosN']/2
+            #factors['lambda12_cosN'] = -2*factors['gamma12']
             #factors['lambda12_cosP'] = factors['lambda12_cosN'] = 0.0280214
 	
             return factors
@@ -811,6 +838,7 @@ class kParamDiscriminantClass(datacardClass):
 	    #yield_ratios = {channel : all_norm[channel]/tot_norm  for channel in [1,2,3]}  
 	    #self.log.debug('getFinalStateYieldRatio -> yield ratios = {0}'.format(yield_ratios) )	
 	    yield_ratios = {1: 0.3543010974318054, 2: 0.18414932432211456, 3: 0.46154957824608}
+	    #yield_ratios = {1: 0.354, 2: 0.184, 3: 0.462}
 	    return yield_ratios
 	    
 	    
@@ -823,7 +851,7 @@ class kParamDiscriminantClass(datacardClass):
 	    file_name = "{1}/Dsignal_{0}.root".format(channelName[channel-1], os.path.dirname(templateSigName))
 	    factors = _readFactorsFromFile(file_name, termNames,channel)
 	    den_segment_geoloc = den_base.format(factors['gamma11'],factors['gamma22'],factors['gamma33'],factors['gamma12'],factors['gamma13'],factors['gamma23'])
-	    den_segment = "{0}*({1})".format(yield_ratio, den_segment_geoloc)
+	    den_segment = "{0:.3f}*({1})".format(yield_ratio, den_segment_geoloc)
 	    self.log.debug('Denominator segment for ch={0} : {1}'.format(channel, den_segment))
 	    return den_segment
 	    
@@ -840,15 +868,17 @@ class kParamDiscriminantClass(datacardClass):
 	self.log.debug('Factors from file {0}: {1}'.format(templateSigName, str(factors)))
 	if self.DEBUG: 
 	    for fn in factors.keys(): 
-                print "{0} = {1}".format(fn, factors[fn])
-	
+                #print "{0} = {1}".format(fn, factors[fn])
+                print "{0} = {1:.4f}".format(fn, factors[fn])
 	
 	
 	yield_ratios = _getFinalStateYieldRatios()
 	#todo: make denominator a function of self.termNames, so to excludde parts which are =0. Use dictionary...
 	#todo: check if we have to add factor of 2 in front of gamma12 (= gamma21)... Ask Pedja!!!
 	#denominator_geoloc = "{0}+{1}*@0*@0+{2}*@1*@1+({3}*@0)+({4}*@1)+({5}*@0*@1)"
-	denominator_geoloc = "{0}+{1}*@0*@0+{2}*@1*@1+2*(({3}*@0)+({4}*@1)+({5}*@0*@1))" ### added factor 2 for mixed terms
+	#denominator_geoloc = "{0}+{1}*@0*@0+{2}*@1*@1+2*(({3}*@0)+({4}*@1)+({5}*@0*@1))" ### added factor 2 for mixed terms
+	denominator_geoloc = "{0:.3f}+{1:.3f}*@0*@0+{2:.3f}*@1*@1+2*(({3:.3f}*@0)+({4:.3f}*@1)+({5:.3f}*@0*@1))" ### added factor 2 for mixed terms
+	#denominator_geoloc = "{0:.3f}+{1:.3f}*@0*@0+{2:.3f}*@1*@1+1*(({3:.3f}*@0)+({4:.3f}*@1)+({5:.3f}*@0*@1))" ### added factor 2 for mixed terms
 	#denominator = denominator_geoloc.format(factors['gamma11'],factors['gamma22'],factors['gamma33'],
                                                 #factors['gamma12'],factors['gamma13'],factors['gamma23'])
 	denominator = "{0}+{1}+{2}".format(_getDenominatorSegment(1,denominator_geoloc),_getDenominatorSegment(2,denominator_geoloc),_getDenominatorSegment(3,denominator_geoloc))	
@@ -900,15 +930,23 @@ class kParamDiscriminantClass(datacardClass):
 	  'ggInt_23P':     '{0}*@0*@1'.format(factors['lambda23_cosP']),  
 	  'ggInt_23N':'{0}*@0*@1*(-1)'.format(factors['lambda23_cosN'])  
 	}
-	rfvNorms={}									
+	self.rfvNorms={}									
+	self.rfvNorms_denom={}
+	self.rfvNorms_nom={}
 	for term in termNames:
 	    postfix = "{0:.0f}_{1:.0f}".format(self.channel,self.sqrts)
-	    rfvNorms[term] = ROOT.RooFormulaVar("geolocation_{0}_norm_{1}".format(term, postfix),"({0})/({1})".format(nominator[term], denominator),ROOT.RooArgList(self.k2k1_ratio, self.k3k1_ratio))
+	    self.rfvNorms_denom[term] = {}
+	    for one_ch in [1,2,3]:
+                self.rfvNorms_denom[term]['ch{0}'.format(one_ch)] = ROOT.RooFormulaVar("geolocation_denSeg{2}_{0}_norm_{1}".format(term, postfix,one_ch),"{0}".format(_getDenominatorSegment(one_ch,denominator_geoloc)),ROOT.RooArgList(self.k2k1_ratio, self.k3k1_ratio))
+                
+            self.rfvNorms_nom[term] = ROOT.RooFormulaVar("geolocation_nom_{0}_norm_{1}".format(term, postfix),"{0}".format(nominator[term]),ROOT.RooArgList(self.k2k1_ratio, self.k3k1_ratio))    
+            self.rfvNorms[term] = ROOT.RooFormulaVar("geolocation_{0}_norm_{1}".format(term, postfix),"(@0)/(@1+@2+@3)", ROOT.RooArgList(self.rfvNorms_nom[term], self.rfvNorms_denom[term]['ch1'],self.rfvNorms_denom[term]['ch2'],self.rfvNorms_denom[term]['ch3']))
+	    #rfvNorms[term] = ROOT.RooFormulaVar("geolocation_{0}_norm_{1}".format(term, postfix),"({0})/({1})".format(nominator[term], denominator),ROOT.RooArgList(self.k2k1_ratio, self.k3k1_ratio))
 	    #rfvNorms[term] = ROOT.RooFormulaVar("geolocation_{0}_norm_{1}".format(term, postfix),"({0}*{2})/({1})".format(nominator[term], denominator, r_fs),ROOT.RooArgList(self.k2k1_ratio, self.k3k1_ratio))
 	    if self.DEBUG:
-		rfvNorms[term].Print()
+		self.rfvNorms[term].Print()
 		
-	return rfvNorms
+	return self.rfvNorms
 
 
                                                                     

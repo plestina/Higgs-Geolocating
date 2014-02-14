@@ -5,6 +5,7 @@ import math
 from ROOT import *
 import ROOT
 from array import array
+from lib.util.Logger import *
 
 
 ## ------------------------------------
@@ -14,7 +15,12 @@ from array import array
 class systematicsClass:
 
     def __init__(self,theMass,theForXSxBR,theisFSR,theInputs):
-
+        level   = 10
+        self.log = Logger().getLogger(self.__class__.__name__,level)
+        self.DEBUG = (self.log.getEffectiveLevel()<20)
+        
+        print "++++++++++++++++++++++++++++++++++++++++++++++++++++ systematicsClass DEBUG = ", self.DEBUG
+        
         self.ID_4mu = 1
         self.ID_4e = 2
         self.ID_2e2mu = 3
@@ -138,7 +144,9 @@ class systematicsClass:
             channelList=['ggH','qqZZ','ggZZ','zjets','ttbar','zbb']
         if theInputs["all"] and theInputs["doHypTest"]:
             channelList=['ggH','ggH','qqZZ','ggZZ','zjets']
-        
+            channelList = theInputs['terms_for_systematics']
+            
+        self.log.debug('Channel list for systematics: {0}'.format(channelList))
         
         for chan in channelList:
             if theInputs[chan] or theInputs["all"] or (theInputs["all"] and theInputs["doHypTest"]):
