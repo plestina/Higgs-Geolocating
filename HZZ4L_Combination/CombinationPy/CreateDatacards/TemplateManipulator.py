@@ -23,15 +23,36 @@ def parseOptions():
     ### store options and arguments as global variables
     #global opt, args
     #(opt, args) = parser.parse_args()
-def refurbishedHist(hist,histName,norm=-1):
+def refurbishedHist(hist,histName,norm=-1,rebin=(1,1),smooth=(0,'')):
 
-    #nBinsX = hist.GetXaxis().GetNbins()
-    #nBinsY = hist.GetYaxis().GetNbins()
+    nBinsX = hist.GetXaxis().GetNbins()
+    nBinsY = hist.GetYaxis().GetNbins()
+    minX = hist.GetXaxis().GetXmin()
+    minY = hist.GetYaxis().GetXmin()
+    maxX = hist.GetXaxis().GetXmax()
+    maxY = hist.GetYaxis().GetXmax()
     
+    hist2DF = TH2F('refurbishedHist2D', 'refurnbishedHist2D',nBinsX,minX,maxX, nBinsY,minY,maxY)
+    
+    for i in range(1,nBinsX+1):
+            for j in range(1,nBinsY+1):
+                hist2DF.SetBinContent(i,j,hist.GetBinContent(i,j))
+    
+    if rebin[0]>1 or rebin[1]>1:
+        rebinnedHist2D = hist2DF.Rebin2D(rebin[0], rebin[1], 'rebinnedHist2D')
+        hist2DF = rebinnedHist2D
+    
+    if smooth[0]>=1 and smooth[1] in ['k5a','k5b','k3a']:
+        hist2DF.Smooth(smooth[0],smooth[1])
+    
+    hist2DF.SetNameTitle(hist.GetName(), histName)
+        
     #hist2D = ROOT.TH2F()
-    hist2D = hist
-    hist2D.SetTitle(histName)
-    return hist2D
+    #hist2D = hist
+    #hist2D.SetTitle(histName)
+    #return hist2D
+    return hist2DF
+    
 
 def unfoldedHist(hist,histName,norm=-1):
 
@@ -283,11 +304,11 @@ def make_unfolded_hist(template_file, dir_2D):
     fnew.Close()
    
     
-def make_refurbished_hist(template_file, dir_2D):
+def make_refurbished_hist(template_file, dir_2D, rebin=(1,1),smooth=(0,''), new_dir = 'refurbished'):
     
-    print "------------- Unfolding  templates"
+    print "------------- Refurbishing  templates"
     #dir_2D = '/afs/cern.ch/work/r/roko/Stat/CMSSW_611_JCP/src/HZZ4L_Combination/CombinationPy/CreateDatacards/Sandbox/templates_compare2Pedja/Templates2D_D0M_Dint13/'
-    dir_2D_refurbished = dir_2D+"/refurbished/"
+    dir_2D_refurbished = dir_2D+"/"+new_dir+"/"
     misc.make_sure_path_exists(dir_2D_refurbished)
     #f=ROOT.TFile('/afs/cern.ch/work/r/roko/Stat/CMSSW_611_JCP/src/HZZ4L_Combination/CombinationPy/CreateDatacards/Sandbox/templates2D_D0M_Dint13/Dsignal_2e2mu.root')
     #f=ROOT.TFile('/afs/cern.ch/work/r/roko/Stat/CMSSW_611_JCP/src/HZZ4L_Combination/CombinationPy/CreateDatacards/Sandbox/Templates2D_D0Ph_Dint12/DSignal_4l.root')
@@ -335,7 +356,7 @@ def make_refurbished_hist(template_file, dir_2D):
             print "@@@@ Shape {0}_shape doesn't exist.".format(term)
         else:
             print 'Working with {0}_shape'.format(term)
-            refurbished = refurbishedHist(f.Get('{0}_shape'.format(term)),'{0}_shape_refurbished'.format(term),norm=-1)
+            refurbished = refurbishedHist(f.Get('{0}_shape'.format(term)),'{0}_shape_refurbished'.format(term),norm=-1, rebin=rebin, smooth=smooth)
             #refurbished = f.Get('{0}_shape'.format(term))
             #refurbished.SetTitle('{0}_shape_refurbished'.format(term))
             fnew.cd()
@@ -438,8 +459,8 @@ if __name__ == "__main__":
       ]
     dir_2D = [
         #'/afs/cern.ch/work/r/roko/Stat/CMSSW_611_JCP/src/HZZ4L_Combination/CombinationPy/CreateDatacards/Sandbox/templates_compare2Pedja/LF_RECO_8TeV/Templates2D_D0M_Dint13/',
-        #'/afs/cern.ch/work/r/roko/Stat/CMSSW_611_JCP/src/HZZ4L_Combination/CombinationPy/CreateDatacards/Sandbox/templates_compare2Pedja/LF_GEN_8TeV/Templates2D_D0Ph_Dint12/',
-        '/afs/cern.ch/work/r/roko/Stat/CMSSW_611_JCP/src/HZZ4L_Combination/CombinationPy/CreateDatacards/Sandbox/templates_compare2Pedja/LF_RECO_8TeV/Templates2D_D0Ph_Dint12/',
+        '/afs/cern.ch/work/r/roko/Stat/CMSSW_611_JCP/src/HZZ4L_Combination/CombinationPy/CreateDatacards/Sandbox/templates_compare2Pedja/LF_GEN_8TeV/Templates2D_D0Ph_Dint12/',
+        #'/afs/cern.ch/work/r/roko/Stat/CMSSW_611_JCP/src/HZZ4L_Combination/CombinationPy/CreateDatacards/Sandbox/templates_compare2Pedja/LF_RECO_8TeV/Templates2D_D0Ph_Dint12/',
 #'/afs/cern.ch/work/r/roko/Stat/CMSSW_611_JCP/src/HZZ4L_Combination/CombinationPy/CreateDatacards/Sandbox/templates_compare2Pedja/LF_RECO_8TeV/Templates2D_D0M_Dint13_for_k2k1/',
 #'/afs/cern.ch/work/r/roko/Stat/CMSSW_611_JCP/src/HZZ4L_Combination/CombinationPy/CreateDatacards/Sandbox/templates_compare2Pedja/LF_GEN_8TeV/Templates2D_D0M_Dint13_test_copy_tree/',
         #'/afs/cern.ch/work/r/roko/Stat/CMSSW_611_JCP/src/HZZ4L_Combination/CombinationPy/CreateDatacards/Sandbox/templates_compare2Pedja/LF_GEN_8TeV/Templates2D_D0M_Dint13/'
@@ -459,9 +480,12 @@ if __name__ == "__main__":
     for theDir in dir_2D:
         for file_name in files_for_DC:
             print "------------------------------ INPUT FILE:", file_name
-            make_unfolded_hist(file_name, theDir)
+            #make_unfolded_hist(file_name, theDir)
             #make_projected_hist(file_name, theDir)
-            #make_refurbished_hist(file_name, theDir)
+            make_refurbished_hist(file_name, theDir)
+            #make_refurbished_hist(file_name, theDir, new_dir='refurbishedRebinned22', rebin=(2,2))
+            #make_refurbished_hist(file_name, theDir, new_dir='refurbishedRebinned55', rebin=(5,5))
+            #make_refurbished_hist(file_name, theDir, new_dir='refurbishedSmoothed_k5b', smooth=(1,'k5b'))
 	
     #make_unfolded_hist_bkg()
     #sys.exit()

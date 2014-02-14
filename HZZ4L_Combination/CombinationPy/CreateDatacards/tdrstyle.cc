@@ -122,7 +122,8 @@ void setTDRStyle(bool force) {
 
   gStyle->SetTitleColor(1, "XYZ");
   gStyle->SetTitleFont(42, "XYZ");
-  gStyle->SetTitleSize(0.06, "XYZ");
+//   gStyle->SetTitleSize(0.06, "XYZ");
+  gStyle->SetTitleSize(0.05, "XYZ");
   // gStyle->SetTitleXSize(Float_t size = 0.02); // Another way to set the size?
   // gStyle->SetTitleYSize(Float_t size = 0.02);
   gStyle->SetTitleXOffset(0.9);
@@ -134,7 +135,7 @@ void setTDRStyle(bool force) {
   gStyle->SetLabelColor(1, "XYZ");
   gStyle->SetLabelFont(42, "XYZ");
   gStyle->SetLabelOffset(0.007, "XYZ");
-  gStyle->SetLabelSize(0.05, "XYZ");
+//   gStyle->SetLabelSize(0.05, "XYZ");
 
 // For the axis:
 
