@@ -760,9 +760,9 @@ class kParamDiscriminantClass(datacardClass):
 		      'lambda23_cosP','lambda23_cosN','lambda23_sinP','lambda23_sinN']
 		      
 	    needed_factors = {
-	      'ggH'	  :   'gamma11',
-	      'gg0Ph'    :   'gamma22',     # @0 = k2k1_ratio
-	      'gg0M'     :   'gamma33',     # @1 = k3k1_ratio
+	      'ggH'	  :   'gamma11,gamma12',
+	      'gg0Ph'    :   'gamma22,gamma12',     # @0 = k2k1_ratio
+	      'gg0M'     :   'gamma33,gamma12',     # @1 = k3k1_ratio
 	      'ggInt_12P':   'lambda12_cosP',  
 	      'ggInt_12N':   'lambda12_cosN',  
 	      
@@ -774,25 +774,41 @@ class kParamDiscriminantClass(datacardClass):
 	    factors_to_read = []
 	    for term in termNames: 
 		if term in needed_factors.keys(): 
-                    factors_to_read.append(needed_factors[term])
+                    #factors_to_read.append(needed_factors[term])
+                    this_term_factors_to_read = [factor.strip() for factor in needed_factors[term].split(',')]
+                    factors_to_read+=this_term_factors_to_read
 		else:
-		    raise ValueError, "_getGeolocationNormalization:: The term \"{0}\" is unknown. Please check spelling. Allowed terms are : {1}".format(term, str(needed_factors.keys()))
-	    self.log.debug('Factors to read from file {0}: {1}'.format(file_name, str(factors_to_read)))
+		    raise KeyError, "_getGeolocationNormalization:: The term \"{0}\" is unknown. Please check spelling. Allowed terms are : {1}".format(term, str(needed_factors.keys()))
+            factors_to_read = list(set(factors_to_read))  #make list with unique entries
+            self.log.debug('Factors to read from file {0}: {1}'.format(file_name, str(factors_to_read)))
 	    
 	    #initialize factor dictionary	
 	    factors={}
 	    sigTempFile.cd()
 	    tree=sigTempFile.Get('factors')
-	    for fn in factorNames:
-		factors[fn] = array('d',[0])
-		if fn in factors_to_read:
-                    self.log.debug('SetBranchAddress to -> {0}'.format(fn))
-                    tree.SetBranchAddress(fn,factors[fn])
-	    tree.GetEntry(0) #there shouldbe onlyone number, one entry
+	    #for fn in factorNames:
+		#factors[fn] = array('d',[0])
+		#if fn in factors_to_read:
+                    #self.log.debug('SetBranchAddress to -> {0}'.format(fn))
+                    #tree.SetBranchAddress(fn,factors[fn])
+	    #tree.GetEntry(0) #there shouldbe onlyone number, one entry
 	    
-	    for fn in factors.keys():
-		factors[fn] = factors[fn][0]
-	    
+	    #for fn in factors.keys():
+		#factors[fn] = factors[fn][0]
+           
+	   
+            tree.GetEntry(0)
+            for fn in factorNames:
+                if fn in factors_to_read:
+                    try:
+                        factors[fn] = eval('tree.{0}'.format(fn))
+                    except:
+                        self.log.warn('The factors tree does not contain the {0} branch. Please check the tree or the spelling of the variable! Currently setting value to 0.'.format(fn))
+                        factors[fn] = 0
+                else:
+                    factors[fn]=0
+	   
+	   
 	    if channel==3:
 	      #gamma 33 = 0.040 #2e2mu
 	      factors['gamma33']=0.040
@@ -806,8 +822,8 @@ class kParamDiscriminantClass(datacardClass):
             #if channel==3:
             #factors['lambda12_cosN']*=0.9
             #factors['gamma22']*=1.1
-            factors['gamma12'] = -factors['lambda12_cosN']/2
-            #factors['lambda12_cosN'] = -2*factors['gamma12']
+            factors['gamma12'] = -factors['lambda12_cosN']
+            #factors['lambda12_cosN'] = -factors['gamma12']
             #factors['lambda12_cosP'] = factors['lambda12_cosN'] = 0.0280214
 	
             return factors
@@ -877,8 +893,8 @@ class kParamDiscriminantClass(datacardClass):
 	#todo: check if we have to add factor of 2 in front of gamma12 (= gamma21)... Ask Pedja!!!
 	#denominator_geoloc = "{0}+{1}*@0*@0+{2}*@1*@1+({3}*@0)+({4}*@1)+({5}*@0*@1)"
 	#denominator_geoloc = "{0}+{1}*@0*@0+{2}*@1*@1+2*(({3}*@0)+({4}*@1)+({5}*@0*@1))" ### added factor 2 for mixed terms
-	denominator_geoloc = "{0:.3f}+{1:.3f}*@0*@0+{2:.3f}*@1*@1+2*(({3:.3f}*@0)+({4:.3f}*@1)+({5:.3f}*@0*@1))" ### added factor 2 for mixed terms
-	#denominator_geoloc = "{0:.3f}+{1:.3f}*@0*@0+{2:.3f}*@1*@1+1*(({3:.3f}*@0)+({4:.3f}*@1)+({5:.3f}*@0*@1))" ### added factor 2 for mixed terms
+	#denominator_geoloc = "{0:.3f}+{1:.3f}*@0*@0+{2:.3f}*@1*@1+2*(({3:.3f}*@0)+({4:.3f}*@1)+({5:.3f}*@0*@1))" ### added factor 2 for mixed terms
+	denominator_geoloc = "{0:.3f}+{1:.3f}*@0*@0+{2:.3f}*@1*@1+1*(({3:.3f}*@0)+({4:.3f}*@1)+({5:.3f}*@0*@1))" ### added factor 2 for mixed terms
 	#denominator = denominator_geoloc.format(factors['gamma11'],factors['gamma22'],factors['gamma33'],
                                                 #factors['gamma12'],factors['gamma13'],factors['gamma23'])
 	denominator = "{0}+{1}+{2}".format(_getDenominatorSegment(1,denominator_geoloc),_getDenominatorSegment(2,denominator_geoloc),_getDenominatorSegment(3,denominator_geoloc))	

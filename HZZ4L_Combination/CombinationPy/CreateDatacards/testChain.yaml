@@ -597,9 +597,9 @@
           - really the 2D templates are used
 
           
-2D.k2k1.0.PedjaIn.IntOn.D0Ph.Dint12.8TeV.M4l121to131.GEN:
+2D.k2k1.0.PedjaIn.IntOn.D0Ph.Dint12.8TeV.M4l121to131.RECO.Lambda12eqGamma12:
     termNames : ggH,gg0Ph,ggInt_12N
-    templatedir : Sandbox/templates_compare2Pedja/LF_GEN_8TeV/Templates2D_D0Ph_Dint12/refurbished
+    templatedir : Sandbox/templates_compare2Pedja/LF_RECO_8TeV/Templates2D_D0Ph_Dint12/refurbished
     discriminant_name : D_{0-}^{int(12)} 
     additional_options : --user_option UniformBkg
     analysis_inputs : SM_inputs_8TeV_CJLST
