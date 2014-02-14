@@ -1,0 +1,1 @@
+rm -r cards_2D.k2k1.0.PedjaIn.IntOn.D0Ph.Dint12.8TeV.M4l121to131.GEN; python makeDCsandWSs.py -b -i SM_inputs_8TeV_CJLST -a 2D.k2k1.0.PedjaIn.IntOn.D0Ph.Dint12.8TeV.M4l121to131.GEN -t Sandbox/templates_compare2Pedja/LF_GEN_8TeV/Templates2D_D0Ph_Dint12/refurbished --terms ggH,gg0Ph,ggInt_12N --user_option UniformBkg

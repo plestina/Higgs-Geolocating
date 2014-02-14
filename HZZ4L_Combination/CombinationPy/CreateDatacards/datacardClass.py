@@ -764,12 +764,14 @@ class datacardClass(object):
             del czz
         
         ## ------------------- LUMI -------------------- ##
-        self.rrvLumi = ROOT.RooRealVar("cmshzz4l_lumi","cmshzz4l_lumi",self.lumi)  
+        #self.rrvLumi = ROOT.RooRealVar("cmshzz4l_lumi","cmshzz4l_lumi",self.lumi)
+        self.rrvLumi = ROOT.RooRealVar("cmshzz4l_lumi_{0:.0f}".format(self.sqrts),"cmshzz4l_lumi_{0:.0f}".format(self.sqrts),self.lumi)  
 
         
         ## ----------------------- SIGNAL RATES ----------------------- ##
         #self.CMS_zz4l_mass.setRange("shape",self.inputs['low_M'],self.inputs['high_M'])
         self.CMS_zz4l_mass.setRange("shape",121,131)
+        #self.CMS_zz4l_mass.setRange("shape",106,141)
         
         fr_low_M = self.inputs['low_M']
         fr_high_M = self.inputs['high_M']        

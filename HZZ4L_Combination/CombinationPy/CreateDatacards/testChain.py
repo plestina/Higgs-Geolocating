@@ -19,11 +19,12 @@ def parseOptions():
              + '%prog -h for help')
     parser = optparse.OptionParser(usage)
     parser.add_option('-c', '--cfg', dest='config_filename', type='string', default="testChain.yaml",    help='Name of the file with full configuration')
-    parser.add_option('-D','--datacard', dest='datacard', type='int', default=1, help='Toggle the datacard creation (0 or 1). Default [1]')
+    parser.add_option('-D', '--datacard', dest='datacard', type='int', default=0, help='Toggle the datacard creation (0 or 1). Default [0]')
     parser.add_option('-r', '--run', dest='run_data_name', type='string', default="",    help='Name of the section to be run')
     parser.add_option('-p', '--print', action='store_true', dest='print_config_and_exit', default=False ,help='Just print the configuration and exit')
     parser.add_option('-w', '--www', action='store_true', dest='do_copy_to_webdir', default=True, help='Copy plots and relevant stuff to a webdir')
-    parser.add_option('-v','--verbosity', dest='verbosity', type='int', default=10, help='Set the levelof output for all the subscripts. Default [10] = very verbose')
+    parser.add_option('-v', '--verbosity', dest='verbosity', type='int', default=10, help='Set the levelof output for all the subscripts. Default [10] = very verbose')
+    parser.add_option('-C',  '--cmd', dest='cmd_list', type='string', default="all",    help='Commands that will be run. Order is defined internally.')
     # store options and arguments as global variables
     global opt, args
     (opt, args) = parser.parse_args()
@@ -54,12 +55,29 @@ class ChainProcessor(object):
         self.MY_CUR_WWW_SUBDIR=""
         self.append_name_base = run_data_name
         self.MY_CUR_WWW_SUBDIR = self.append_name_base
-        self.POIs = list(self.run_dict['POI'])
+        self.POIs = self.run_dict['POI']
         self.poi = self.run_dict['POI_setup']
         self.termNames =  self.run_dict['termNames']
         self.templatedir = self.run_dict['templatedir']
         self.discriminant = self.run_dict['discriminant_name']
         self.additional_options = self.run_dict['additional_options']
+        try:
+            self.analysis_inputs = self.run_dict['analysis_inputs']
+        except KeyError:
+            self.analysis_inputs = 'SM_inputs_8TeV_CJLST'
+            self.log.info('Using 8 TeV analysis inputs from : {0}'.format(self.analysis_inputs))
+        
+        try:
+            self.combine_datacards = self.run_dict['combine_datacards']
+        except KeyError:
+            self.combine_datacards = ''
+            self.combination_7and8TeV = False
+            self.log.info('Runing standard datacards sequence.')
+        else:
+            self.combination_7and8TeV = True
+            self.log.info('Runing sequence for combining different datacard directories.')
+        
+        
         if 'unfolded' in self.templatedir or 'projected' in self.templatedir:
             self.log.warn('Adding --unfolded option to makeDCsandWSs.py so that the 2D templates will not be used indeed.')
             self.additional_options+=' --unfolded'    
@@ -99,14 +117,15 @@ class ChainProcessor(object):
         #make list out of POI
         if isinstance(self.run_dict['POI'],list):
             pass
-        else:
-            tmp_list=[]
-            tmp_list.append(self.run_dict['POI'])
-            self.run_dict['POI'] = tmp_list
+        elif isinstance(self.run_dict['POI'],str):
+            #tmp_list=[]
+            #tmp_list.append(self.run_dict['POI'])
+            self.run_dict['POI'] = [one_poi.strip() for one_poi in str(self.run_dict['POI']).split(',')]
+            #self.run_dict['POI'] = tmp_list
         
         self.POIs = self.run_dict['POI']
         self.log.debug('POI: {0}'.format(self.POIs))
-        assert len(self.POIs)>0 and len(self.POIs)<3 and ("k2k1_ratio" or "k3k1_ratio" in self.POIs), \
+        assert len(self.POIs)>0 and len(self.POIs)<3 and ("k2k1_ratio" in self.POIs or "k3k1_ratio" in self.POIs), \
             "You should provide at least one POI (k2k1_ratio, k3k1_ratio), while you provided {0}".format(self.POIs)
         
         if "k3k1_ratio" in self.POIs and "k2k1_ratio" in self.POIs:
@@ -162,24 +181,41 @@ class ChainProcessor(object):
         self.do_cmd = do_cmd
         self.setup_POI_related_stuff()
         
-        
+        self.systematic_opt = '-S 1'
         
         import lib.util.MiscTools as misc
         #print self.__dict__
         self.fs_expanded = self.fs
         if self.fs.lower() == "4l":
             self.fs_expanded = "4e,4#mu,2e2#mu"
+            #self.fs_expanded = "4e,4#mu"
         os.environ['PLOT_TAG'] = "Asimov data %(poi_name_value_plot)s | Discrim. %(discriminant)s | L=%(lumi)s fb^{-1} @ %(sqrts_plot)s TeV | Fin. state = %(fs_expanded)s" %self.__dict__
-
+        import string
+        self.sqrts_dc_noTeV = string.replace(self.sqrts_dc,'TeV','')
         cmd = {}
-        cmd['createCards']    = "rm -r cards_%(append_name_base)s; python makeDCsandWSs.py -b -i SM_inputs_8TeV_CJLST -a %(append_name_base)s -t %(templatedir)s --terms %(termNames)s %(additional_options)s" %self.__dict__
-        cmd['combCards']      = "rm -rf hzz4l_4lS_%(sqrts_dc)s_ALT.txt; combineCards.py hzz4l_4muS_%(sqrts_dc)s_ALT.txt hzz4l_4eS_%(sqrts_dc)s_ALT.txt hzz4l_2e2muS_%(sqrts_dc)s_ALT.txt> hzz4l_4lS_%(sqrts_dc)s_ALT.txt" %self.__dict__
-        cmd['t2w'] 		= "text2workspace.py hzz4l_%(fs)sS_%(sqrts_dc)s_ALT.txt -m 126 -P %(poi_physics_model)s %(poi_ranges_string_t2w)s  --PO muFloating -o combine.ws.%(fs)s.%(version)s.root" %self.__dict__
-        cmd['gen'] 		= "combine -M GenerateOnly combine.ws.%(fs)s.%(version)s.root -m 126 -t -1 --expectSignal=1 --saveToys --setPhysicsModelParameters %(poi_name_value)s,cmshzz4l_lumi=%(lumi)s -S 0" %self.__dict__
-        cmd['addasimov'] 	= "root -b -l -q %(create_cards_dir)s/addToyDataset.C\(\\\"combine.ws.%(fs)s.%(version)s.root\\\",\\\"higgsCombineTest.GenerateOnly.mH126.123456.root\\\",\\\"toy_asimov\\\",\\\"workspaceWithAsimov_%(poi_name_value_filename)s_lumi_%(lumi)s.root\\\"\)" %self.__dict__
-        cmd['fit'] 		= "combine -M MultiDimFit workspaceWithAsimov_%(poi_name_value_filename)s_lumi_%(lumi)s.root --algo=grid --points %(poi_n_points)s  -m 126 -n .asimov.%(fs)s.%(poi_name_value_filename)s.lumi_%(lumi_zfill)s -D toys/toy_asimov -S 0 --setPhysicsModelParameters cmshzz4l_lumi=%(lumi)s --setPhysicsModelParameterRanges %(poi_ranges_string_fit)s" %self.__dict__
-        cmd['plot'] 	       = "root -l -b -q %(create_cards_dir)s/plotLimit.C\(\\\"higgsCombine.asimov.%(fs)s.%(poi_name_value_filename)s.lumi_%(lumi_zfill)s.MultiDimFit.mH126.root\\\",\\\"%(pois)s\\\",\\\"environ PLOT_TAG\\\" \)" %self.__dict__
-        
+        cmd['createCards']  = "rm -r cards_%(append_name_base)s; python makeDCsandWSs.py -b -i %(analysis_inputs)s -a %(append_name_base)s -t %(templatedir)s --terms %(termNames)s %(additional_options)s" %self.__dict__
+        cmd['combCards']    = "rm -rf hzz4l_4lS_%(sqrts_dc)s_ALT.txt; combineCards.py hzz4l_4muS_%(sqrts_dc)s_ALT.txt hzz4l_4eS_%(sqrts_dc)s_ALT.txt hzz4l_2e2muS_%(sqrts_dc)s_ALT.txt> hzz4l_4lS_%(sqrts_dc)s_ALT.txt" %self.__dict__
+        #cmd['combCards']   = "rm -rf hzz4l_4lS_%(sqrts_dc)s_ALT.txt; combineCards.py hzz4l_4muS_%(sqrts_dc)s_ALT.txt hzz4l_4eS_%(sqrts_dc)s_ALT.txt > hzz4l_4lS_%(sqrts_dc)s_ALT.txt" %self.__dict__
+        cmd['t2w']          = "text2workspace.py hzz4l_%(fs)sS_%(sqrts_dc)s_ALT.txt -m 126 -P %(poi_physics_model)s %(poi_ranges_string_t2w)s  --PO muFloating -o combine.ws.%(fs)s.%(version)s.root" %self.__dict__
+        cmd['gen'] 	   = "combine -M GenerateOnly combine.ws.%(fs)s.%(version)s.root -m 126 -t -1 --expectSignal=1 --saveToys --setPhysicsModelParameters %(poi_name_value)s,cmshzz4l_lumi_%(sqrts_dc_noTeV)s=%(lumi)s %(systematic_opt)s" %self.__dict__
+        cmd['addasimov'] 	   = "root -b -l -q %(create_cards_dir)s/addToyDataset.C\(\\\"combine.ws.%(fs)s.%(version)s.root\\\",\\\"higgsCombineTest.GenerateOnly.mH126.123456.root\\\",\\\"toy_asimov\\\",\\\"workspaceWithAsimov_%(poi_name_value_filename)s_lumi_%(lumi)s.root\\\"\)" %self.__dict__
+        cmd['fit'] 	   = "combine -M MultiDimFit workspaceWithAsimov_%(poi_name_value_filename)s_lumi_%(lumi)s.root --algo=grid --points %(poi_n_points)s  -m 126 -n .asimov.%(fs)s.%(poi_name_value_filename)s.lumi_%(lumi_zfill)s -D toys/toy_asimov %(systematic_opt)s --setPhysicsModelParameters cmshzz4l_lumi_%(sqrts_dc_noTeV)s=%(lumi)s --setPhysicsModelParameterRanges %(poi_ranges_string_fit)s" %self.__dict__
+        cmd['plot'] 	   = "root -l -b -q %(create_cards_dir)s/plotLimit.C\(\\\"higgsCombine.asimov.%(fs)s.%(poi_name_value_filename)s.lumi_%(lumi_zfill)s.MultiDimFit.mH126.root\\\",\\\"%(pois)s\\\",\\\"environ PLOT_TAG\\\" \)" %self.__dict__
+      
+        if self.combination_7and8TeV:
+            cmd['createCards']  = "echo 'createCards ------> !!!Not implemented yet !!!'"
+            #make so that thingsare copied properly and individual cards created
+            #cmd['createCards'] = "rm -r cards_%(append_name_base)s; python makeDCsandWSs.py -b -i %(analysis_inputs)s -a %(append_name_base)s -t %(templatedir)s --terms %(termNames)s %(additional_options)s" %self.__dict__
+            cmd['combCards']    = "rm -rf hzz4l_4lS_7and8TeV_ALT.txt; combineCards.py hzz4l_4lS_7TeV_ALT.txt hzz4l_4lS_8TeV_ALT.txt > hzz4l_4lS_7and8TeV_ALT.txt" %self.__dict__
+            #cmd['combCards']   = "rm -rf hzz4l_4lS_%(sqrts_dc)s_ALT.txt; combineCards.py hzz4l_4muS_%(sqrts_dc)s_ALT.txt hzz4l_4eS_%(sqrts_dc)s_ALT.txt > hzz4l_4lS_%(sqrts_dc)s_ALT.txt" %self.__dict__
+            cmd['t2w']          = "text2workspace.py hzz4l_4lS_7and8TeV_ALT.txt -m 126 -P %(poi_physics_model)s %(poi_ranges_string_t2w)s  --PO muFloating -o combine.ws.%(fs)s.%(version)s.root" %self.__dict__
+            cmd['gen']          = "combine -M GenerateOnly combine.ws.%(fs)s.%(version)s.root -m 126 -t -1 --expectSignal=1 --saveToys --setPhysicsModelParameters %(poi_name_value)s %(systematic_opt)s" %self.__dict__
+            cmd['addasimov']    = "root -b -l -q %(create_cards_dir)s/addToyDataset.C\(\\\"combine.ws.%(fs)s.%(version)s.root\\\",\\\"higgsCombineTest.GenerateOnly.mH126.123456.root\\\",\\\"toy_asimov\\\",\\\"workspaceWithAsimov_%(poi_name_value_filename)s.root\\\"\)" %self.__dict__
+            cmd['fit']          = "combine -M MultiDimFit workspaceWithAsimov_%(poi_name_value_filename)s.root --algo=grid --points %(poi_n_points)s  -m 126 -n .asimov.%(fs)s.%(poi_name_value_filename)s -D toys/toy_asimov %(systematic_opt)s --setPhysicsModelParameterRanges %(poi_ranges_string_fit)s" %self.__dict__
+            cmd['plot']         = "root -l -b -q %(create_cards_dir)s/plotLimit.C\(\\\"higgsCombine.asimov.%(fs)s.%(poi_name_value_filename)s.MultiDimFit.mH126.root\\\",\\\"%(pois)s\\\",\\\"environ PLOT_TAG\\\" \)" %self.__dict__
+            
+      
+      
         with open('testChain.cmds','a') as cmd_file: 
             for my_cmd in self.do_cmd.split(','):
                 self.log.info('Adding the command in testChain.cmds file: {0}'.format(cmd[my_cmd.strip()]))
@@ -196,32 +232,19 @@ class ChainProcessor(object):
         if "addasimov" in do_cmd: misc.processCmd(cmd['addasimov']) 
         if "fit" in do_cmd: misc.processCmd(cmd['fit']) 
         if "plot" in do_cmd: 
-            #misc.processCmd(cmd['plot']) 
-            #from plotLimit import *
             plotter = LikelihoodFitContourPlot()
             plotter.setCopyToWebDir(True,self.www_dir)
             #print "higgsCombine.asimov.%(fs)s.%(poi_name_value_filename)s.lumi_%(lumi_zfill)s.MultiDimFit.mH126.root with pois = %(pois)s" %self.__dict__
             limits_file_name = "higgsCombine.asimov.%(fs)s.%(poi_name_value_filename)s.lumi_%(lumi_zfill)s.MultiDimFit.mH126.root" %self.__dict__
-            title = "Asimov data %(poi_name_value_plot)s | Discrim. %(discriminant)s | L=%(lumi)s fb^{-1} @ %(sqrts_plot)s TeV | Fin. state = %(fs_expanded)s" %self.__dict__
-            plotter.make_plot(limits_file_name,self.pois,title)
+            title = "Asimov data %(poi_name_value_plot)s | %(discriminant)s | L=%(lumi)s fb^{-1} @ %(sqrts_plot)s TeV | %(fs_expanded)s" %self.__dict__
+            if self.combination_7and8TeV:
+                limits_file_name = "higgsCombine.asimov.%(fs)s.%(poi_name_value_filename)s.MultiDimFit.mH126.root" %self.__dict__
+                title = "Asimov data %(poi_name_value_plot)s | %(discriminant)s | 5.1 fb^{-1}@7TeV + 19.7 fb^{-1}@8TeV | %(fs_expanded)s" %self.__dict__
+            
+            graph_dict = None
+            plotter.make_plot(limits_file_name,self.pois,title, graph_dict)
             self.limits_dict = plotter.get_limits_dict()
             #"higgsCombine.asimov.%(fs)s.%(poi_name_value_filename)s.lumi_%(lumi_zfill)s.MultiDimFit.mH126.root\\\",\\\"%(pois)s\\\",\\\"environ PLOT_TAG\\\" \)" %self.__dict__
-
-            
-            #import lib.util.MiscTools as misc
-            #misc.make_sure_path_exists(self.www_dir)
-            #shutil.copy("/afs/cern.ch/user/r/roko/www/html/index.php",self.www_dir)
-            #for self.x in ['AxisK3K1', 'AxisArctanGamK3K1', 'AxisArctanK3K1', 'AxisFa3', 'AxisK2K1']:
-                ##print "cp higgsCombine.asimov.{fs}.{poi_name_value}.MultiDimFit.mH126.root*png {www_dir}/exp.{fs}.{poi_name_value_filename}.mH126.{x}.png".format(**self.__dict__)
-                ##shutil.copy("higgsCombine.asimov.{fs}.{poi_name_value_filename}.lumi_{lumi_zfill}.MultiDimFit.mH126.root.{x}.png".format(**self.__dict__), \
-                            ##"{www_dir}/exp.{fs}.{poi_name_value_filename}.mH126.{x}.{lumi_zfill}ifb.png".format(**self.__dict__))
-                #file_2_copy = "higgsCombine.asimov.{fs}.{poi_name_value_filename}.lumi_{lumi_zfill}.MultiDimFit.mH126.root.{x}.png".format(**self.__dict__)            
-                #if os.path.exists(file_2_copy):
-                    #shutil.copy(file_2_copy,"{www_dir}/exp.{fs}.{poi_name_value_filename}.mH126.{x}.{lumi_zfill}ifb.png".format(**self.__dict__))
-            #print "{www_dir}/?match=exp.{fs}.{poi_name_value_filename}.mH126.*.png".format(**self.__dict__).replace("/afs/cern.ch/user/r/roko/www/html/","https://roko.web.cern.ch/roko/")
-            
-        
-        
         
     def get_limits_dict(self):
         try:
@@ -273,7 +296,15 @@ if __name__ == "__main__":
     # parse the arguments and options
     global opt, args
     parseOptions()
-    
+    cmd_list = opt.cmd_list.lower()
+    if cmd_list=='all':
+        cmd_list = 'createCards,combineCards,t2w,gen,addasimov,fit,plot'
+        
+    if opt.datacard and 'createCards' not in cmd_list:
+        cmd_list+=',createCards'
+    elif not opt.datacard and 'createCards' in cmd_list:
+        opt.datacard = True
+        
     os.environ['PYTHON_LOGGER_VERBOSITY'] =  str(opt.verbosity)
     
     log = Logger().getLogger(__name__, 10)
@@ -309,7 +340,7 @@ if __name__ == "__main__":
     
     lumi_list = run_data['lumi_list']
   
-    this_dir=os.getcwd()
+    this_dir = os.getcwd()
     cards_dir = "cards_{0}/HCG/126".format(opt.run_data_name)
     #out_file_name_base = "{0}.{1}.asimov.k3k1.{2}".format(opt.run_data_name, run_data['final_state'],run_data['k3k1_ratio'])
     out_file_name_base = "{0}.{1}.asimov.{2}".format(opt.run_data_name, run_data['final_state'],chain_process.get_poi_name_value_filename())
@@ -326,7 +357,7 @@ if __name__ == "__main__":
         log.info('Writing used configuration to data_config.yaml')
     
     
-    if opt.datacard:
+    if 'create' in cmd_list:
         chain_process.process("createCards")
         try:
             os.remove(info_name)
@@ -341,7 +372,10 @@ if __name__ == "__main__":
                 pass
     os.chdir(cards_dir)        
     log.debug("Current dir = {0}".format(os.getcwd()))
-    chain_process.process("combCards,t2w")
+    if 'comb' in cmd_list:
+        chain_process.process("combCards")
+    if 't2w' in cmd_list:
+        chain_process.process("t2w")
     os.chdir(this_dir)
     log.debug("Current dir = {0}".format(os.getcwd()))        
     print "--------------------------------------------------------"
@@ -357,29 +391,33 @@ if __name__ == "__main__":
         
         os.chdir(cards_dir)
         log.debug("Current dir = {0}".format(os.getcwd()))
-        chain_process.process("gen,addasimov,fit,plot")
-        #chain_process.process("plot")
-        #table_raw = chain_process.get_table_row()
-        tab_dict['{0}'.format(str(lumi).zfill(4))] = chain_process.get_limits_dict()
-        #tab_dict[int(lumi)] = chain_process.get_limits_dict()
+        if 'gen' in cmd_list:
+            chain_process.process("gen")
+        if 'addasimov' in cmd_list:
+            chain_process.process("addasimov")
+        if 'fit' in cmd_list:
+            chain_process.process("fit")
+        if 'plot' in cmd_list:
+            chain_process.process("plot")
+        
+            #chain_process.process("plot")
+            #table_raw = chain_process.get_table_row()
+            tab_dict['{0}'.format(str(lumi).zfill(4))] = chain_process.get_limits_dict()
+            #tab_dict[int(lumi)] = chain_process.get_limits_dict()
         os.chdir(this_dir)
         log.debug("Current dir = {0}".format(os.getcwd()))        
         #f.write(table_raw)
         #print "%({lumi} %({bf} %({ul68} %({ul95} %({wf}" >> %(tab_name
-    
+        shutil.copy("{0}/{1}".format(this_dir,tab_name),"{0}/{1}".format(cards_dir, tab_name))
+        
     with open(tab_name, 'w') as f:
         #f.write(yaml.dump(tab_dict, default_flow_style=False))
         import json
         json.dump(tab_dict,f,sort_keys=True,indent=4, separators=(',', ': '))
         log.info('Writing lumi and limits to {0}'.format(tab_name))
         print json.dumps(tab_dict, sort_keys=True,indent=4, separators=(',', ': '))
-    
-    
-    
-    #f.write(tab_dict)
-    #f.close()
+        
     #copy info, table and DC to webdir
-    shutil.copy("{0}/{1}".format(this_dir,tab_name),"{0}/{1}".format(cards_dir, tab_name))
     shutil.copy("{0}/{1}".format(this_dir,info_name),"{0}/{1}".format(cards_dir, info_name))
     shutil.copy("{0}/data_config.yaml".format(this_dir,info_name),"{0}/data_config.yaml".format(cards_dir))
     

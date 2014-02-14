@@ -1,289 +1,3 @@
-#YAML run configuration
-
-k3k1.PedjaIn.InterferenceTermsOff.D0M.mix90 :
-    termNames : ggH,gg0M  
-    templatedir : Sandbox/templates1D_0M_mix90_v1 
-    discriminant_name : D_{0-}(90^{o})
-
-k3k1.PedjaIn.InterferenceTermsOff.D0M.mix45 :
-    termNames : ggH,gg0M  
-    templatedir : Sandbox/templates1D_0M_mix45_v1 
-    discriminant_name : D_{0-}(45^{o})
-
-k3k1.PedjaIn.InterferenceTermsOn.D0M.mix45 :
-    termNames : ggH,gg0M,ggInt_13P,ggInt_13N 
-    templatedir : Sandbox/templates1D_0M_mix45_v1 
-    discriminant_name : D_{0-}(45^{o})
-
-2D.k3k1.PedjaIn.InterferenceTermsOff.D0M.Dint13 :
-    termNames : ggH,gg0M  
-    templatedir : Sandbox/templates2D_D0M_Dint13 
-    discriminant_name : D_{0-}^{int(13)}
-
-2D.k3k1.PedjaIn.InterferenceTermsOn.D0M.Dint13 :
-    termNames : ggH,gg0M,ggInt_13P,ggInt_13N  
-    templatedir : Sandbox/templates2D_D0M_Dint13 
-    discriminant_name : D_{0-}^{int(13)}
-    
-#1D projection from 2D
-2D.k3k1.PedjaIn.InterferenceTermsOff.D0M.Dint13.projectedToD0M :
-    termNames : ggH,gg0M  
-    templatedir : Sandbox/templates2D_D0M_Dint13_projected 
-    discriminant_name : D_{0-}
-    
-2D.k3k1.PedjaIn.InterferenceTermsOn.D0M.Dint13.projectedToD0M :
-    termNames : ggH,gg0M,ggInt_13P,ggInt_13N  
-    templatedir : Sandbox/templates2D_D0M_Dint13_projected 
-    discriminant_name : D_{0-}
-    # -------------------------------------------------------------
-    
-    
-#1D unfolded from 2D templates
-2D.k3k1.PedjaIn.InterferenceTermsOff.D0M.Dint13.unfolded :
-    termNames : ggH,gg0M  
-    templatedir : Sandbox/templates2D_D0M_Dint13_unfolded 
-    discriminant_name : D_{0-}^{int(13)} 
-
-2D.k3k1.PedjaIn.InterferenceTermsOn.D0M.Dint13.unfolded :
-    termNames : ggH,gg0M,ggInt_13P,ggInt_13N  
-    templatedir : Sandbox/templates2D_D0M_Dint13_unfolded 
-    discriminant_name : D_{0-}^{int(13)}
-
-#1D unfolded from 2D templates @ 14TeV
-2D.k3k1.PedjaIn.InterferenceTermsOff.D0M.Dint13.unfolded.14TeV :
-    termNames : ggH,gg0M  
-    templatedir : Sandbox/templates2D_D0M_Dint13_unfolded 
-    discriminant_name : D_{0-}^{int(13)} 
-    additional_options : --user_option 14TeV_rescale 
-    final_state : 4l 
-
-2D.k3k1.PedjaIn.InterferenceTermsOn.D0M.Dint13.unfolded.14TeV :
-    termNames : ggH,gg0M,ggInt_13P,ggInt_13N  
-    templatedir : Sandbox/templates2D_D0M_Dint13_unfolded 
-    discriminant_name : D_{0-}^{int(13)} 
-    additional_options : --user_option 14TeV_rescale 
-    final_state : 4l 
-
-
-#1D unfolded from 2D templates @ 14TeV for 2e2mu only
-2D.k3k1.PedjaIn.InterferenceTermsOff.D0M.Dint13.unfolded.14TeV :
-    termNames : ggH,gg0M  
-    templatedir : Sandbox/templates2D_D0M_Dint13_unfolded 
-    discriminant_name : D_{0-}^{int(13)} 
-    additional_options : --user_option 14TeV_rescale 
-    final_state : 2e2mu 
-
-2D.k3k1.PedjaIn.InterferenceTermsOn.D0M.Dint13.unfolded.14TeV :
-    termNames : ggH,gg0M,ggInt_13P,ggInt_13N  
-    templatedir : Sandbox/templates2D_D0M_Dint13_unfolded 
-    discriminant_name : D_{0-}^{int(13)} 
-    additional_options : --user_option 14TeV_rescale 
-    final_state : 2e2mu 
-
-
-#1D unfolded from 2D templates @ 14TeV w/ BLG
-2D.k3k1.PedjaIn.UnidaformBkg.InterferenceTermsOff.D0M.Dint13.unfolded.14TeV :
-    termNames : ggH,gg0M  
-    templatedir : Sandbox/templates2D_D0M_Dint13_unfolded 
-    discriminant_name : D_{0-}^{int(13)} 
-    additional_options : --user_option 14TeV_rescale,UniformBkg 
-    final_state : 4l 
-
-2D.k3k1.PedjaIn.UniformBkg.InterferenceTermsOn.D0M.Dint13.unfolded.14TeV :
-    termNames : ggH,gg0M,ggInt_13P,ggInt_13N  
-    templatedir : Sandbox/templates2D_D0M_Dint13_unfolded 
-    discriminant_name : D_{0-}^{int(13)} 
-    additional_options : --user_option 14TeV_rescale,UniformBkg 
-    final_state : 4l 
-
-
-#1D unfolded from 2D templates @ 14TeV w/ BLG and templates per channel
-2D.k3k1.PedjaIn.UniformBkg.InterferenceTermsOff.D0M.Dint13.unfolded.14TeV.tmpPerChan :
-    termNames : ggH,gg0M  
-    templatedir : Sandbox/templates2D_D0M_Dint13_unfolded_perCh 
-    discriminant_name : D_{0-}^{int(13)} 
-    additional_options : --user_option 14TeV_rescale,UniformBkg 
-    final_state : 4l 
-
-2D.k3k1.PedjaIn.UniformBkg.InterferenceTermsOn.D0M.Dint13.unfolded.14TeV.tmpPerChan :
-    termNames : ggH,gg0M,ggInt_13P,ggInt_13N  
-    templatedir : Sandbox/templates2D_D0M_Dint13_unfolded_perCh 
-    discriminant_name : D_{0-}^{int(13)} 
-    additional_options : --user_option 14TeV_rescale,UniformBkg 
-    final_state : 4l 
-
-
-
-#1D unfolded from 2D templates @ 14TeV w/ BLG and templates per channel
-2D.k3k1.PedjaIn.UniformBkg.InterferenceTermsOff.D0M.Dint13.unfolded.14TeV.tmpPerChan.noDenominator :
-    termNames : ggH,gg0M  
-    templatedir : Sandbox/templates2D_D0M_Dint13_unfolded_perCh 
-    discriminant_name : D_{0-}^{int(13)} 
-    additional_options : --user_option 14TeV_rescale,UniformBkg,NoDenominator 
-    final_state : 4l 
-
-2D.k3k1.PedjaIn.UniformBkg.InterferenceTermsOn.D0M.Dint13.unfolded.14TeV.tmpPerChan.noDenominator :
-    termNames : ggH,gg0M,ggInt_13P,ggInt_13N  
-    templatedir : Sandbox/templates2D_D0M_Dint13_unfolded_perCh 
-    discriminant_name : D_{0-}^{int(13)} 
-    additional_options : --user_option 14TeV_rescale,UniformBkg,NoDenominator
-    final_state : 4l 
-
-
-2D.TEST.norm :
-    termNames : ggH,gg0M  
-    templatedir : Sandbox/templates2D_D0M_Dint13_unfolded_perCh 
-    discriminant_name : D_{0-}^{int(13)} 
-    additional_options : --user_option 14TeV_rescale,UniformBkg 
-    final_state : 4l 
-
-2D.k3k1.PedjaIn.UniformBkg.InterferenceTermsOff.D0M.Dint13.unfolded.14TeV.tmpPerChan.NewDenominator :
-    termNames : ggH,gg0M  
-    templatedir : Sandbox/templates2D_D0M_Dint13_unfolded_perCh 
-    discriminant_name : D_{0-}^{int(13)} 
-    additional_options : --user_option 14TeV_rescale,UniformBkg 
-    final_state : 4l 
-
-2D.k3k1.PedjaIn.UniformBkg.InterferenceTermsOn.D0M.Dint13.unfolded.14TeV.tmpPerChan.NewDenominator :
-    termNames : ggH,gg0M,ggInt_13P,ggInt_13N  
-    templatedir : Sandbox/templates2D_D0M_Dint13_unfolded_perCh 
-    discriminant_name : D_{0-}^{int(13)} 
-    additional_options : --user_option 14TeV_rescale,UniformBkg 
-    final_state : 4l 
-
-
-2D.k3k1.PedjaIn.UniformBkg.InterferenceTermsOff.D0M.Dint13.unfolded.14TeV.tmpPerChan.NewDenominator.scaleFactors :
-    termNames : ggH,gg0M  
-    templatedir : Sandbox/templates2D_D0M_Dint13_unfolded_perCh 
-    discriminant_name : D_{0-}^{int(13)} 
-    additional_options : --user_option 14TeV_rescale,UniformBkg 
-    final_state : 4l 
-
-2D.k3k1.PedjaIn.UniformBkg.InterferenceTermsOn.D0M.Dint13.unfolded.14TeV.tmpPerChan.NewDenominator.scaleFactors :
-    termNames : ggH,gg0M,ggInt_13P,ggInt_13N  
-    templatedir : Sandbox/templates2D_D0M_Dint13_unfolded_perCh 
-    discriminant_name : D_{0-}^{int(13)} 
-    additional_options : --user_option 14TeV_rescale,UniformBkg 
-    final_state : 4l 
-
-
-# Test with bug fixes for normalization
-2D.k3k1.PedjaIn.UniformBkg.InterferenceTermsOff.D0M.Dint13.unfolded.14TeV.tmpPerChan.NewDenominator.scaleFactors.fixNorm :
-    termNames : ggH,gg0M  
-    templatedir : Sandbox/templates2D_D0M_Dint13_unfolded_perCh 
-    discriminant_name : D_{0-}^{int(13)} 
-    additional_options : --user_option 14TeV_rescale,UniformBkg 
-    final_state : 4l 
-
-2D.k3k1.PedjaIn.UniformBkg.InterferenceTermsOn.D0M.Dint13.unfolded.14TeV.tmpPerChan.NewDenominator.scaleFactors.fixNorm :
-    termNames : ggH,gg0M,ggInt_13P,ggInt_13N  
-    templatedir : Sandbox/templates2D_D0M_Dint13_unfolded_perCh 
-    discriminant_name : D_{0-}^{int(13)} 
-    additional_options : --user_option 14TeV_rescale,UniformBkg 
-    final_state : 4l 
-
-
-
-
-#1D unfolded from 2D templates @ 14TeV w/ BLG and templates per channel
-2D.k3k1.PedjaIn.UniformBkg.InterferenceTermsOff.D0M.Dint13.unfolded.14TeV.tmpPerChan.fixWS :
-    termNames : ggH,gg0M  
-    templatedir : Sandbox/templates2D_D0M_Dint13_unfolded_perCh 
-    discriminant_name : D_{0-}^{int(13)} 
-    additional_options : --user_option 14TeV_rescale,UniformBkg 
-    final_state : 4l 
-
-2D.k3k1.PedjaIn.UniformBkg.InterferenceTermsOn.D0M.Dint13.unfolded.14TeV.tmpPerChan.fixWS :
-    termNames : ggH,gg0M,ggInt_13P,ggInt_13N  
-    templatedir : Sandbox/templates2D_D0M_Dint13_unfolded_perCh 
-    discriminant_name : D_{0-}^{int(13)} 
-    additional_options : --user_option 14TeV_rescale,UniformBkg 
-    final_state : 4l 
-
-
-# Test with bug fixes for normalization
-2D.k3k1.PedjaIn.UniformBkg.InterferenceTermsOff.D0M.Dint13.unfolded.14TeV.tmpPerChan.NewDenominator.fixWS :
-    termNames : ggH,gg0M  
-    templatedir : Sandbox/templates2D_D0M_Dint13_unfolded_perCh 
-    discriminant_name : D_{0-}^{int(13)} 
-    additional_options : --user_option 14TeV_rescale,UniformBkg 
-    final_state : 4l 
-
-2D.k3k1.PedjaIn.UniformBkg.InterferenceTermsOn.D0M.Dint13.unfolded.14TeV.tmpPerChan.NewDenominator.fixWS :
-    termNames : ggH,gg0M,ggInt_13P,ggInt_13N  
-    templatedir : Sandbox/templates2D_D0M_Dint13_unfolded_perCh 
-    discriminant_name : D_{0-}^{int(13)} 
-    additional_options : --user_option 14TeV_rescale,UniformBkg 
-    final_state : 4l 
-
-
-# Test with bug fixes for normalization
-2D.k3k1.PedjaIn.UniformBkg.InterferenceTermsOff.D0M.Dint13.unfolded.14TeV.tmpPerChan.NewDenominator.scaleFactors.fixWS :
-    termNames : ggH,gg0M  
-    templatedir : Sandbox/templates2D_D0M_Dint13_unfolded_perCh 
-    discriminant_name : D_{0-}^{int(13)} 
-    additional_options : --user_option 14TeV_rescale,UniformBkg 
-    final_state : 4l 
-
-2D.k3k1.PedjaIn.UniformBkg.InterferenceTermsOn.D0M.Dint13.unfolded.14TeV.tmpPerChan.NewDenominator.scaleFactors.fixWS :
-    termNames : ggH,gg0M,ggInt_13P,ggInt_13N  
-    templatedir : Sandbox/templates2D_D0M_Dint13_unfolded_perCh 
-    discriminant_name : D_{0-}^{int(13)} 
-    additional_options : --user_option 14TeV_rescale,UniformBkg 
-    final_state : 4l 
-
-#  - scaleFactors  :  correcting scale to 14Tev and expected ...
-
-
-#2D unfolded from 2D templates @ 14TeV w/ BLG
-2D.k3k1.PedjaIn.UniformBkg.InterferenceTermsOff.D0M.Dint13.unfolded.14TeV.NewDenominator.scaleFactorsToPedja.fixWS: 
-    termNames : ggH,gg0M  
-    templatedir : Sandbox/templates2D_D0M_Dint13_unfolded_asInPaper 
-    discriminant_name : D_{0-}^{int(13)} 
-    additional_options : --user_option 14TeV_rescale,UniformBkg 
-    final_state : 4l 
-
-2D.k3k1.PedjaIn.UniformBkg.InterferenceTermsOn.D0M.Dint13.unfolded.14TeV.NewDenominator.scaleFactorsToPedja.fixWS :
-    termNames : ggH,gg0M,ggInt_13P,ggInt_13N  
-    templatedir : Sandbox/templates2D_D0M_Dint13_unfolded_asInPaper 
-    discriminant_name : D_{0-}^{int(13)} 
-    additional_options : --user_option 14TeV_rescale,UniformBkg 
-    final_state : 4l 
-
-
-
-#2D unfolded from 2D 2e2mu templates @ 14TeV w/ BLG
-2D.k3k1.PedjaIn.UnformBkg.InterferenceTermsOff.D0M.Dint13.unfolded.14TeV.NewDenominator.scaleFactorsToPedjaOff.fixWS:
-    termNames : ggH,gg0M  
-    templatedir : Sandbox/templates2D_D0M_Dint13_unfolded_asInPaper 
-    discriminant_name : D_{0-}^{int(13)} 
-    additional_options : --user_option 14TeV_rescale,UniformBkg 
-    final_state : 4l 
-
-2D.k3k1.PedjaIn.UniformBkg.InterferenceTermsOn.D0M.Dint13.unfolded.14TeV.NewDenominator.scaleFactorsToPedjaOff.fixWS:
-    termNames : ggH,gg0M,ggInt_13P,ggInt_13N  
-    templatedir : Sandbox/templates2D_D0M_Dint13_unfolded_asInPaper 
-    discriminant_name : D_{0-}^{int(13)} 
-    additional_options : --user_option 14TeV_rescale,UniformBkg 
-    final_state : 4l 
-
-# remove 18/22 scaling of yields to paper results. 
-
-
-#2D unfolded from 2D 2e2mu templates @ 14TeV w/ BLG
-2D.k3k1.PedjaIn.UnformBkg.InterferenceTermsOff.D0M.Dint13.unfolded.14TeV.NewDenominator.scaleFactorsToPedjaOn.fixWS.fixM4lRange: 
-    termNames : ggH,gg0M  
-    templatedir : Sandbox/templates2D_D0M_Dint13_unfolded_perCh/testBkgTmpl 
-    discriminant_name : D_{0-}^{int(13)} 
-    additional_options : --user_option 14TeV_rescale,UniformBkg 
-    final_state : 4l 
-
-2D.k3k1.PedjaIn.UniformBkg.InterferenceTermsOn.D0M.Dint13.unfolded.14TeV.NewDenominator.scaleFactorsToPedjaOn.fixWS.fixM4lRange:
-    termNames : ggH,gg0M,ggInt_13P,ggInt_13N  
-    templatedir : Sandbox/templates2D_D0M_Dint13_unfolded_perCh/testBkgTmpl 
-    discriminant_name : D_{0-}^{int(13)} 
-    additional_options : --user_option 14TeV_rescale,UniformBkg 
-    final_state : 4l 
 
 
 # 2D unfolded from 2D 2e2mu templates @ 14TeV w/ BLG -- RECO
@@ -346,6 +60,7 @@ k3k1.PedjaIn.InterferenceTermsOn.D0M.mix45 :
     final_state : 4l 
     sqrts_plot : 8   # the energy used only for plots, doesn't change anything in calculation
     k3k1_ratio : 0
+    POI: k3k1_ratio
     info: |
           Unfolded templates used, full interference information
           8 TeV datacards with only qqZZ background
@@ -460,31 +175,82 @@ k3k1.PedjaIn.InterferenceTermsOn.D0M.mix45 :
                     
 2D.k3k1.5.13.PedjaIn.UniformBkg.IntOn.D0M.Dint13.8TeV.M4l121to131.RECO:
     termNames : ggH,gg0M,ggInt_13P,ggInt_13N  
-    templatedir : Sandbox/templates_compare2Pedja/LF_RECO_8TeV/Templates2D_D0M_Dint13/unfolded 
+#     templatedir : Sandbox/templates_compare2Pedja/LF_RECO_8TeV/Templates2D_D0M_Dint13/unfolded 
+    templatedir : Sandbox/templates_compare2Pedja/LF_RECO_8TeV/Templates2D_D0M_Dint13/refurbished 
     discriminant_name : D_{0-}^{int(13)} 
     additional_options : --user_option UniformBkg 
     final_state : 4l 
     sqrts_plot : 8   # the energy used only for plots, doesn't change anything in calculation
     k3k1_ratio : 5.13
+    POI: k3k1_ratio
     info: |
           Unfolded templates used with interference information
           8 TeV datacards with only qqZZ background
           RECO level templates
           Asimov dataset k3k1=5.13 -> Corresponds to fa3=0.5      
 
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #    
+#  _____      ___ _____  __     __
+# |___  |_   ( _ )_   _|_\ \   / /
+#    / /| |_ / _ \ | |/ _ \ \ / / 
+#   / /_   _| (_) || |  __/\ V /  
+#  /_/  |_|  \___/ |_|\___| \_/  
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
+2D.k3k1.0.PedjaIn.IntOn.D0Ph.Dint12.8TeV.M4l121to131.RECO:
+    termNames : ggH,gg0M,ggInt_13P,ggInt_13N
+    templatedir : Sandbox/templates_compare2Pedja/LF_RECO_8TeV/Templates2D_D0M_Dint13/refurbished
+    discriminant_name : D_{0-}^{int(13)} 
+    additional_options : --user_option UniformBkg
+    analysis_inputs : SM_inputs_8TeV_CJLST
+    final_state : 4l
+    sqrts_plot : 8   # the energy used only for plots, doesn't change anything in calculation
+    k3k1_ratio : 0
+    POI: k3k1_ratio
+#     lumi_list : [19.7]
+    info: |
+          - used for the input into 7+8TeV combination
+          - really the 2D templates are used
           
-test_2Dtemplates:
+
+2D.k3k1.0.PedjaIn.IntOn.D0Ph.Dint12.7TeV.M4l121to131.RECO:
+    termNames : ggH,gg0M,ggInt_13P,ggInt_13N
+    templatedir : Sandbox/templates_compare2Pedja/LF_RECO_8TeV/Templates2D_D0M_Dint13/refurbished
+    discriminant_name : D_{0-}^{int(13)} 
+    additional_options : --user_option UniformBkg
+    analysis_inputs : SM_inputs_7TeV
+    final_state : 4l
+    sqrts_plot : 7   # the energy used only for plots, doesn't change anything in calculation
+    sqrts_dc: 7TeV
+    k3k1_ratio : 0
+    POI: k3k1_ratio
+    lumi_list : [5.051]
+    info: |
+          - used for the input into 7+8TeV combination
+          - NOTE: The 8 TeV templates are used
+          - really the 2D templates are used
+          
+          
+2D.k3k1.0.PedjaIn.IntOn.D0Ph.Dint12.7and8TeVcombination.M4l121to131.RECO:
     termNames : ggH,gg0M,ggInt_13P,ggInt_13N
     templatedir : Sandbox/templates_compare2Pedja/LF_RECO_8TeV/Templates2D_D0M_Dint13/refurbished
     discriminant_name : D_{0-}^{int(13)} 
     additional_options : --user_option UniformBkg
     final_state : 4l
-    sqrts_plot : 8   # the energy used only for plots, doesn't change anything in calculation
+    sqrts_plot : "7 + 8"
+    combine_datacards: 
+                       - 2D.k3k1.0.PedjaIn.IntOn.D0Ph.Dint12.7TeV.M4l121to131.RECO
+                       - 2D.k3k1.0.PedjaIn.IntOn.D0Ph.Dint12.8TeV.M4l121to131.RECO
     k3k1_ratio : 0
     POI: k3k1_ratio
     info: |
-          Testing new framework
+          - used only for plotting pourposis not creating datacards
+          - used for the input into 7+8TeV combination
           - really the 2D templates are used
+
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #           
+    
+    
+    
     
 2D.k2k1.0.PedjaIn.IntOff.D0Ph.Dint12.8TeV.M4l121to131.GEN:
     termNames : ggH,gg0Ph
@@ -498,17 +264,6 @@ test_2Dtemplates:
     info: | 
            Testing new framework with k2k1_ratio
           
-2D.k2k1.0.PedjaIn.IntOn.D0Ph.Dint12.8TeV.M4l121to131.RECO:
-    termNames : ggH,gg0Ph,ggInt_12N
-    templatedir : Sandbox/templates_compare2Pedja/LF_RECO_8TeV/Templates2D_D0Ph_Dint12/unfolded
-    discriminant_name : D_{0-}^{int(12)} 
-    additional_options : --user_option UniformBkg
-    final_state : 4l
-    sqrts_plot : 8   # the energy used only for plots, doesn't change anything in calculation
-    k2k1_ratio : 0
-    POI: k2k1_ratio
-    info: | 
-           Testing new framework with k2k1_ratio
           
 
 2D.k2k1.0.PedjaIn.IntOn.D0Ph.Dint12.8TeV.M4l131to141.RECO:
@@ -602,9 +357,266 @@ test_2Dtemplates:
     info: | 
            - Testing new framework with k2k1_ratio
            - fully 2D templates
+
+2D.k2k1.0.0.PedjaIn.IntOn.D0Ph.Dint12.8TeV.M4l121to131.RECO.NEW:
+    termNames : ggH,gg0Ph,ggInt_12N
+    templatedir : Sandbox/templates_compare2Pedja/LF_RECO_8TeV/Templates2D_D0Ph_Dint12/refurbished
+    discriminant_name : D_{0-}^{int(12)} 
+    additional_options : --user_option UniformBkg
+    final_state : 4l
+    sqrts_plot : 8   # the energy used only for plots, doesn't change anything in calculation
+    k2k1_ratio : 0
+    POI: k2k1_ratio
+    info: | 
+           - Testing new framework with k2k1_ratio
+           - fully 2D templates
            
+2D.k2k1.0.0.PedjaIn.IntOn.D0Ph.Dint12.8TeV.M4l121to131.RECO.NEW.kTRUE:
+    termNames : ggH,gg0Ph,ggInt_12N
+    templatedir : Sandbox/templates_compare2Pedja/LF_RECO_8TeV/Templates2D_D0Ph_Dint12/refurbished
+    discriminant_name : D_{0-}^{int(12)} 
+    additional_options : --user_option UniformBkg
+    final_state : 4l
+    sqrts_plot : 8   # the energy used only for plots, doesn't change anything in calculation
+    k2k1_ratio : 0
+    POI: k2k1_ratio
+    info: | 
+           - Testing new framework with k2k1_ratio
+           - fully 2D templates
+           
+2D.k2k1.0.0.PedjaIn.IntOn.D0Ph.Dint12.8TeV.M4l121to131.RECO.NEW.kTRUE.TEST.NEW.TEMPL:
+    termNames : ggH,gg0Ph,ggInt_12N
+#     templatedir : Sandbox/templates_compare2Pedja/LF_RECO_8TeV/Templates2D_D0Ph_Dint12/refurbishedSmoothed_k5b
+    templatedir : Sandbox/templates_compare2Pedja/LF_RECO_8TeV/Templates2D_D0Ph_Dint12/refurbished
+    discriminant_name : D_{0-}^{int(12)} 
+    additional_options : --user_option UniformBkg
+    final_state : 4l
+    sqrts_plot : 8   # the energy used only for plots, doesn't change anything in calculation
+    k2k1_ratio : 0
+    POI: k2k1_ratio
+    info: | 
+           - Testing new framework with k2k1_ratio
+           - fully 2D templates
+           
+2D.k2k1.k3k1.0.0.PedjaIn.IntOn.D0Ph.Dint12.8TeV.M4l121to131.RECO.TEST2POIs:
+    termNames : ggH,gg0Ph,ggInt_12N,gg0M,ggInt_13N,ggInt_13P
+    templatedir : Sandbox/templates_compare2Pedja/LF_RECO_8TeV/Templates2D_D0Ph_Dint12/refurbished
+    discriminant_name : D_{0-}^{int(12)} 
+    additional_options : --user_option UniformBkg
+    final_state : 4l
+    sqrts_plot : 8   # the energy used only for plots, doesn't change anything in calculation
+    k2k1_ratio : 0
+    POI: k2k1_ratio,k3k1_ratio
+    info: | 
+           - Testing new framework with k2k1_ratio and k3k1_ratio
+           - fully 2D templates
+           - 
+
+           
+
+2D.k2k1.0.0.PedjaIn.IntOn.D0Ph.Dint12.8TeV.M4l121to131.4mu.RECO:
+    termNames : ggH,gg0Ph,ggInt_12N
+    templatedir : Sandbox/templates_compare2Pedja/LF_RECO_8TeV/Templates2D_D0Ph_Dint12/refurbished
+    discriminant_name : D_{0-}^{int(12)} 
+    additional_options : --user_option UniformBkg
+    final_state : 4mu
+    sqrts_plot : 8   # the energy used only for plots, doesn't change anything in calculation
+    k2k1_ratio : 0
+    POI: k2k1_ratio
+    info: | 
+           - 4mu channel
+           - Testing new framework with k2k1_ratio
+           - fully 2D templates
+
+2D.k2k1.0.0.PedjaIn.IntOn.D0Ph.Dint12.8TeV.M4l121to131.4mu.unfold.RECO:
+    termNames : ggH,gg0Ph,ggInt_12N
+    templatedir : Sandbox/templates_compare2Pedja/LF_RECO_8TeV/Templates2D_D0Ph_Dint12/unfolded
+    discriminant_name : D_{0-}^{int(12)} 
+    additional_options : --user_option UniformBkg
+    final_state : 4mu
+    sqrts_plot : 8   # the energy used only for plots, doesn't change anything in calculation
+    k2k1_ratio : 0
+    POI: k2k1_ratio
+    info: | 
+           - 4mu channel
+           - Testing new framework with k2k1_ratio
+           - fully 2D templates
             
+2D.k2k1.0.0.PedjaIn.IntOn.D0Ph.Dint12.8TeV.M4l121to131.4mu4e.RECO:
+    termNames : ggH,gg0Ph,ggInt_12N
+    templatedir : Sandbox/templates_compare2Pedja/LF_RECO_8TeV/Templates2D_D0Ph_Dint12/refurbished
+    discriminant_name : D_{0-}^{int(12)} 
+    additional_options : --user_option UniformBkg
+    final_state : 4l
+    sqrts_plot : 8   # the energy used only for plots, doesn't change anything in calculation
+    k2k1_ratio : 0
+    POI: k2k1_ratio
+    info: | 
+           - 4mu,4e channel
+           - Testing new framework with k2k1_ratio
+           - fully 2D templates
+
+2D.k2k1.0.0.PedjaIn.IntOn.D0Ph.Dint12.7TeV.M4l121to131.RECO.NEW:
+    termNames : ggH,gg0Ph,ggInt_12N
+    templatedir : Sandbox/templates_compare2Pedja/LF_RECO_8TeV/Templates2D_D0Ph_Dint12/refurbished
+    discriminant_name : D_{0-}^{int(12)} 
+    additional_options : --user_option UniformBkg
+    analysis_inputs : SM_inputs_7TeV
+    final_state : 4l
+    sqrts_plot : 7   # the energy used only for plots, doesn't change anything in calculation
+    sqrts_dc : 7TeV   # the energy used only for plots, doesn't change anything in calculation
+    k2k1_ratio : 0
+    POI: k2k1_ratio
+    info: | 
+           - Testing new framework with k2k1_ratio
+           - fully 2D templates
+           
+2D.k2k1.0.0.PedjaIn.IntOn.D0Ph.Dint12.7TeV.M4l106to141.RECO.NEW:
+    termNames : ggH,gg0Ph,ggInt_12N
+    templatedir : Sandbox/templates_compare2Pedja/LF_RECO_8TeV/Templates2D_D0Ph_Dint12/refurbished
+    discriminant_name : D_{0-}^{int(12)} 
+    additional_options : --user_option UniformBkg
+    analysis_inputs : SM_inputs_7TeV
+    final_state : 4l
+    sqrts_plot : 7   # the energy used only for plots, doesn't change anything in calculation
+    sqrts_dc : 7TeV   # the energy used only for plots, doesn't change anything in calculation
+    k2k1_ratio : 0
+    POI: k2k1_ratio
+    info: | 
+           - Testing new framework with k2k1_ratio
+           - fully 2D templates
+
+           
+2D.k2k1.0.PedjaIn.IntOn.D0Ph.Dint12.8TeV.M4l106to141.RECO:
+    termNames : ggH,gg0Ph,ggInt_12N
+    templatedir : Sandbox/templates_compare2Pedja/LF_RECO_8TeV/Templates2D_D0Ph_Dint12/refurbished
+    discriminant_name : D_{0-}^{int(12)} 
+    additional_options : --user_option UniformBkg
+    analysis_inputs : SM_inputs_8TeV_CJLST
+    final_state : 4l
+    sqrts_plot : 8   # the energy used only for plots, doesn't change anything in calculation
+    k2k1_ratio : 0
+    POI: k2k1_ratio
+    lumi_list : [19.7]
+    info: |
+          - used for the input into 7+8TeV combination
+          - really the 2D templates are used
+
+           
+           
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #    
+#  _____      ___ _____  __     __
+# |___  |_   ( _ )_   _|_\ \   / /
+#    / /| |_ / _ \ | |/ _ \ \ / / 
+#   / /_   _| (_) || |  __/\ V /  
+#  /_/  |_|  \___/ |_|\___| \_/  
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
+2D.k2k1.0.PedjaIn.IntOn.D0Ph.Dint12.8TeV.M4l121to131.RECO:
+    termNames : ggH,gg0Ph,ggInt_12N
+    templatedir : Sandbox/templates_compare2Pedja/LF_RECO_8TeV/Templates2D_D0Ph_Dint12/refurbished
+    discriminant_name : D_{0-}^{int(12)} 
+    additional_options : --user_option UniformBkg
+    analysis_inputs : SM_inputs_8TeV_CJLST
+    final_state : 4l
+    sqrts_plot : 8   # the energy used only for plots, doesn't change anything in calculation
+    k2k1_ratio : 0
+    POI: k2k1_ratio
+    lumi_list : [19.7]
+    info: |
+          - used for the input into 7+8TeV combination
+          - really the 2D templates are used
           
+
+2D.k2k1.0.PedjaIn.IntOn.D0Ph.Dint12.7TeV.M4l121to131.RECO:
+    termNames : ggH,gg0Ph,ggInt_12N
+    templatedir : Sandbox/templates_compare2Pedja/LF_RECO_8TeV/Templates2D_D0Ph_Dint12/refurbished
+    discriminant_name : D_{0-}^{int(12)} 
+    additional_options : --user_option UniformBkg
+    analysis_inputs : SM_inputs_7TeV
+    final_state : 4l
+    sqrts_plot : 7   # the energy used only for plots, doesn't change anything in calculation
+    sqrts_dc: 7TeV
+    k2k1_ratio : 0
+    POI: k2k1_ratio
+    lumi_list : [5.051]
+    info: |
+          - used for the input into 7+8TeV combination
+          - NOTE: The 8 TeV templates are used
+          - really the 2D templates are used
+          
+          
+2D.k2k1.0.PedjaIn.IntOn.D0Ph.Dint12.7and8TeVcombination.M4l121to131.RECO:
+    termNames : ggH,gg0Ph,ggInt_12N
+    templatedir : Sandbox/templates_compare2Pedja/LF_RECO_8TeV/Templates2D_D0Ph_Dint12/refurbished
+    discriminant_name : D_{0-}^{int(12)} 
+    additional_options : --user_option UniformBkg
+    final_state : 4l
+    sqrts_plot : "7 + 8"
+    combine_datacards: 
+                       - 2D.k2k1.0.PedjaIn.IntOn.D0Ph.Dint12.7TeV.M4l121to131.RECO
+                       - 2D.k2k1.0.PedjaIn.IntOn.D0Ph.Dint12.8TeV.M4l121to131.RECO
+    k2k1_ratio : 0
+    POI: k2k1_ratio
+    info: |
+          - used only for plotting pourposis not creating datacards
+          - used for the input into 7+8TeV combination
+          - really the 2D templates are used
+          
+          
+          
+2D.k3k1.0.PedjaIn.IntOn.D0Ph.Dint12.8TeV.M4l121to131.RECO.SYS:
+    termNames : ggH,gg0M,ggInt_13P,ggInt_13N
+    templatedir : Sandbox/templates_compare2Pedja/LF_RECO_8TeV/Templates2D_D0M_Dint13/refurbished
+    discriminant_name : D_{0-}^{int(13)} 
+    additional_options : --user_option UniformBkg
+    analysis_inputs : SM_inputs_8TeV_CJLST
+    final_state : 4l
+    sqrts_plot : 8   # the energy used only for plots, doesn't change anything in calculation
+    k3k1_ratio : 0
+    POI: k3k1_ratio
+#     lumi_list : [19.7]
+    info: |
+          - test for including of systematics 
+          - really the 2D templates are used
+          
+          
+          
+          
+2D.k2k1.0.PedjaIn.IntOn.D0Ph.Dint12.8TeV.M4l121to131.RECO.0.9Lambda:
+    termNames : ggH,gg0Ph,ggInt_12N
+    templatedir : Sandbox/templates_compare2Pedja/LF_RECO_8TeV/Templates2D_D0Ph_Dint12/refurbished
+    discriminant_name : D_{0-}^{int(12)} 
+    additional_options : --user_option UniformBkg
+    analysis_inputs : SM_inputs_8TeV_CJLST
+    final_state : 4l
+    sqrts_plot : 8   # the energy used only for plots, doesn't change anything in calculation
+    k2k1_ratio : 0
+    POI: k2k1_ratio
+    info: |
+          - used for the input into 7+8TeV combination
+          - really the 2D templates are used
+
+          
+2D.k2k1.0.PedjaIn.IntOn.D0Ph.Dint12.8TeV.M4l121to131.GEN:
+    termNames : ggH,gg0Ph,ggInt_12N
+    templatedir : Sandbox/templates_compare2Pedja/LF_GEN_8TeV/Templates2D_D0Ph_Dint12/refurbished
+    discriminant_name : D_{0-}^{int(12)} 
+    additional_options : --user_option UniformBkg
+    analysis_inputs : SM_inputs_8TeV_CJLST
+    final_state : 4l
+    sqrts_plot : 8   # the energy used only for plots, doesn't change anything in calculation
+    k2k1_ratio : 0
+    POI: k2k1_ratio
+    info: |
+          - used for the input into 7+8TeV combination
+          - really the 2D templates are used
+
+          
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #           
+    
+    
+               
+           
 # # # # # # # # # # # # # # # # # # # # # 
 #   ____ ___  __  __ __  __  ___  _   _ 
 #  / ___/ _ \|  \/  |  \/  |/ _ \| \ | |
@@ -621,8 +633,8 @@ COMMON:
         k3k1_ratio: {range: "-100,100", n_scan_points: 1000,  nice_name: "k_{3}/k_{1}", value: 0, range_vs_lumi : "not_implemented"} 
         
     k3k1_ratio : 0
-#     lumi_list : [25]
-    lumi_list : [25,100,300,1000, 3000]
+    lumi_list : [25]
+#     lumi_list : [25,100,300,1000, 3000]
 #     lumi_list : [8,10,25,300,3000]
 #     lumi_list : [8, 10]
     
