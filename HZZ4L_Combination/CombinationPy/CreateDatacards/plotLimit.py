@@ -1,7 +1,7 @@
 from ROOT import *
 import ROOT
 from array import array
-import shutil
+#import shutil
 #import yaml
 import pprint
 #from lib.util.RootAttributeTranslator import RootAttributeTranslator 
@@ -19,9 +19,9 @@ class LikelihoodFitContourPlot(PlotPolisher,RootPlottersBase):
         
         self.log = Logger().getLogger(self.__class__.__name__, 10)
         self.name = name
-        #ROOT.gROOT.ProcessLine(".L /afs/cern.ch/work/r/roko/Stat/CMSSW_611_JCP/src/HZZ4L_Combination/CombinationPy/CreateDatacards/tdrstyle.cc")
-        #from ROOT import setTDRStyle
-        #ROOT.setTDRStyle(True)
+        ROOT.gROOT.ProcessLine(".L /afs/cern.ch/work/r/roko/Stat/CMSSW_611_JCP/src/HZZ4L_Combination/CombinationPy/CreateDatacards/tdrstyle.cc")
+        from ROOT import setTDRStyle
+        ROOT.setTDRStyle(True)
         ROOT.gROOT.SetBatch(1)
         ROOT.gStyle.SetPalette(1)
         ROOT.gStyle.SetOptStat(0)
@@ -29,23 +29,19 @@ class LikelihoodFitContourPlot(PlotPolisher,RootPlottersBase):
         #self.webdir = ""
         self.pp = pprint.PrettyPrinter(indent=4)
         self.title = ''
-        self.canv = {}
-        self.axis_nice_names = {
-                                'k2k1_ratio': ('k_{2}/k_{1}', 'AxisK2K1'),
-                                'k3k1_ratio': ('k_{3}/k_{1}', 'AxisK3K1'),
-                                }
         
         
     def set_title(self,title):
         self.title = title
         self.log.debug('Title of plot: {0}'.format(self.title))
         
-    def get_limits_dict(self):
+    def get_limits_dict(self, rescale_expression=None):
         try:
             self.limits_dict
         except:
             raise RuntimeError, 'Please call the make_plot function before...'
         return self.limits_dict
+        
     def _get_limit_intervals(self,ll_list, ul_list, x_min=-99999, x_max=99999):
         self.log.debug('Getting limit intervals...')
         all_tuple_list_sorted = [(element, 'll') for element in ll_list] + [(element, 'ul') for element in ul_list]
@@ -78,9 +74,10 @@ class LikelihoodFitContourPlot(PlotPolisher,RootPlottersBase):
         self.log.info('Made list of limit pairs: {0}'.format(llul_pairs))
         return llul_pairs
 
-    def putLimitLinesOnPlot(self, fit_result_dict, c):
+    def putLimitLinesOnPlot(self, graph_dict):
         #   #1 sigma and 2 sigma lines
-        
+        fit_result_dict = graph_dict['fit_results']
+        c = graph_dict['canv']
         self.log.debug('Putting limit lines on the plot.')
         self.pp.pprint(fit_result_dict)
         c.cd()
@@ -90,39 +87,50 @@ class LikelihoodFitContourPlot(PlotPolisher,RootPlottersBase):
         bf_arr.SetLineWidth(2)
         bf_arr.DrawArrow(bestFit,-0.5,bestFit,-0.25,0.02,"|->")
 
-        gra = c.GetPrimitive('Graph').GetXaxis()
-        x_min = gra.GetXmin()
-        x_max = gra.GetXmax()
-
+        
+        x_min = TMath.MinElement(c.GetPrimitive('Graph').GetN(),c.GetPrimitive('Graph').GetX())
+        x_max = TMath.MaxElement(c.GetPrimitive('Graph').GetN(),c.GetPrimitive('Graph').GetX())
+        
         line = TLine()
         line.SetLineStyle(kDashed)
         #line.SetLineStyle(kSolid)
         line.SetLineWidth(2)
         #  #68% C.L        
-        deltaNLL = 1
+        
+        if 'quantileExpected' in graph_dict['contour_axis']:
+            y_max = 0.68
+        elif 'deltaNLL' in graph_dict['contour_axis']:
+            y_max = 1
+            
         line.SetLineColor(kRed)
         llul_pairs = self._get_limit_intervals(fit_result_dict['LL68'], fit_result_dict['UL68'],x_min, x_max )
         for pair in llul_pairs:
-            line.DrawLine(pair[0],deltaNLL,pair[1],deltaNLL)
+            line.DrawLine(pair[0],y_max,pair[1],y_max)
             if not AreSame(pair[0],x_min):
-                line.DrawLine(pair[0],0,pair[0],deltaNLL)
+                line.DrawLine(pair[0],0,pair[0],y_max)
             if not AreSame(pair[1],x_max):
-                line.DrawLine(pair[1],0,pair[1],deltaNLL)
+                line.DrawLine(pair[1],0,pair[1],y_max)
         
+        if 'quantileExpected' in graph_dict['contour_axis']:
+            y_max = 0.95
+        elif 'deltaNLL' in graph_dict['contour_axis']:
+            y_max = 3.84
         #95 %CL
         line.SetLineColor(kBlue)
-        deltaNLL = 3.84
         llul_pairs = self._get_limit_intervals(fit_result_dict['LL95'], fit_result_dict['UL95'],x_min, x_max )
         for pair in llul_pairs:
-            line.DrawLine(pair[0],deltaNLL,pair[1],deltaNLL)
+            line.DrawLine(pair[0],y_max,pair[1],y_max)
             if not AreSame(pair[0],x_min):
-                line.DrawLine(pair[0],0,pair[0],deltaNLL)
+                line.DrawLine(pair[0],0,pair[0],y_max)
             if not AreSame(pair[1],x_max):
-                line.DrawLine(pair[1],0,pair[1],deltaNLL)
+                line.DrawLine(pair[1],0,pair[1],y_max)
 
           
-    def putBrasilianFlagsOnPlot(self, fit_result_dict, c):
+    def putBrasilianFlagsOnPlot(self, graph_dict):
         #   #1 sigma and 2 sigma lines
+        
+        fit_result_dict = graph_dict['fit_results']
+        c = graph_dict['canv']
         
         self.log.debug('Putting limit lines on the plot.')
         self.pp.pprint(fit_result_dict)
@@ -136,11 +144,15 @@ class LikelihoodFitContourPlot(PlotPolisher,RootPlottersBase):
         gra_x = c.GetPrimitive('Graph').GetXaxis()
         x_min = gra_x.GetXmin()
         x_max = gra_x.GetXmax()
+        
+        
+        x_min = TMath.MinElement(c.GetPrimitive('Graph').GetN(),c.GetPrimitive('Graph').GetX())
+        x_max = TMath.MaxElement(c.GetPrimitive('Graph').GetN(),c.GetPrimitive('Graph').GetX())
         gra_y = c.GetPrimitive('Graph').GetYaxis()
         #y_max = gra_y.GetXmax()
-        y_max = 4.99
         
-        
+        gPad.Update()
+        y_max = 0.82*(gPad.GetY2() - gPad.GetY1())
         box = TBox()
         
         #95 %CL
@@ -161,23 +173,17 @@ class LikelihoodFitContourPlot(PlotPolisher,RootPlottersBase):
         
 
 
-    def putInformationOnPlot(self, fit_result_dict, c, x, y, POI="|k_3/k_1|"):
+    #def putInformationOnPlot(self, fit_result_dict, c, x, y, POI="|k_3/k_1|"):
+    def putInformationOnPlot(self, graph_dict):
 
+        fit_result_dict = graph_dict['fit_results']
+        c = graph_dict['canv']
+    
         latex = TLatex()
         latex.SetTextSize(0.025)
         latex.SetTextAlign(10)  #align at special bottom
 
-        max_y = 5.0
-        max_y_2 = max_y - 6*(max_y)/100.0
-        max_y_3 = max_y - 10*(max_y)/100.0
-        max_y_4 = max_y - 14*(max_y)/100.0
-        self.log.debug('Positions max_y: {0} {1} {2} {3}'.format(max_y, max_y_2, max_y_3, max_y_4))
-
-
-        min_x = x.GetXmin() + 2*(x.GetXmax() - x.GetXmin())/100
-        self.log.debug("min_x = {0} max_y = {1}".format(min_x, max_y))
         fit_info = '{0}'.format(self.title)
-
         import string
         ll68 = string.join(['{0:.2f}'.format(limit) for limit in fit_result_dict['LL68']],',')
         ll95 = string.join(['{0:.2f}'.format(limit) for limit in fit_result_dict['LL95']],',')
@@ -195,169 +201,130 @@ class LikelihoodFitContourPlot(PlotPolisher,RootPlottersBase):
         if len(fit_result_dict['UL68'])==0 :  ul68 = 'N.A.'
         if len(fit_result_dict['UL95'])==0 :  ul95 = 'N.A.'
         
-        fit_info_2 = "Best fit {0} = {1: .3f}".format(POI, fit_result_dict['BF'])
+        fit_info_2 = "Best fit {0} = {1: .3f}".format(graph_dict['axis_nice_names'].split(':')[0].strip(), fit_result_dict['BF'])
         fit_info_3 = "U.L. 68(95)% = {0}({1})".format(ul68, ul95)
         fit_info_4 = "L.L. 68(95)% = {0}({1})".format(ll68, ll95)
 
         print  fit_info  
 
         c.cd()
-        latex.DrawLatex(min_x, max_y,fit_info)
-        latex.DrawLatex(min_x, max_y_2,fit_info_2)
-        latex.DrawLatex(min_x, max_y_3,fit_info_3)
-        latex.DrawLatex(min_x, max_y_4,fit_info_4)
+        latex.SetNDC(1)
+        min_x = 0.19
+        y = 0.948
+        latex.DrawLatex(min_x, y,fit_info) 
+        y-=0.06
+        latex.DrawLatex(min_x, y,fit_info_2)
+        y-=0.032
+        latex.DrawLatex(min_x, y,fit_info_3)
+        y-=0.032
+        latex.DrawLatex(min_x, y,fit_info_4)
+
+        #print 'User to Pad coordinates: min_x = {0} max_y = {1} max_y_2 = {2} max_y_3 = {3} max_y_4 = {4}'.format(gPad.XtoPad(min_x), gPad.YtoPad(max_y),gPad.YtoPad(max_y_2),gPad.YtoPad(max_y_3),gPad.YtoPad(max_y_4))
+        #print 'User to NDC coordinates: min_x = {0} max_y = {1} max_y_2 = {2} max_y_3 = {3} max_y_4 = {4}'.format(self.XtoNDC(min_x), self.YtoNDC(max_y),self.YtoNDC(max_y_2),self.YtoNDC(max_y_3),self.YtoNDC(max_y_4))
 
   
    
    
-    def _setup_graph(self, graph, POI, dims=1):
+    def _setup_graph(self, graph_dict, dims=1):
         assert dims==1, 'Currently we have only one POI axis supported.Sorry :('
+        graph = graph_dict['graph']
+        graph.SetNameTitle('Graph','')
+        
+        title_X = graph_dict['axis_nice_names'].split(':')[0].strip()
+        title_Y = graph_dict['axis_nice_names'].split(':')[1].strip()
+        self.log.debug('Plot: X title {0} : Y title {1}'.format(title_X,title_Y))
+        
+        graph.GetXaxis().SetTitle(title_X)
+        graph.GetYaxis().SetTitle(title_Y)
+        
+        if 'quantileExpected' in graph_dict['contour_axis']:
+            graph.GetYaxis().SetRangeUser(0,1)
+        elif 'deltaNLL' in graph_dict['contour_axis']:
+            graph.GetYaxis().SetRangeUser(0,5)
+            #graph.GetYaxis().SetRangeUser(0,10)
         
         graph.SetMarkerSize(2.0)
-        #   TString ytitle = "|k_3/k_1|"
-        graph.SetNameTitle('Graph','')
-        graph.GetXaxis().SetTitle(self.axis_nice_names[POI][0])
-        graph.GetYaxis().SetTitle("-2 #Delta ln L")
-        graph.GetXaxis().SetLabelSize(0.04)
-        graph.GetYaxis().SetRangeUser(0,5)
         graph.SetMarkerStyle(20)
         graph.SetMarkerSize(.5)
-
-        graph.GetYaxis().SetTitleOffset(1.3)
-        graph.GetXaxis().SetTitleOffset(1.3)
+        graph.SetLineWidth(3)
         
 
 
-    def make_plot(self, file_name, POI,title=''):
+    def make_plot(self, file_name, POI,title='', graph_dict = None):
         if title:
             self.set_title(title)
         
         self.fit_results = FitResultReader(POI, [file_name], combine_method='MultiDimFit')
         self.fit_results.set_files([file_name])
         self.fit_results.set_POI(POI)
-
-        gr_xnll = self.fit_results.get_graph('{0}:2*deltaNLL'.format(POI))
-        self._setup_graph(gr_xnll, POI, dims=1)
-        #ROOT.gStyle.SetPalette(1)
-        #   gr_xnll.SetMarkerStyle(34) 
-        c1 = TCanvas("cc1","CANVAS1",600,600)
-        c1.cd()
-        #c1.SetLogy()
-        gPad.SetRightMargin(0.0085)
-
-        self.limits_dict = self.fit_results.get_results_dict(POI, option='standard')
+        self.limits_dict = self.fit_results.get_results_dict(POI, option='standard', rescale_expression='')
         
         with open('{0}.limits'.format(file_name), 'w') as limits_file:
-             #limits_file.write(yaml.dump(self.limits_dict, default_flow_style=True))
              for value_id in self.limits_dict.keys():
                  limits_file.write('{0} : {1}\n'.format(value_id, self.limits_dict[value_id]))
-                 
              self.log.info('Writing fit results into {0}'.format(limits_file.name))
 
-        #   if (POI != "k3k1_ratio") 
-        #     gr_xnll.Draw("AP")
-        #     c1.SaveAs(Form("%s.png",file_name.Data()))
-        #   
+        if graph_dict:
+            graph = graph_dict
+        else:
+            graph = {'k2k1_ratio' : {
+                                    #'{0}nll'.format(POI) : {'contour_axis':'{0}:2*deltaNLL'.format(POI),'axis_nice_names': '{0}:-2 #Delta ln L'.format(POI)},
+                                    'k2k1_ratio_VS_nll' : {'contour_axis':'k2k1_ratio:2*deltaNLL',
+                                                        'axis_nice_names': 'k_{2}/k_{1}:-2 #Delta ln L' },
+                                    'k2k1_ratio_VS_qe'  : {'contour_axis':'k2k1_ratio:1-quantileExpected',
+                                                        'axis_nice_names': 'k_{2}/k_{1}:CL_{s}' },
+                                    'fa2_VS_nll'        : {'contour_axis':'(-1*0.090*TMath.Sign(1,k2k1_ratio)*TMath.Power(k2k1_ratio,2)/(1+0.090*TMath.Power(k2k1_ratio,2))):2*deltaNLL',
+                                                        #'contour_axis':'(0.090*TMath.Sign(1,k2k1_ratio)*TMath.Power(k2k1_ratio,2)/(1+0.090*TMath.Power(k2k1_ratio,2)+2*-0.291*k2k1_ratio)):2*deltaNLL',
+                                                        'axis_nice_names': 'f_{a2} : -2 #Delta ln L'},
+                                    },
+                    'k3k1_ratio'  : {
+                                    'k3k1_ratio_VS_nll': {'contour_axis':'k3k1_ratio:2*deltaNLL',
+                                                            'axis_nice_names': 'k_{3}/k_{1}:-2 #Delta ln L' },
+                                    'fa3_VS_nll'       : {'contour_axis':'(0.040*TMath.Sign(1,k3k1_ratio)*TMath.Power(k3k1_ratio,2)/(1+0.040*TMath.Power(k3k1_ratio,2))):2*deltaNLL',
+                                                            'axis_nice_names': 'f_{a3} : -2 #Delta ln L'},
+                                    }
+                                         
+                    }
+                    
+        import pprint
+        pp = pprint.PrettyPrinter(indent=4)
 
-        #
-        gr_xnll.SetLineWidth(3)
-        gr_xnll.Draw("AL")
-        self.putBrasilianFlagsOnPlot(self.limits_dict, c1)
-        self.putLimitLinesOnPlot(self.limits_dict, c1)
-        self.putInformationOnPlot(self.limits_dict,c1, gr_xnll.GetXaxis(), gr_xnll.GetYaxis(), self.axis_nice_names[POI][0])
-        gPad.RedrawAxis()
-        #gr_xnll.Draw("AL")
-         #plot_name = "limitVsLumi_2D_k3k1_0_logy"
-        plot_name = self.name
-        self.save_extensions = ['png','gif', 'root']
-        self.save(c1, '{0}.{1}'.format(file_name, self.axis_nice_names[POI][1]), self.save_extensions)
+        import copy
+        for g in graph[POI].keys():
+            the_graph = graph[POI][g]
+            the_X = the_graph['contour_axis'].split(':')[0].strip()
+
+            do_invert = False
+            if g=='fa2_VS_nll':
+                do_invert=True
+            add_info_dict = {
+                             'canv'             : TCanvas("canv_{0}".format(g),"Plot {0}".format(g),600,600),
+                             'graph'            : self.fit_results.get_graph(the_graph['contour_axis']),
+                             'fit_results'      : copy.deepcopy(self.fit_results.get_results_dict(POI, option='standard', rescale_expression = the_X, invert_LL_UL=do_invert)),
+                            }
+            
+            the_graph.update(add_info_dict)
+            pp.pprint(the_graph)
+            #dump to file
+            with open('{0}.{1}.limits'.format(file_name,g), 'w') as limits_file:
+                for value_id in the_graph['fit_results'].keys():
+                    limits_file.write('{0} : {1}\n'.format(value_id, the_graph['fit_results'][value_id]))
+                self.log.info('Writing fit results into {0}'.format(limits_file.name))
+
+            self._setup_graph(the_graph, dims=1)
+            the_graph['canv'].cd()
+            #gPad.SetRightMargin(0.0085)
+            the_graph['graph'].Draw("AL")
+            self.putBrasilianFlagsOnPlot(the_graph)
+            self.putLimitLinesOnPlot(the_graph)
+            self.putInformationOnPlot(the_graph)
+            gPad.RedrawAxis()
+            #saving plot
+            plot_name = '{0}.{1}'.format(file_name, g)
+            self.save_extensions = ['png','gif', 'root']
+            self.save(the_graph['canv'], plot_name, self.save_extensions)
 
         
-        #TCanvas *c2=new TCanvas("cc2","CANVAS2",600,600)
-        #c2.cd()
-        #gPad.SetRightMargin(0.0085)
-
-        #TGraph * gr_xnll_arctan = getRescaledGraph(gr_xnll,0.03676929746947648)
-        #gr_xnll_arctan.GetXaxis().SetTitle("1/#pi arctan(#sqrt#gamma_33 k_3/k_1)")
-        #gr_xnll_arctan.GetYaxis().SetTitle("-2 #Delta ln L")
-        #gr_xnll_arctan.GetYaxis().SetTitleOffset(1.3)
-        #gr_xnll_arctan.GetXaxis().SetTitleOffset(1.3)
-        #gr_xnll_arctan.SetTitle("")
-        #gr_xnll_arctan.GetXaxis().SetLabelSize(0.04)
-        #gr_xnll_arctan.SetMarkerStyle(20)
-        #gr_xnll_arctan.SetMarkerSize(.5)
-        #gr_xnll_arctan.GetYaxis().SetRangeUser(0,5)
-        #gr_xnll_arctan.Draw("AP")
-        ##     max_y = gr_xnll_arctan.GetYaxis().GetXmax()
-        ##     min_x = gr_xnll_arctan.GetXaxis().GetXmin()
-        ##     latex.DrawLatex(min_x, max_y,fit_info)
-        ##     putInformationOnPlot(t, POI, c2, gr_xnll_arctan.GetXaxis(), gr_xnll_arctan.GetYaxis())
-        #putInformationOnPlot(fitres, c2, gr_xnll_arctan.GetXaxis(), gr_xnll_arctan.GetYaxis())
-        #putLimitLinesOnPlot(&getRescaledFitResult(fitres,0.03676929746947648), c2)
-
-        #c2.SaveAs(Form("%s.AxisArctanGamK3K1.png",file_name.Data()))
-
-
-
-
-        #TCanvas *c3=new TCanvas("cc3","CANVAS3",600,600)
-        #c3.cd()
-        #gPad.SetRightMargin(0.0085)
-
-        #TGraph * gr_xnll_arctan_2 = getRescaledGraph(gr_xnll,1)
-        #gr_xnll_arctan_2.GetXaxis().SetTitle("1/#pi arctan(k_3/k_1)")
-        #gr_xnll_arctan_2.GetYaxis().SetTitle("-2 #Delta ln L")
-        #gr_xnll_arctan_2.GetYaxis().SetTitleOffset(1.3)
-        #gr_xnll_arctan_2.GetXaxis().SetTitleOffset(1.3)
-        #gr_xnll_arctan_2.SetTitle("")
-        #gr_xnll_arctan_2.GetXaxis().SetLabelSize(0.04)
-        #gr_xnll_arctan_2.SetMarkerStyle(20)
-        #gr_xnll_arctan_2.SetMarkerSize(.5)
-        #gr_xnll_arctan_2.GetYaxis().SetRangeUser(0,5)
-        #gr_xnll_arctan_2.Draw("AP")
-        #putInformationOnPlot(fitres, c3, gr_xnll_arctan_2.GetXaxis(), gr_xnll_arctan_2.GetYaxis())
-        #putLimitLinesOnPlot(&getRescaledFitResult(fitres,1), c3)
-        #c3.SaveAs(Form("%s.AxisArctanK3K1.png",file_name.Data()))
-
-
-        ##fa3 result
-        #TCanvas *c4=new TCanvas("cc4","CANVAS4",600,600)
-        #c4.cd()
-        #gPad.SetRightMargin(0.0085)
-
-        #TGraph * gr_xnll_fa3 = getfa3RescaledGraph(gr_xnll)
-        #gr_xnll_fa3.GetXaxis().SetTitle("f_a3")
-        #gr_xnll_fa3.GetYaxis().SetTitle("-2 #Delta ln L")
-        #gr_xnll_fa3.GetYaxis().SetTitleOffset(1.3)
-        #gr_xnll_fa3.GetXaxis().SetTitleOffset(1.3)
-        #gr_xnll_fa3.SetTitle("")
-        #gr_xnll_fa3.GetXaxis().SetLabelSize(0.04)
-        #gr_xnll_fa3.SetMarkerStyle(20)
-        #gr_xnll_fa3.SetMarkerSize(.5)
-        #gr_xnll_fa3.GetYaxis().SetRangeUser(0,5)
-        #gr_xnll_fa3.Draw("AP")
-        ##     max_y = gr_xnll_fa3.GetYaxis().GetXmax()
-        ## #     min_x = gr_xnll_fa3.GetXaxis().GetXmin()
-        ##     latex.DrawLatex(min_x, max_y,fit_info)
-        ##     putInformationOnPlot(t, POI, c4, gr_xnll_fa3.GetXaxis(), gr_xnll_fa3.GetYaxis())
-        #putInformationOnPlot(getfa3RescaledFitResult(fitres), c4, gr_xnll_fa3.GetXaxis(), gr_xnll_fa3.GetYaxis(),"f_a3")
-        #putLimitLinesOnPlot(&getfa3RescaledFitResult(fitres), c4)
-        #c4.SaveAs(Form("%s.AxisFa3.png",file_name.Data()))
-
-
-
-        #if (POI == "k2k1_ratio") 
-
-        #gr_xnll.Draw("AP")
-        #putInformationOnPlot(fitres,c1, gr_xnll.GetXaxis(), gr_xnll.GetYaxis())
-        #putLimitLinesOnPlot(&fitres, c1)
-        #c1.SaveAs(Form("%s.AxisK2K1.png",file_name.Data()))
-        #c1.SaveAs(Form("%s.AxisK2K1.root",file_name.Data()))
-
-
-  
-  
-
 
 
 
@@ -390,7 +357,7 @@ class FitResultReader(object):
     """Reads the tree with fit information and gives back the 
        information relevant for plotng the limits or measurements. 
     """
-    def __init__(self, POIs=None, file_names=[], combine_method=None):
+    def __init__(self, POIs=None, file_names=None, combine_method=None):
         self.log = Logger().getLogger(self.__class__.__name__, 10)
        
         self.combine_method = combine_method
@@ -410,12 +377,12 @@ class FitResultReader(object):
            of strings or string with POIs separated by ";:*, "
         """
         self.POI = []
-        assert isinstance(POIs, list) or isinstance(POIs, str), "POIs should be provided either as list of strings or as string with \";,: \" as delimiters. "
+        assert isinstance(POIs, list) or isinstance(POIs, str), "POIs should be provided either as list of strings or as string with \";: \" as delimiters. "
         if isinstance(POIs, list):
             self.POI = POIs
         elif isinstance(POIs, str):
             import re
-            POIs = re.sub('[;,: ]+',':',POIs) #pois can be split by ";:*, " - we don't care
+            POIs = re.sub('[;: ]+',':',POIs) #pois can be split by ";:*, " - we don't care
             self.POI = POIs.split(":")
         
         for poi in self.POI:
@@ -464,7 +431,7 @@ class FitResultReader(object):
            The last axis provided should be 
         """
         import re
-        contour_axis = re.sub('[;,:]+',':',contour_axis) #can be split by ";:*, " - we don't care
+        contour_axis = re.sub('[;:]+',':',contour_axis) #can be split by ";: " - we don't care
         try:
             self.contour_graph[contour_axis]
         except KeyError:
@@ -584,7 +551,7 @@ class FitResultReader(object):
         except KeyError:
             raise KeyError, 'The POI name \"{0}\" is invalid.'.format(POI)
         else:    
-            return self.global_best_fit[POI]
+            return float(self.global_best_fit[POI])
         
         
     def is_set_ll(self,POI, cl=0.68):
@@ -615,7 +582,7 @@ class FitResultReader(object):
         else:    
             return (self.global_best_fit[POI]!=None)
             
-    def get_results_dict(self, POI, option='standard'):
+    def get_results_dict(self, POI, option='standard', rescale_expression='', invert_LL_UL=False):
         """Returns a dict with best fit values and limits at 68(95)%
         """
         self.log.info('Compiling the fit results dictionary...')
@@ -630,7 +597,26 @@ class FitResultReader(object):
             self.limits_dict['UL95']= self.ul_values(POI, 0.95)
             
             self.log.debug('Limits are: {0}'.format(self.limits_dict))    
-            return self.limits_dict
+            
+            import copy
+            return_dict = copy.deepcopy(self.limits_dict)  #because dict is mutable... we don't want the initial dict to be changed
+            
+            if POI in rescale_expression:  #the rescale must contain the formula with the POI string inside
+                for key in return_dict.keys():
+                    if isinstance(return_dict[key],float):
+                        the_value = return_dict[key]
+                        return_dict[key] = eval(rescale_expression.replace(POI,str(return_dict[key])))
+                        self.log.debug('Rescaling {3} value with {0}: {1} ---> {2}'.format(rescale_expression, the_value,return_dict[key], key ))
+                    elif isinstance(return_dict[key],list):
+                        for val_i in range(len(return_dict[key])):
+                            the_value = return_dict[key][val_i]
+                            return_dict[key][val_i] = eval(rescale_expression.replace(POI,str(return_dict[key][val_i])))
+                            self.log.debug('Rescaling {3} value with {0}: {1} ---> {2}'.format(rescale_expression, the_value,return_dict[key][val_i], key ))
+            
+                if invert_LL_UL:
+                    return_dict['UL68'],return_dict['LL68'] = return_dict['LL68'],return_dict['UL68']
+                    return_dict['UL95'],return_dict['LL95'] = return_dict['LL95'],return_dict['UL95']
+            return return_dict
         else:
             print 'The option {0} is still not implemented. Do you want to volonteer? :)'.format(option)
             
@@ -762,89 +748,8 @@ class FitResultReader(object):
 #def getArcTanParam(self, k3k1,  gamma=1):
     #return (1/TMath.Pi())*TMath.ATan(TMath.Sqrt(gamma)*k3k1)
 
-#FitResult_t getRescaledFitResult(FitResult_t fitres,  gamma)
-##     rescale all values in fit result
-    #FitResult_t nfr
-    #nfr.bf_global = getArcTanParam(fitres.bf_global,gamma)
-    #nfr.bf = getArcTanParam(fitres.bf,gamma)
-    #nfr.wf = getArcTanParam(fitres.wf,gamma)
-    
-    # ulimit68 = fitres.ul68
-    # ulimit95 = fitres.ul95
-    # llimit68 = fitres.ll68
-    # llimit95 = fitres.ll95
-    #nfr.ll68 = (AreSame(llimit68,default_fr.ll68)) ? default_fr.ll68 :  getArcTanParam(fitres.ll68,gamma)
-    #nfr.ll95 = (AreSame(llimit95,default_fr.ll95)) ? default_fr.ll95 :  getArcTanParam(fitres.ll95,gamma)
-    #nfr.ul68 = (AreSame(ulimit68,default_fr.ul68)) ? default_fr.ul68 :  getArcTanParam(fitres.ul68,gamma)
-    #nfr.ul95 = (AreSame(ulimit95,default_fr.ul95)) ? default_fr.ul95 :  getArcTanParam(fitres.ul95,gamma)
-#return nfr    
 
 
-#FitResult_t getfa3RescaledFitResult(FitResult_t fitres)
-##     rescale all values in fit result
-    #FitResult_t nfr= -99999,-99999,-99999,99999,99999,-99999,-99999 
-    #nfr.bf_global = fa3(fitres.bf_global,0)
-    #nfr.bf = fa3(fitres.bf,0)
-    #nfr.wf = fa3(fitres.wf,0)
-    
-    # ulimit68 = fitres.ul68
-    # ulimit95 = fitres.ul95
-    # llimit68 = fitres.ll68
-    # llimit95 = fitres.ll95
-    #nfr.ll68 = (AreSame(llimit68,default_fr.ll68)) ? default_fr.ll68 :  fa3(fitres.ll68,0)
-    #nfr.ll95 = (AreSame(llimit95,default_fr.ll95)) ? default_fr.ll95 :  fa3(fitres.ll95,0)
-    #nfr.ul68 = (AreSame(ulimit68,default_fr.ul68)) ? default_fr.ul68 :  fa3(fitres.ul68,0)
-    #nfr.ul95 = (AreSame(ulimit95,default_fr.ul95)) ? default_fr.ul95 :  fa3(fitres.ul95,0)
-#return nfr    
-
-
-
-#TGraph * getfa3RescaledGraph(TGraph *gr)
-  #Int_t N = gr.GetN()
-  #print "N = " N  
-  # *x
-  #vector<> new_x
-  # *y
-  
-  #x = gr.GetX()
-  #y = gr.GetY()
-##   print "N = " N  
-  #for (Int_t i=0 i<N i++)
-    #new_x.push_back(fa3(x[i],0))
-##     print "x, new_x = "  x[i]  " " new_x[i] 
-  
-  
-  #TGraph * gr_ret = new TGraph(N,&(new_x.front()),y)
-##   TGraph * gr_ret = new TGraph(N,x,y)
-  #return gr_ret
-
-
-
-#def getRescaledGraph(self, gr, gamma):
-    #N = gr.GetN()
-    #print "N = ",N  
-    #x = gr.GetX()
-    #y = gr.GetY()
-    #new_x = []
-    #for i in range(N):
-        #new_x[i] = self.getArcTanParam(x[i],gamma)
-        ##print "x= {0} new_x = {1}".format(x[i],new_x[i]) 
-    #gr_ret = TGraph(N,array('d', new_x),y)
-    #return gr_ret
-
-
-
-#def getGamma33(self, channel=0):
-    #g=0.038
-    #if channel==0:  
-        #g = 0.040
-    ##         g = (0.46154957824608*0.040+0.3543010974318054*0.034+0.18414932432211456*0.034 ) #weighted mean in case of calculation for all channels
-    #elif channel==3: 
-        #g = 0.040
-    #else:
-        #g=0.034
-    ##print "@@@@@ gamma33 (ch={0})={1}".format(channel,g)
-    #return g
 
 #def fa3(self, k3k1, channel):
     #sgn = 1
@@ -854,24 +759,42 @@ class FitResultReader(object):
     #g = self.getGamma33(channel)
     #return sgn * g * k3k1 * k3k1/(1 + g * k3k1 * k3k1)
 
+def parseOptions():
 
-#if __name__ == "__main__":
+    usage = ('usage: %prog [options] \n'
+             + '%prog -h for help')
+    parser = optparse.OptionParser(usage)
+    parser.add_option('-c', '--cfg', dest='config_filename', type='string', default="testChain.yaml",    help='Name of the file with full configuration')
+    parser.add_option('-s', '--setup', dest='setup_name', type='string', default="",    help='Name of the section with graph setup to be run')
+    parser.add_option('-i', '--input', dest='limits_file_name', type='string', default="",    help='Name of the file with with limits - combine output.')
+    parser.add_option('-t', '--title', dest='title', type='string', default="",    help='Title for the plot.')
+    parser.add_option('-w', '--www', action='store_true', dest='do_copy_to_webdir', default=False, help='Copy plots and relevant stuff to a webdir')
+    
+    global opt, args
+    (opt, args) = parser.parse_args()
+
+if __name__ == "__main__":
      
+    global opt, args
+    parseOptions()
     #print "Starting plots..."
     
     #pp = pprint.PrettyPrinter(indent=4)
     
-    #DEBUG = True
-    ##cfg_reader = UniversalConfigParser(cfg_type="YAML",file_list = "plotLimitVsLumi.yaml")
-    ##cfg_reader.setLogLevel(10) 
+    DEBUG = True
+    cfg_reader = UniversalConfigParser(cfg_type="YAML",file_list = "plotLimit.yaml")
+    #cfg_reader.setLogLevel(10) 
     
-    ##plots_data = cfg_reader.get_dict()
+    graph_dict= cfg_reader.get_dict()
     
-    ##if DEBUG: 
-          ##print "plots_data = ", 
-          ##pp.pprint(plots_data)
+    if DEBUG: 
+          print "graph_dict = ", 
+          pp.pprint(graph_dict_data)
     
-    #plotter = LikelihoodFitContourPlot()
-    #plotter.setCopyToWebDir(False,"/afs/cern.ch/user/r/roko/www/html/Geoloc/")
-    #plotter.make_plot()
+    plotter = LikelihoodFitContourPlot()
+    plotter.setCopyToWebDir(True,'/afs/cern.ch/user/r/roko/www/html/Geoloc/')
+    #limits_file_name = "higgsCombine.asimov.%(fs)s.%(poi_name_value_filename)s.lumi_%(lumi_zfill)s.MultiDimFit.mH126.root" %self.__dict__
+    #title = "Asimov data %(poi_name_value_plot)s | Discrim. %(discriminant)s | L=%(lumi)s fb^{-1} @ %(sqrts_plot)s TeV | Fin. state = %(fs_expanded)s" %self.__dict__
+    plotter.make_plot(opt.limits_file_name,opt.pois,opt.title, graph_dict)
+    #self.limits_dict = plotter.get_limits_dict()
     

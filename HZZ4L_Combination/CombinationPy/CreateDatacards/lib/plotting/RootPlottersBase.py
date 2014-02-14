@@ -25,7 +25,7 @@ class RootPlottersBase(object):
         self.copy_to_web_dir = False
         self.webdir = ""
         self.save_extensions = ['png','pdf','eps']
-        self.pp = pprint.PrettyPrinter(indent=4)
+        #self.pp = pprint.PrettyPrinter(indent=4)
       
   def setName(self, newname): self.name = newname
         
@@ -79,15 +79,23 @@ class RootPlottersBase(object):
             extensions=['']
         for ext in extensions:
             postfix = "."+ext
-            if ext=='': postfix=''
+            if ext=='': 
+                postfix=''
             canv.SaveAs(plot_name+postfix)
             self.log.debug("Saving to: {0}.*".format(plot_name))
             if self.copy_to_web_dir : 
                 self.doCopyToWebDir(plot_name+postfix)
             
 
+  def XtoNDC(self, x):
+        gPad.Update() #this is necessary!
+        return (x - gPad.GetX1())/(gPad.GetX2()-gPad.GetX1())
+        
       
-      
+  def YtoNDC(self, y):
+        gPad.Update() #this is necessary!
+        return (y - gPad.GetY1())/(gPad.GetY2()-gPad.GetY1())
+        
     
     
     
