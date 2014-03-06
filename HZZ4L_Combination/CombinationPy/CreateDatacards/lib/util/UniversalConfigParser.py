@@ -67,7 +67,7 @@ class UniversalConfigParser(object):
       
     def get_dict(self):
 	"""
-	Returns the full configuration red 
+	Returns the full configuration in the form of dictionary. 
 	"""
 	self.log.debug('Getting dictionary from config files: %s', str(self.file_list))
 	for cfg_file in self.file_list:

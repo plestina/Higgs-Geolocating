@@ -98,6 +98,11 @@ class Logger(object):
             self.logger.setLevel(level)
         self.formatter = ColoredFormatter(self.COLOR_FORMAT)
         
+        #check if there is already a handler for this logger to avoid mltiplication of log lines. 
+        if self.logger.handlers != []: 
+            return self.logger
+        
+        
         # Add FileHandler
         if log_file is not None:
             self.fh = logging.FileHandler(self.LOG_FILE)

@@ -434,6 +434,19 @@ if __name__ == "__main__":
                                                     'Dbackground_ggZZ_2e2mu.root','Dbackground_ggZZ_4e.root','Dbackground_ggZZ_4mu.root',
                                                     'Dbackground_ZJetsCR_AllChans.root'],
                                                     
+                                                    
+            ###Discriminant templates for k2k1_ratio VS k3k1_ratio
+            'DSignal_D0M_D0Ph_2e2mu.root':['Dsignal_2e2mu.root','Dsignal_superMELA_2e2mu.root'],
+            'DSignal_D0M_D0Ph_4e.root':['Dsignal_4e.root','Dsignal_superMELA_4e.root'],
+            'DSignal_D0M_D0Ph_4mu.root':['Dsignal_4mu.root','Dsignal_superMELA_4mu.root'],
+
+            'DBackground_D0M_D0Ph_qqZZ_2e2mu.root':['Dbackground_qqZZ_2e2mu.root','Dbackground_qqZZ_superMELA_2e2mu.root',],
+            'DBackground_D0M_D0Ph_qqZZ_4e.root':['Dbackground_qqZZ_4e.root',      'Dbackground_qqZZ_superMELA_4e.root'],
+            'DBackground_D0M_D0Ph_qqZZ_4mu.root':['Dbackground_qqZZ_4mu.root','Dbackground_qqZZ_superMELA_4mu.root',
+                                                    'Dbackground_ggZZ_2e2mu.root','Dbackground_ggZZ_4e.root','Dbackground_ggZZ_4mu.root',
+                                                    'Dbackground_ZJetsCR_AllChans.root'],
+            
+                                                    
         }
     
     
@@ -458,19 +471,25 @@ if __name__ == "__main__":
       'Dbackground_ZJetsCR_AllChans.root'
       ]
     dir_2D = [
+        '/afs/cern.ch/work/r/roko/Stat/CMSSW_611_JCP/src/HZZ4L_Combination/CombinationPy/CreateDatacards/Sandbox/templates_compare2Pedja_v3/LF_RECO_7TeV/Templates2D_D0M_D0Ph',
+        '/afs/cern.ch/work/r/roko/Stat/CMSSW_611_JCP/src/HZZ4L_Combination/CombinationPy/CreateDatacards/Sandbox/templates_compare2Pedja_v3/LF_RECO_8TeV/Templates2D_D0M_D0Ph',
         #'/afs/cern.ch/work/r/roko/Stat/CMSSW_611_JCP/src/HZZ4L_Combination/CombinationPy/CreateDatacards/Sandbox/templates_compare2Pedja/LF_RECO_8TeV/Templates2D_D0M_Dint13/',
-        '/afs/cern.ch/work/r/roko/Stat/CMSSW_611_JCP/src/HZZ4L_Combination/CombinationPy/CreateDatacards/Sandbox/templates_compare2Pedja/LF_GEN_8TeV/Templates2D_D0Ph_Dint12/',
+        #'/afs/cern.ch/work/r/roko/Stat/CMSSW_611_JCP/src/HZZ4L_Combination/CombinationPy/CreateDatacards/Sandbox/templates_compare2Pedja/LF_GEN_8TeV/Templates2D_D0Ph_Dint12/',
+        #'/afs/cern.ch/work/r/roko/Stat/CMSSW_611_JCP/src/HZZ4L_Combination/CombinationPy/CreateDatacards/Sandbox/templates_compare2Pedja_v2/LF_RECO_8TeV/Templates2D_D0Ph_Dint12',
+        #'/afs/cern.ch/work/r/roko/Stat/CMSSW_611_JCP/src/HZZ4L_Combination/CombinationPy/CreateDatacards/Sandbox/templates_compare2Pedja_v2/LF_RECO_7TeV/Templates2D_D0Ph_Dint12',
+        #'/afs/cern.ch/work/r/roko/Stat/CMSSW_611_JCP/src/HZZ4L_Combination/CombinationPy/CreateDatacards/Sandbox/templates_compare2Pedja_v2/LF_RECO_8TeV/Templates2D_D0M_Dint13',
+        #'/afs/cern.ch/work/r/roko/Stat/CMSSW_611_JCP/src/HZZ4L_Combination/CombinationPy/CreateDatacards/Sandbox/templates_compare2Pedja_v2/LF_RECO_7TeV/Templates2D_D0M_Dint13',
         #'/afs/cern.ch/work/r/roko/Stat/CMSSW_611_JCP/src/HZZ4L_Combination/CombinationPy/CreateDatacards/Sandbox/templates_compare2Pedja/LF_RECO_8TeV/Templates2D_D0Ph_Dint12/',
 #'/afs/cern.ch/work/r/roko/Stat/CMSSW_611_JCP/src/HZZ4L_Combination/CombinationPy/CreateDatacards/Sandbox/templates_compare2Pedja/LF_RECO_8TeV/Templates2D_D0M_Dint13_for_k2k1/',
 #'/afs/cern.ch/work/r/roko/Stat/CMSSW_611_JCP/src/HZZ4L_Combination/CombinationPy/CreateDatacards/Sandbox/templates_compare2Pedja/LF_GEN_8TeV/Templates2D_D0M_Dint13_test_copy_tree/',
         #'/afs/cern.ch/work/r/roko/Stat/CMSSW_611_JCP/src/HZZ4L_Combination/CombinationPy/CreateDatacards/Sandbox/templates_compare2Pedja/LF_GEN_8TeV/Templates2D_D0M_Dint13/'
         ]  
     #copy to proper name
-    import shutil
-    for origTmplFile in copy_map.keys():
-        for newFile in copy_map[origTmplFile]: 
-            if os.path.exists(origTmplFile):
-                shutil.copy(origTmplFile, newFile)
+    #import shutil
+    #for origTmplFile in copy_map.keys():
+        #for newFile in copy_map[origTmplFile]: 
+            #if os.path.exists(origTmplFile):
+                #shutil.copy(origTmplFile, newFile)
     
     #make projection and unfolded
     #if opt.run_on_dir!="" and os.path.isdir(opt.run_on_dir):
@@ -478,6 +497,13 @@ if __name__ == "__main__":
         #dir_2D.append(opt.run_on_dir)
         
     for theDir in dir_2D:
+        import shutil
+        for origTmplFile in copy_map.keys():
+            if os.path.exists(theDir+'/'+origTmplFile):
+                print 'Copying file: '+theDir+'/'+origTmplFile
+                for newFile in copy_map[origTmplFile]: 
+                    shutil.copy(theDir+'/'+origTmplFile, theDir+'/'+newFile)
+        
         for file_name in files_for_DC:
             print "------------------------------ INPUT FILE:", file_name
             #make_unfolded_hist(file_name, theDir)

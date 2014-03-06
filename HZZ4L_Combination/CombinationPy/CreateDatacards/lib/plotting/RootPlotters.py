@@ -166,7 +166,7 @@ class PlotPolisher(object):
       if att_toggle['legend'] : 
 	 this_setup = setup['legend']
 	 this_att_toggle = self.toggle_options(this_setup.keys(),{'title':0, 'position':0})
-	 self.leg = ROOT.TLegend(0.18,0.15,0.8,0.4);
+	 self.leg = ROOT.TLegend(0.18,0.15,0.8,0.4)
 	 self.leg.SetBorderSize(0)
 	 self.leg.SetFillColor(-1)
 	 if this_att_toggle['position'] :
