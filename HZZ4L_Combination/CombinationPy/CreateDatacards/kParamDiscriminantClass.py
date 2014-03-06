@@ -24,7 +24,9 @@ class kParamDiscriminantClass(datacardClass):
 	self.DEBUG = (self.log.getEffectiveLevel()<20)
 	print "++++++++++++++++++++++++++++++++++++++++++++++++++++ DEBUG = ", self.DEBUG
 	
-
+    def add_postfix_to_keys(self,mydict,postfix):
+        return dict((k+postfix,f(v) if hasattr(v,'keys') else v) for k,v in mydict.items())
+        
     def setTermNames(self, termNames=[]):
 	self.allowedTermNames = ['ggH','gg0Ph','gg0M' ,'ggInt_12P','ggInt_12N','ggInt_13P','ggInt_13N','ggInt_23P','ggInt_23N']
 	if len(termNames)>0 : 
@@ -505,14 +507,18 @@ class kParamDiscriminantClass(datacardClass):
 		      #'gg0Ph' :  'jhuGen_0hplus_yield'
 		      }	   
 		      
-	self.rfvGeoLocNorms = self._getGeolocationNormalization(self.termNames)
-		      
+	#self.rfvGeoLocNorms = self._setupGeolocationNormalization(self.termNames)
+	self._setupGeolocationNormalization(self.termNames)
+        
 	for term in self.termNames:
+            self.log.debug('Building and importing the final norms into worksppace for term: {0}'.format(term))
 	    #self.rfvSigRate[term] = ROOT.RooFormulaVar("{0}_norm".format(term),"@0*@1",ROOT.RooArgList(self.rfvSigRate_all,self.rfvGeoLocNorms[term] ))  #mod-roko -- multiply by gama lambda dependant factor
 	    #to avoid putting all the SM norms per production channel into WS, we just put the final value as number. 
-	    self.rfvSigRate[term] = ROOT.RooFormulaVar("{0}_norm".format(term),"{0}/{1}*@0*@1".format(self.rfvSigRate_all.getVal(), self.rrvLumi.getVal()),ROOT.RooArgList(self.rrvLumi,self.rfvGeoLocNorms[term] ))  
+	    self.rfvGeoLocNorm_tmp = self.w.function("geoloc_{0}_norm_{1}".format(term, postfix))
+	    self.rfvSigRate[term] = ROOT.RooFormulaVar("{0}_norm".format(term),"{0}/{1}*@0*(@1)".format(self.rfvSigRate_all.getVal(), self.rrvLumi.getVal()),
+                                                                                                      ROOT.RooArgList(self.rrvLumi,self.rfvGeoLocNorm_tmp ))  
 	    if self.DEBUG : 
-                self.rfvSigRate[term].Print()
+                    self.rfvSigRate[term].Print()
 	    getattr(self.w,'import')(self.rfvSigRate[term], ROOT.RooFit.RecycleConflictNodes())
 	    
 	    #fix for JHUGen rates
@@ -539,15 +545,6 @@ class kParamDiscriminantClass(datacardClass):
 	    print 20*"----" 
         
         self.w.writeToFile(self.name_ShapeWS)
-        #quit()
-        
-	#self.ws_norm = ROOT.RooWorkspace("ws_norm_{0}_{1:.0f}".format(self.channel,self.sqrts),"ws_norm_{0}_{1:.0f}".format(self.channel,self.sqrts))
-	#newname = "all_norm_{0}_{1:.0f}".format(self.channel,self.sqrts)
-	#self.rfvSigRate_all.SetNameTitle(newname,newname)
-	#getattr(self.ws_norm,'import')(self.rfvSigRate_all, ROOT.RooFit.RecycleConflictNodes())
-	#self.ws_norm.writeToFile("ws_norm.root",False) #do not recreate but only append
-
-        
         
                 
     
@@ -720,16 +717,16 @@ class kParamDiscriminantClass(datacardClass):
         #test systematics mod-roko
         file.write("\n")
             
-        #processLine = "test_sys lnN "
+        processLine = "test_sys lnN "
 
-        #for x in range(-numberSig+1,1):
-            #processLine += "1.00001 "
+        for x in range(-numberSig+1,1):
+            processLine += "1.00001 "
 
-        #for y in range(1,numberBg+1):
-            #processLine += "1.00001 "
+        for y in range(1,numberBg+1):
+            processLine += "1.00001 "
 
-        #file.write(processLine)
-        #file.write("\n")
+        file.write(processLine)
+        file.write("\n")
         
         
         #Channel list will be asked in systematicsClass.py
@@ -740,9 +737,9 @@ class kParamDiscriminantClass(datacardClass):
         
             
   
-    def _getGeolocationNormalization(self, termNames=None):
+    def _setupGeolocationNormalization(self, termNames=None):
 	"""
-	Normalizatoin in front of terms in parametrization a la Geolocating paper.
+	Normalization in front of terms in parametrization a la Geolocating paper.
 	It depends on k1,k3,lambda, gamma and channel(thru acceptance)
 	"""
 	if termNames==None:
@@ -751,7 +748,7 @@ class kParamDiscriminantClass(datacardClass):
 	def _readFactorsFromFile(file_name, termNames, channel = self.channel):
 		    
 	    if len(termNames)==0 or not isinstance(termNames, list): 
-		raise RuntimeError, "_getGeolocationNormalization:: You have to provide a list of terms for which I can calculate the normalization."
+		raise RuntimeError, "_setupGeolocationNormalization:: You have to provide a list of terms for which I can calculate the normalization."
 	    
 	    sigTempFile = self.TFile_safe_open(file_name)
 	    factorNames= ['gamma11','gamma22','gamma33','gamma12','gamma13','gamma23',
@@ -778,7 +775,7 @@ class kParamDiscriminantClass(datacardClass):
                     this_term_factors_to_read = [factor.strip() for factor in needed_factors[term].split(',')]
                     factors_to_read+=this_term_factors_to_read
 		else:
-		    raise KeyError, "_getGeolocationNormalization:: The term \"{0}\" is unknown. Please check spelling. Allowed terms are : {1}".format(term, str(needed_factors.keys()))
+		    raise KeyError, "_setupGeolocationNormalization:: The term \"{0}\" is unknown. Please check spelling. Allowed terms are : {1}".format(term, str(needed_factors.keys()))
             factors_to_read = list(set(factors_to_read))  #make list with unique entries
             self.log.debug('Factors to read from file {0}: {1}'.format(file_name, str(factors_to_read)))
 	    
@@ -786,22 +783,15 @@ class kParamDiscriminantClass(datacardClass):
 	    factors={}
 	    sigTempFile.cd()
 	    tree=sigTempFile.Get('factors')
-	    #for fn in factorNames:
-		#factors[fn] = array('d',[0])
-		#if fn in factors_to_read:
-                    #self.log.debug('SetBranchAddress to -> {0}'.format(fn))
-                    #tree.SetBranchAddress(fn,factors[fn])
-	    #tree.GetEntry(0) #there shouldbe onlyone number, one entry
-	    
-	    #for fn in factors.keys():
-		#factors[fn] = factors[fn][0]
-           
-	   
+            
             tree.GetEntry(0)
             for fn in factorNames:
                 if fn in factors_to_read:
+                    
                     try:
-                        factors[fn] = eval('tree.{0}'.format(fn))
+                        #factors[fn] = eval('tree.{0}'.format(fn))
+                        factor_value = eval('tree.{0}'.format(fn))
+                        factors[fn] = float('{0:.4f}'.format(factor_value))  #jsut to have a factor value up to 3 decimals precirsion
                     except:
                         self.log.warn('The factors tree does not contain the {0} branch. Please check the tree or the spelling of the variable! Currently setting value to 0.'.format(fn))
                         factors[fn] = 0
@@ -809,11 +799,11 @@ class kParamDiscriminantClass(datacardClass):
                     factors[fn]=0
 	   
 	   
-	    if channel==3:
-	      #gamma 33 = 0.040 #2e2mu
-	      factors['gamma33']=0.040
-	    else:
-	      factors['gamma33']=0.034
+	    #if channel==3:
+	      ##gamma 33 = 0.040 #2e2mu
+	      #factors['gamma33']=0.040
+	    #else:
+	      #factors['gamma33']=0.034
 	      
 	    #providional until 
 	    #self.log.warn('Current values used for interference 12 are provisional. Change them when you get templates from Pedja.')
@@ -822,10 +812,27 @@ class kParamDiscriminantClass(datacardClass):
             #if channel==3:
             #factors['lambda12_cosN']*=0.9
             #factors['gamma22']*=1.1
-            factors['gamma12'] = -factors['lambda12_cosN']
+            #factors['gamma12'] = -factors['lambda12_cosN']
             #factors['lambda12_cosN'] = -factors['gamma12']
             #factors['lambda12_cosP'] = factors['lambda12_cosN'] = 0.0280214
 	
+	
+            #change name and make RooRealVar
+            appendName = "_{0}_{1:.0f}".format(channel, self.sqrts)
+            try:
+                mean_lamda_13 = (factors['lambda13_cosN']+factors['lambda13_cosP'])/2.0
+            except KeyError:
+                pass
+            else:
+                factors['lambda13_cosP'] = mean_lamda_13
+                factors['lambda13_cosN'] = mean_lamda_13
+            for fn in factors.keys():
+                factor_name = '{0}{1}'.format(fn,appendName)
+                factors[fn] = ROOT.RooRealVar(factor_name, factor_name, factors[fn])
+                #factors[fn].setConstant()
+           
+            factors = self.add_postfix_to_keys(factors,appendName)
+            #self.log.debug('Factors after adding postfix: {0}'.format(factors))
             return factors
 	    
 		    
@@ -865,48 +872,60 @@ class kParamDiscriminantClass(datacardClass):
 	    yield_ratio = yield_ratios[channel]
 	    channelName = ['4mu', '4e','2e2mu']
 	    file_name = "{1}/Dsignal_{0}.root".format(channelName[channel-1], os.path.dirname(templateSigName))
-	    factors = _readFactorsFromFile(file_name, termNames,channel)
-	    den_segment_geoloc = den_base.format(factors['gamma11'],factors['gamma22'],factors['gamma33'],factors['gamma12'],factors['gamma13'],factors['gamma23'])
+	    self.factors.update(_readFactorsFromFile(file_name, termNames,channel))
+	    
+            #ROOT.RooRealVar('{0}_{1}'.format(factor,appendName),factors[factor])
+
+	    #den_segment_geoloc = den_base.format('gamma11_{0}'.format(appendName),'gamma22_{0}'.format(appendName),'gamma33_{0}'.format(appendName),'gamma12_{0}'.format(appendName),'gamma13_{0}'.format(appendName),'gamma23_{0}'.format(appendName))
+	    #den_segment_geoloc = den_base.format('1','gamma22_{0}'.format(appendName),'gamma33_{0}'.format(appendName),'gamma12_{0}'.format(appendName),'0'.format(appendName),'gamma23_{0}'.format(appendName))
+	    den_segment_geoloc = den_base.format('gamma22_{0}'.format(appendName),'gamma33_{0}'.format(appendName),'gamma12_{0}'.format(appendName),'gamma23_{0}'.format(appendName))
 	    den_segment = "{0:.3f}*({1})".format(yield_ratio, den_segment_geoloc)
 	    self.log.debug('Denominator segment for ch={0} : {1}'.format(channel, den_segment))
 	    return den_segment
+	    
 	    
 	
 	
 	#read file
 	templateSigName = "{0}/Dsignal_{1}.root".format(self.templateDir ,self.appendName)
-	#templateSigName = "templates_Pedja_v0/DSignal_4l_0M.root"  #mod-roko temporary
-	#templateSigName = "Sandbox/templates2D_D0M_Dint13/Dsignal_2e2mu.root"  #mod-roko temporary
-	#templateSigName = "Sandbox/templates2D_D0M_Dint13_perCh/DSignal_{0}.root".format(self.appendName)
 	
 	#factors = self._readFactorsFromFile(templateSigName, termNames)
-	factors = _readFactorsFromFile(templateSigName, termNames, self.channel)
+	appendName = "{0}_{1:.0f}".format(self.channel, self.sqrts)
+	self.factors={}
+	self.factors.update(_readFactorsFromFile(templateSigName, termNames, self.channel))
+        #mean_lamda_13 = (self.factors['lambda13_cosN_{0}'.format(appendName)].getVal()+self.factors['lambda13_cosP_{0}'.format(appendName)].getVal())/2.0
+        #self.factors['lambda13_cosP_{0}'.format(appendName)].setVal(mean_lamda_13)
+        #self.factors['lambda13_cosN_{0}'.format(appendName)].setVal(mean_lamda_13)
+        
 	self.log.debug('Factors from file {0}: {1}'.format(templateSigName, str(factors)))
-	if self.DEBUG: 
-	    for fn in factors.keys(): 
-                #print "{0} = {1}".format(fn, factors[fn])
-                print "{0} = {1:.4f}".format(fn, factors[fn])
 	
+	if self.DEBUG: 
+	    for fn in self.factors.keys(): 
+                #print "{0} = {1}".format(fn, factors[fn])
+                self.factors[fn].setConstant()
+                print "{0} = {1:.4f}".format(fn, self.factors[fn].getVal())
+                #getattr(self.w,'import')(self.factors[fn],ROOT.RooFit.RecycleConflictNodes())
 	
 	yield_ratios = _getFinalStateYieldRatios()
 	#todo: make denominator a function of self.termNames, so to excludde parts which are =0. Use dictionary...
 	#todo: check if we have to add factor of 2 in front of gamma12 (= gamma21)... Ask Pedja!!!
 	#denominator_geoloc = "{0}+{1}*@0*@0+{2}*@1*@1+({3}*@0)+({4}*@1)+({5}*@0*@1)"
 	#denominator_geoloc = "{0}+{1}*@0*@0+{2}*@1*@1+2*(({3}*@0)+({4}*@1)+({5}*@0*@1))" ### added factor 2 for mixed terms
+	#denominator_geoloc = "{0}+{1}*@0*@0+{2}*@1*@1+(({3}*@0)+({4}*@1)+({5}*@0*@1))" ### added factor 2 for mixed terms
 	#denominator_geoloc = "{0:.3f}+{1:.3f}*@0*@0+{2:.3f}*@1*@1+2*(({3:.3f}*@0)+({4:.3f}*@1)+({5:.3f}*@0*@1))" ### added factor 2 for mixed terms
-	denominator_geoloc = "{0:.3f}+{1:.3f}*@0*@0+{2:.3f}*@1*@1+1*(({3:.3f}*@0)+({4:.3f}*@1)+({5:.3f}*@0*@1))" ### added factor 2 for mixed terms
-	#denominator = denominator_geoloc.format(factors['gamma11'],factors['gamma22'],factors['gamma33'],
-                                                #factors['gamma12'],factors['gamma13'],factors['gamma23'])
+	#denominator_geoloc = "{0:.3f}+{1:.3f}*@0*@0+{2:.3f}*@1*@1+1*(({3:.3f}*@0)+({4:.3f}*@1)+({5:.3f}*@0*@1))" ### added factor 2 for mixed terms
+	#denominator = denominator_geoloc.format(self.factors['gamma11'],self.factors['gamma22'],self.factors['gamma33'],
+                                                #self.factors['gamma12'],self.factors['gamma13'],self.factors['gamma23'])
+                                                
+        #denominator_geoloc = "1+{0}*@0*@0+{1}*@1*@1+(({2}*@0)+({3}*@0*@1))" ### added factor 2 for mixed terms
+                                                
+                                                
+        denominator_geoloc = "1+{0}*@0*@0+{1}*@1*@1+2*(({2}*@0)+({3}*@0*@1))" ### removed insertion of numbers that are not needed, i.e gamma11 and gamma13
+                                                
+                                                
 	denominator = "{0}+{1}+{2}".format(_getDenominatorSegment(1,denominator_geoloc),_getDenominatorSegment(2,denominator_geoloc),_getDenominatorSegment(3,denominator_geoloc))	
 	self.log.debug('denominator = {0}'.format(denominator))
 	#effectively denominator is = "g11+g33*@1*@1"
-	#mu * x/den =  const 
-	##mu' = mu/den
-	#denominator = "0.354301097432*(1.0+0.0*@0*@0+0.034*@1*@1+(0.0*@0)+(0.0*@1)+(0.0*@0*@1))
-		      #+0.184149324322*(1.0+0.0*@0*@0+0.034*@1*@1+(0.0*@0)+(0.0*@1)+(0.0*@0*@1))
-		      #+0.461549578246*(1.0+0.0*@0*@0+0.040*@1*@1+(0.0*@0)+(0.0*@1)+(0.0*@0*@1))"
-		      
-	#quit()
 	
 	
 	
@@ -923,46 +942,84 @@ class kParamDiscriminantClass(datacardClass):
 	if removeGeolocDenominator: 
             denominator = "1"
 	
-	self.log.debug("Geolocating Denomiator = {0}".format(denominator))
+	self.log.debug("Geolocating Denominator = {0}".format(denominator))
 	
 	#r_fs  = self._getFinalStateYieldRatios(self.rfvSigRate_all)
 	r_fs  = yield_ratios[self.channel]
 	#r_fs = 1
 	self.log.debug('FinalState yield ratio: FS = {0} value = {1}'.format(self.channel, r_fs))
 	
-        mean_lamda_13 = (factors['lambda13_cosN']+factors['lambda13_cosP'])/2
+        #mean_lamda_13 = (self.factors['lambda13_cosN_{0}'.format(appendName)].getVal()+self.factors['lambda13_cosP_{0}'.format(appendName)].getVal())/2
+        #self.factors['lambda13_cosP_{0}'.format(appendName)].setVal(mean_lamda_13)
+        #self.factors['lambda13_cosN_{0}'.format(appendName)].setVal(mean_lamda_13)
         
         
 	nominator={
-	  'ggH'	     :           '{0}'.format(factors['gamma11']),
-	  'gg0Ph'    :     '{0}*@0*@0'.format(factors['gamma22']),     # @0 = k2k1_ratio
-	  'gg0M'     :     '{0}*@1*@1'.format(factors['gamma33']),     # @1 = k3k1_ratio
-	  'ggInt_12P':        '{0}*@0'.format(factors['lambda12_cosP']),  
-	  'ggInt_12N':   '{0}*@0*(-1)'.format(factors['lambda12_cosN']),
-	  #'ggInt_13P':        '{0}*@1'.format(factors['lambda13_cosP']),  
-	  #'ggInt_13N':   '{0}*@1*(-1)'.format(factors['lambda13_cosN']),  
-	  'ggInt_13P':        '{0}*@1'.format(mean_lamda_13),  
-	  'ggInt_13N':   '{0}*@1*(-1)'.format(mean_lamda_13),  
-	  'ggInt_23P':     '{0}*@0*@1'.format(factors['lambda23_cosP']),  
-	  'ggInt_23N':'{0}*@0*@1*(-1)'.format(factors['lambda23_cosN'])  
-	}
+          'ggH'      :           '{0}'.format('gamma11_{0}'.format(appendName)),
+          'gg0Ph'    :     '{0}*@0*@0'.format('gamma22_{0}'.format(appendName)),     # @0 = k2k1_ratio
+          'gg0M'     :     '{0}*@1*@1'.format('gamma33_{0}'.format(appendName)),     # @1 = k3k1_ratio
+          'ggInt_12P':        '{0}*@0'.format('lambda12_cosP_{0}'.format(appendName)),  
+          'ggInt_12N':   '{0}*@0*(-1)'.format('lambda12_cosN_{0}'.format(appendName)),
+          'ggInt_13P':        '{0}*@1'.format('lambda13_cosP_{0}'.format(appendName)),  
+          'ggInt_13N':   '{0}*@1*(-1)'.format('lambda13_cosN_{0}'.format(appendName)),  
+          'ggInt_23P':     '{0}*@0*@1'.format('lambda23_cosP_{0}'.format(appendName)),  
+          'ggInt_23N':'{0}*@0*@1*(-1)'.format('lambda23_cosN_{0}'.format(appendName))  
+        }
+	
 	self.rfvNorms={}									
 	self.rfvNorms_denom={}
 	self.rfvNorms_nom={}
-	for term in termNames:
-	    postfix = "{0:.0f}_{1:.0f}".format(self.channel,self.sqrts)
-	    self.rfvNorms_denom[term] = {}
-	    for one_ch in [1,2,3]:
-                self.rfvNorms_denom[term]['ch{0}'.format(one_ch)] = ROOT.RooFormulaVar("geolocation_denSeg{2}_{0}_norm_{1}".format(term, postfix,one_ch),"{0}".format(_getDenominatorSegment(one_ch,denominator_geoloc)),ROOT.RooArgList(self.k2k1_ratio, self.k3k1_ratio))
+	
+	
+	postfix = "{0:.0f}_{1:.0f}".format(self.channel,self.sqrts)
+        for one_ch in [1,2,3]:
+            denominator_formula = _getDenominatorSegment(one_ch,denominator_geoloc)
+            self.ral_denominator = ROOT.RooArgList(self.k2k1_ratio,self.k3k1_ratio)
+            for fn in self.factors.keys():
+                if fn in denominator_formula:
+                    self.ral_denominator.add(self.factors[fn])
+            if self.DEBUG:
+                self.log.debug('RooArgList for denominator:')
+                self.ral_denominator.Print()    
+            
+            #denominator segment depends upon channel and sqrts
+            self.rfvNorms_denom['ch{0}'.format(one_ch)] = ROOT.RooFormulaVar("geoloc_denom_segmentCh{0}_{1:.0f}".format(one_ch,self.sqrts),denominator_formula,self.ral_denominator)
+            #getattr(self.w,'import')(self.rfvNorms_denom['ch{0}'.format(one_ch)],ROOT.RooFit.RecycleConflictNodes())
                 
-            self.rfvNorms_nom[term] = ROOT.RooFormulaVar("geolocation_nom_{0}_norm_{1}".format(term, postfix),"{0}".format(nominator[term]),ROOT.RooArgList(self.k2k1_ratio, self.k3k1_ratio))    
-            self.rfvNorms[term] = ROOT.RooFormulaVar("geolocation_{0}_norm_{1}".format(term, postfix),"(@0)/(@1+@2+@3)", ROOT.RooArgList(self.rfvNorms_nom[term], self.rfvNorms_denom[term]['ch1'],self.rfvNorms_denom[term]['ch2'],self.rfvNorms_denom[term]['ch3']))
+	
+	
+	
+	for term in termNames:
+	    
+            self.ral_nominator = ROOT.RooArgList(self.k2k1_ratio,self.k3k1_ratio)
+            for fn in self.factors.keys():
+                if fn in nominator[term]:
+                    self.ral_nominator.add(self.factors[fn])
+            if self.DEBUG:
+                self.log.debug('RooArgList for nominator:')
+                self.ral_nominator.Print()    
+            #nominator segment depends upon term, channel,sqrts
+            self.rfvNorms_nom[term] = ROOT.RooFormulaVar("geoloc_nomin_{0}_{1}".format(term, postfix),"{0}".format(nominator[term]),self.ral_nominator)    
+            #getattr(self.w,'import')(self.rfvNorms_nom[term],ROOT.RooFit.RecycleConflictNodes())
+
+            self.ral_geolocation_norm = ROOT.RooArgList(self.rfvNorms_nom[term], 
+                                                        self.rfvNorms_denom['ch1'],
+                                                        self.rfvNorms_denom['ch2'],
+                                                        self.rfvNorms_denom['ch3'])
+            self.rfvNorms[term] = ROOT.RooFormulaVar("geoloc_{0}_norm_{1}".format(term, postfix),"(@0)/(@1+@2+@3)", self.ral_geolocation_norm)
+            #self.rfvNorms[term] = ROOT.RooFormulaVar("geolocation_{0}_norm_{1}".format(term, postfix),"(@0)", self.ral_geolocation_norm)
+            getattr(self.w,'import')(self.rfvNorms[term],ROOT.RooFit.RecycleConflictNodes())
 	    #rfvNorms[term] = ROOT.RooFormulaVar("geolocation_{0}_norm_{1}".format(term, postfix),"({0})/({1})".format(nominator[term], denominator),ROOT.RooArgList(self.k2k1_ratio, self.k3k1_ratio))
 	    #rfvNorms[term] = ROOT.RooFormulaVar("geolocation_{0}_norm_{1}".format(term, postfix),"({0}*{2})/({1})".format(nominator[term], denominator, r_fs),ROOT.RooArgList(self.k2k1_ratio, self.k3k1_ratio))
 	    if self.DEBUG:
 		self.rfvNorms[term].Print()
 		
-	return self.rfvNorms
+            #if self.DEBUG : 
+                #for i_k2k1_ratio in range(-3,4):
+                    #self.k2k1_ratio.setVal(i_k2k1_ratio)
+                    #print "k2k1_ratio = ", self.k2k1_ratio.getVal()
+                    #self.rfvNorms[term].Print('V')
+		
 
 
                                                                     
