@@ -81,11 +81,21 @@ class LikelihoodFitContourPlot(PlotPolisher,RootPlottersBase):
         self.log.debug('Putting limit lines on the plot.')
         self.pp.pprint(fit_result_dict)
         c.cd()
-        bestFit = fit_result_dict['BF']
-        bf_arr = TArrow()
-        bf_arr.SetLineColor(kRed)
-        bf_arr.SetLineWidth(2)
-        bf_arr.DrawArrow(bestFit,-0.5,bestFit,-0.25,0.02,"|->")
+        
+        #gr_y_axes = c.GetPrimitive("Graph").GetYaxis()
+        #y_min = gr_y_axes.GetXmin()
+        #y_max = gr_y_axes.GetXmax()
+        #k = (y_max-y_min)/5.0
+        #arr_y_min = -0.5*k + y_min
+        #arr_y_max = -0.25*k + y_min
+        #bestFit = fit_result_dict['BF']
+        #bf_arr = TArrow()
+        #bf_arr.SetLineColor(kRed)
+        #bf_arr.SetLineWidth(2)
+        ##bf_arr.DrawArrow(bestFit,-0.5,bestFit,-0.25,0.02,"|->")
+        #bf_arr.DrawArrow(bestFit,arr_y_min,bestFit,arr_y_max,0.02,"|->")
+        ##bf_arr.SetNDC(1)
+        ##print '|---------->  ARROW : User to NDC : bestFit= {3}= {0} y=-0.5 = {1} y=-0.25 = {2}'.format(self.XtoNDC(bestFit), self.YtoNDC(-0.5),self.YtoNDC(-0.25), bestFit)
 
         
         x_min = TMath.MinElement(c.GetPrimitive('Graph').GetN(),c.GetPrimitive('Graph').GetX())
@@ -96,11 +106,12 @@ class LikelihoodFitContourPlot(PlotPolisher,RootPlottersBase):
         #line.SetLineStyle(kSolid)
         line.SetLineWidth(2)
         #  #68% C.L        
-        
-        if 'quantileExpected' in graph_dict['contour_axis']:
-            y_max = 0.68
-        elif 'deltaNLL' in graph_dict['contour_axis']:
-            y_max = 1
+        the_Y = graph_dict['contour_axis'].split(':')[1].strip()
+       
+        if 'quantileExpected' in the_Y:
+            y_max = eval(the_Y.replace('quantileExpected','0.32'))
+        elif 'deltaNLL' in the_Y:
+            y_max = eval(the_Y.replace('deltaNLL','0.5'))
             
         line.SetLineColor(kRed)
         llul_pairs = self._get_limit_intervals(fit_result_dict['LL68'], fit_result_dict['UL68'],x_min, x_max )
@@ -111,10 +122,16 @@ class LikelihoodFitContourPlot(PlotPolisher,RootPlottersBase):
             if not AreSame(pair[1],x_max):
                 line.DrawLine(pair[1],0,pair[1],y_max)
         
-        if 'quantileExpected' in graph_dict['contour_axis']:
-            y_max = 0.95
-        elif 'deltaNLL' in graph_dict['contour_axis']:
-            y_max = 3.84
+        
+        
+        if 'quantileExpected' in the_Y:
+            y_max = eval(the_Y.replace('quantileExpected','0.05'))
+        elif 'deltaNLL' in the_Y:
+            y_max = eval(the_Y.replace('deltaNLL','(3.84/2.0)'))
+        #if 'quantileExpected' in graph_dict['contour_axis']:
+            #y_max = 0.95
+        #elif 'deltaNLL' in graph_dict['contour_axis']:
+            #y_max = 3.84
         #95 %CL
         line.SetLineColor(kBlue)
         llul_pairs = self._get_limit_intervals(fit_result_dict['LL95'], fit_result_dict['UL95'],x_min, x_max )
@@ -125,7 +142,30 @@ class LikelihoodFitContourPlot(PlotPolisher,RootPlottersBase):
             if not AreSame(pair[1],x_max):
                 line.DrawLine(pair[1],0,pair[1],y_max)
 
-          
+                
+    def putBestFitArrowOnPlot(self, graph_dict):
+        #WARNING: Need to imporve it to really pick up the 
+              #   #1 sigma and 2 sigma lines
+        self.log.debug('Putting best fit arrow on the plot.')
+        c = graph_dict['canv']
+        c.cd()        
+        gr_y_axes = c.GetPrimitive("Graph").GetYaxis()
+        y_min = gr_y_axes.GetXmin()
+        y_max = gr_y_axes.GetXmax()
+        self.log.debug('putBestFitArrowOnPlot: y_min={0} y_max={1}'.format(y_min,y_max))
+        k = (y_max-y_min)/5.0
+        arr_y_min = -0.5*k + y_min
+        arr_y_max = -0.25*k + y_min
+        bestFit = graph_dict['fit_results']['BF']
+        bf_arr = TArrow()
+        bf_arr.SetLineColor(kRed)
+        bf_arr.SetLineWidth(2)
+        #bf_arr.DrawArrow(bestFit,-0.5,bestFit,-0.25,0.02,"|->")
+        bf_arr.DrawArrow(bestFit,arr_y_min,bestFit,arr_y_max,0.02,"|->")
+        #bf_arr.SetNDC(1)
+        #print '|---------->  ARROW : User to NDC : bestFit= {3}= {0} y=-0.5 = {1} y=-0.25 = {2}'.format(self.XtoNDC(bestFit), self.YtoNDC(-0.5),self.YtoNDC(-0.25), bestFit)
+
+  
     def putBrasilianFlagsOnPlot(self, graph_dict):
         #   #1 sigma and 2 sigma lines
         
@@ -135,17 +175,19 @@ class LikelihoodFitContourPlot(PlotPolisher,RootPlottersBase):
         self.log.debug('Putting limit lines on the plot.')
         self.pp.pprint(fit_result_dict)
         c.cd()
-        bestFit = fit_result_dict['BF']
-        bf_arr = TArrow()
-        bf_arr.SetLineColor(kRed)
-        bf_arr.SetLineWidth(2)
-        bf_arr.DrawArrow(bestFit,-0.5,bestFit,-0.25,0.02,"|->")
+        #bestFit = fit_result_dict['BF']
+        #bf_arr = TArrow()
+        #bf_arr.SetLineColor(kRed)
+        #bf_arr.SetLineWidth(2)
+        #bf_arr.DrawArrow(bestFit,-0.5,bestFit,-0.25,0.02,"|->")
+        
+        
+        
 
         gra_x = c.GetPrimitive('Graph').GetXaxis()
         x_min = gra_x.GetXmin()
         x_max = gra_x.GetXmax()
-        
-        
+                
         x_min = TMath.MinElement(c.GetPrimitive('Graph').GetN(),c.GetPrimitive('Graph').GetX())
         x_max = TMath.MaxElement(c.GetPrimitive('Graph').GetN(),c.GetPrimitive('Graph').GetX())
         gra_y = c.GetPrimitive('Graph').GetYaxis()
@@ -222,25 +264,102 @@ class LikelihoodFitContourPlot(PlotPolisher,RootPlottersBase):
         #print 'User to Pad coordinates: min_x = {0} max_y = {1} max_y_2 = {2} max_y_3 = {3} max_y_4 = {4}'.format(gPad.XtoPad(min_x), gPad.YtoPad(max_y),gPad.YtoPad(max_y_2),gPad.YtoPad(max_y_3),gPad.YtoPad(max_y_4))
         #print 'User to NDC coordinates: min_x = {0} max_y = {1} max_y_2 = {2} max_y_3 = {3} max_y_4 = {4}'.format(self.XtoNDC(min_x), self.YtoNDC(max_y),self.YtoNDC(max_y_2),self.YtoNDC(max_y_3),self.YtoNDC(max_y_4))
 
+    def putContoursOnPlot(self, graph_dict):
+        #th2d = graph_dict['graph']    
+        #canv = graph_dict['canv']    
+           
+            graph_contours = graph_dict['graph'].Clone("graph_contours")
+            c = TCanvas("c","Contour List",0,0,600,600)
+            c.cd()
+            #import array
+            contours = array('d',[5.99])
+
+            graph_contours.SetContour(len(contours), contours)
+
+            #// Draw contours as filled regions, and Save points
+            graph_contours.Draw("CONT Z LIST")
+            c.Update() #// Needed to force the plotting and retrieve the contours in TGraphs
+
+            #// Get Contours
+            conts = gROOT.GetListOfSpecials().FindObject("contours")
+            contLevel = None
+            curv      = None
+            gc        = None
+            nGraphs   = 0
+            TotalConts= 0
+
+            if (conts == None):
+                print "*** No Contours Were Extracted!\n"
+                TotalConts = 0
+                return
+            else: 
+                TotalConts = conts.GetSize()
+
+            print "TotalConts = %d\n" %(TotalConts)
+            tgraph_list = []
+            import copy
+
+            for i in range(0,TotalConts):
+                #last contour is the first in the contour array
+                contLevel = conts.At(i)
+                print "Contour %d has %d Graphs\n" %(i, contLevel.GetSize())
+                nGraphs += contLevel.GetSize()
+                for j in range(0,contLevel.GetSize()):
+                    tgraph_list.append(copy.deepcopy(contLevel.At(j)))
+
+            graph_dict['canv'].cd()
+            #graph_dict['graph'].Draw("COLZ")
+
+            print "\n\n\tExtracted %d Contours and %d Graphs \n" %(TotalConts, nGraphs )
+            graph_dict['canv'].cd()
+            for tgraph in tgraph_list:
+                tgraph.SetLineColor(kBlack)
+                tgraph.Draw("C")
+            graph_dict['canv'].Update()    
+            
   
+    def _getContours(self, graph,levels=[0.68,0.95]):
+        #http://root.cern.ch/root/html534/tutorials/hist/ContourList.C.html
+        #check the implementation of cotours
+      
+        pass
    
-   
-    def _setup_graph(self, graph_dict, dims=1):
-        assert dims==1, 'Currently we have only one POI axis supported.Sorry :('
+    def _setup_graph(self, graph_dict, dims=1, name='Graph'):
+        #assert dims==1, 'Currently we have only one POI axis supported.Sorry :('
+        
         graph = graph_dict['graph']
-        graph.SetNameTitle('Graph','')
+        graph.SetNameTitle(name,'')
+        
         
         title_X = graph_dict['axis_nice_names'].split(':')[0].strip()
         title_Y = graph_dict['axis_nice_names'].split(':')[1].strip()
-        self.log.debug('Plot: X title {0} : Y title {1}'.format(title_X,title_Y))
-        
         graph.GetXaxis().SetTitle(title_X)
         graph.GetYaxis().SetTitle(title_Y)
-        
-        if 'quantileExpected' in graph_dict['contour_axis']:
-            graph.GetYaxis().SetRangeUser(0,1)
-        elif 'deltaNLL' in graph_dict['contour_axis']:
-            graph.GetYaxis().SetRangeUser(0,5)
+        if dims==2:
+            title_Z = graph_dict['axis_nice_names'].split(':')[2].strip()
+            graph.GetZaxis().SetTitle(title_Z)
+            self.log.debug('Plot: X title {0} : Y title {1} : Z title {1}'.format(title_X,title_Y, title_Z))
+        else:
+            self.log.debug('Plot: X title {0} : Y title {1}'.format(title_X,title_Y))
+            
+
+        for axis_id, axis_range in enumerate(graph_dict['axis_ranges'].split(':')):
+            axis_range = eval(axis_range)
+            assert isinstance(axis_range,list) and (len(axis_range)==0 or len(axis_range)==2), 'Range of the axis has to be of the format: [],[a,b]'
+            self.log.debug('Axis {0} range: {1}'.format(axis_id,axis_range))
+                
+            if len(axis_range)>0:
+                if axis_id==0:  #X-axis
+                    graph.GetXaxis().SetRangeUser(axis_range[0],axis_range[1])
+                elif axis_id==1:  #Y-axis
+                    graph.GetYaxis().SetRangeUser(axis_range[0],axis_range[1])
+                elif axis_id==2:  #Z-axis
+                    graph.GetZaxis().SetRangeUser(axis_range[0],axis_range[1])
+            
+        #if 'quantileExpected' in graph_dict['contour_axis']:
+            #graph.GetYaxis().SetRangeUser(0,1)
+        #elif 'deltaNLL' in graph_dict['contour_axis']:
+            #graph.GetYaxis().SetRangeUser(0,5)
             #graph.GetYaxis().SetRangeUser(0,10)
         
         graph.SetMarkerSize(2.0)
@@ -248,11 +367,180 @@ class LikelihoodFitContourPlot(PlotPolisher,RootPlottersBase):
         graph.SetMarkerSize(.5)
         graph.SetLineWidth(3)
         
-
-
+    
+    
     def make_plot(self, file_name, POI,title='', graph_dict = None):
         if title:
             self.set_title(title)
+        
+        assert isinstance(POI, list) or isinstance(POI, str), "POI should be provided either as list of strings or as string with \";: \" as delimiters. "
+        if isinstance(POI, list):
+            POI = POI
+        elif isinstance(POI, str):
+            import re
+            POI = re.sub('[;:,]+',',',POI) #pois can be split by ";:*, " - we don't care
+            POI_list = POI.split(",")
+        
+        self.n_pois = len(POI_list)
+        assert 0 < self.n_pois < 3, 'Number of POIs provided shoud be between 1 and 3.'
+        self.log.debug('Number of POIs = {0}'.format(self.n_pois))
+        self.log.debug('POIs = {0}'.format(POI))
+        if self.n_pois==1:
+            self._make_plot_1D(file_name, POI,title, graph_dict)
+        elif self.n_pois==2:
+            self._make_plot_2D(file_name, POI,title, graph_dict)
+
+            
+            
+    def _make_plot_2D(self, file_name, POI_list,title='', graph_dict = None):
+        #http://root.cern.ch/root/html534/tutorials/hist/ContourList.C.html
+        #check the implementation of cotours
+        #import string
+        #POI_list = string.join(POI_list,',')
+        self.fit_results = FitResultReader(POI_list, [file_name], combine_method='MultiDimFit')
+        self.fit_results.set_files([file_name])
+        self.fit_results.set_POI(POI_list)
+        
+        
+        #self.limits_dict = {
+                            #POI_list[0] : self.fit_results.get_results_dict(POI_list[0], option='standard', rescale_expression=''),
+                            #POI_list[1] : self.fit_results.get_results_dict(POI_list[1], option='standard', rescale_expression='')
+                            #}
+        
+        #with open('{0}.limits'.format(file_name), 'w') as limits_file:
+            #for poi_id in sorted(self.limits_dict.keys()):
+                #for value_id in poi_id.keys():
+                    #limits_file.write('{0} : {1} : {2}\n'.format(poi_id, value_id, self.limits_dict[value_id]))
+                    
+            #self.log.info('Writing fit results into {0}'.format(limits_file.name))
+
+        if graph_dict:
+            graph = graph_dict
+        else:
+            graph = {'k2k1_ratio,k3k1_ratio' : {
+                                    #'{0}nll'.format(POI) : {'contour_axis':'{0}:2*deltaNLL'.format(POI),'axis_nice_names': '{0}:-2 #Delta ln L'.format(POI)},
+                                    'k2k1_ratio_VS_k3k1_ratio_VS_nll' : {'contour_axis':'k3k1_ratio:k2k1_ratio:2*deltaNLL',
+                                                                         'axis_nice_names': 'k_{3}/k_{1}:k_{2}/k_{1}:-2 #Delta ln L',
+                                                                         'axis_ranges' : '[]:[]:[0,12]'
+                                                                         },
+                                    #'k2k1_ratio_VS_k3k1_ratio_VS_qe'  : {'contour_axis':'k3k1_ratio:k2k1_ratio:1-quantileExpected',
+                                                                         #'axis_nice_names': 'k_{3}/k_{1}:k_{2}/k_{1}:CL_{s+b}',
+                                                                         #'axis_ranges' : '[]:[]:[0,1]'
+                                                                         #},
+                                    #'fa2_VS_fa3_VS_nll'               : {'contour_axis':'(0.040*TMath.Sign(1,k3k1_ratio)*TMath.Power(k3k1_ratio,2)/(1+0.040*TMath.Power(k3k1_ratio,2))):\
+                                                                                         #(-1*0.090*TMath.Sign(1,k2k1_ratio)*TMath.Power(k2k1_ratio,2)/(1+0.090*TMath.Power(k2k1_ratio,2))):\
+                                                                                         #:2*deltaNLL',
+                                                                         #'axis_nice_names': 'f_{a2}:f_{a3}:-2 #Delta ln L',
+                                                                         #'axis_ranges' : '[-1,1]:[-1,1]:[0,12]'
+                                                                         #},
+                                    },
+                     'k2k1_ratio,r' : {
+                                    #'{0}nll'.format(POI) : {'contour_axis':'{0}:2*deltaNLL'.format(POI),'axis_nice_names': '{0}:-2 #Delta ln L'.format(POI)},
+                                    'k2k1_ratio_VS_r_VS_nll'          : {'contour_axis':'k2k1_ratio:r:2*deltaNLL',
+                                                                         'axis_nice_names': 'k_{2}/k_{1}:#mu:-2 #Delta ln L',
+                                                                         'axis_ranges' : '[]:[0,4]:[0,12]'
+                                                                         },
+                                    'k2k1_ratio_VS_r_VS_qe'           : {'contour_axis':'k2k1_ratio:r:1-quantileExpected',
+                                                                         'axis_nice_names': 'k_{2}/k_{1}:#mu:CL_{s+b}',
+                                                                         'axis_ranges' : '[]:[0,4]:[0,1]'
+                                                                         },
+                                    'fa2_VS_r_VS_nll'                 : {'contour_axis':'(-1*0.090*TMath.Sign(1,k2k1_ratio)*TMath.Power(k2k1_ratio,2)/(1+0.090*TMath.Power(k2k1_ratio,2))):\
+                                                                                         r:2*deltaNLL',
+                                                                         'axis_nice_names': 'f_{a2}:#mu:-2 #Delta ln L',
+                                                                         'axis_ranges' : '[-1,1]:[0,4]:[0,12]'
+                                                                         },
+                                    },
+                     'k2k1_ratio,r' : {
+                                    #'{0}nll'.format(POI) : {'contour_axis':'{0}:2*deltaNLL'.format(POI),'axis_nice_names': '{0}:-2 #Delta ln L'.format(POI)},
+                                    'k3k1_ratio_VS_r_VS_nll'          : {'contour_axis':'k3k1_ratio:r:2*deltaNLL',
+                                                                         'axis_nice_names': 'k_{3}/k_{1}:#mu:-2 #Delta ln L',
+                                                                         'axis_ranges' : '[]:[0,4]:[0,12]'
+                                                                         },
+                                    'k3k1_ratio_VS_r_VS_qe'           : {'contour_axis':'k3k1_ratio:r:1-quantileExpected',
+                                                                         'axis_nice_names': 'k_{3}/k_{1}:#mu:CL_{s+b}',
+                                                                         'axis_ranges' : '[]:[0,4]:[0,1]'
+                                                                         },
+                                    'fa3_VS_r_VS_nll'                 : {'contour_axis':'(0.040*TMath.Sign(1,k3k1_ratio)*TMath.Power(k3k1_ratio,2)/(1+0.040*TMath.Power(k3k1_ratio,2))):\
+                                                                                         r:2*deltaNLL',
+                                                                         'axis_nice_names': 'f_{a3}:#mu:-2 #Delta ln L',
+                                                                         'axis_ranges' : '[-1,1]:[0,4]:[0,12]'
+                                                                         },
+                                    },                                    
+                                    
+                                    
+                    }
+                    
+        import pprint
+        pp = pprint.PrettyPrinter(indent=4)
+
+        import copy
+        for g in graph[POI_list].keys():
+            the_graph = graph[POI_list][g]
+            the_X = the_graph['contour_axis'].split(':')[0].strip()
+            the_Y = the_graph['contour_axis'].split(':')[1].strip()
+
+            do_invert_X = False
+            do_invert_Y = False
+            if g=='fa2_VS_fa3_VS_nll':  #to get the intervals right because of negative sign
+                do_invert_X=True
+                
+            add_info_dict = {
+                             'canv'             : TCanvas("canv_{0}".format(g),"Plot {0}".format(g),1000,800),
+                             'graph'            : self.fit_results.get_graph(the_graph['contour_axis']),
+                             #'fit_results'      : copy.deepcopy({
+                                                                #POI_list[0] : self.fit_results.get_results_dict(POI_list[0], option='standard', rescale_expression = the_X, invert_LL_UL=do_invert_X),
+                                                                #POI_list[1] : self.fit_results.get_results_dict(POI_list[1], option='standard', rescale_expression = the_Y, invert_LL_UL=do_invert_Y)
+                                                                #})
+                            }
+            
+            the_graph.update(add_info_dict)
+            pp.pprint(the_graph)
+            #dump to file
+            #with open('{0}.{1}.limits'.format(file_name,g), 'w') as limits_file:
+                #limits_file.write('POI : LIMIT ID : VALUE\n')
+                #for poi_id in sorted(the_graph['fit_results'].keys()):
+                    #for value_id in poi_id.keys():
+                        #limits_file.write('{0} : {1} : {2}\n'.format(poi_id, value_id, self.limits_dict[value_id]))
+                #self.log.info('Writing fit results into {0}'.format(limits_file.name))
+
+            self._setup_graph(the_graph, dims=2, name=g)
+            the_graph['canv'].cd()
+            gPad.SetRightMargin(0.2)
+            #self.limit_contours_2D = self.fit_results.contours(the_graph['contour_axis'], levels=[0.68,0.95])
+            
+            the_graph['graph'].Draw("COLZ")
+            contours = self.fit_results.get_contours(the_graph['contour_axis'],limits=['2.30','5.99'])
+            the_graph['canv'].cd()
+            
+            for tgraph in contours['5.99']:
+                tgraph.SetLineWidth(2)
+                #tgraph.SetFillStyle(kSolid)
+                tgraph.SetLineColor(kBlack)
+                tgraph.Draw("Csame")
+            for tgraph in contours['2.30']:
+                tgraph.SetLineWidth(2)
+                tgraph.SetLineColor(kBlack)
+                tgraph.SetLineStyle(kDashed)
+                tgraph.Draw("Csame")
+            the_graph['canv'].Update()  
+            
+            
+
+            #self.putBrasilianFlagsOnPlot(the_graph)
+            #self.putInformationOnPlot(the_graph)
+            #self.putBestFitArrowOnPlot(the_graph)
+            #self.putBestFitCrossOnPlot(the_graph)
+            gPad.RedrawAxis()
+            #saving plot
+            plot_name = '{0}.{1}'.format(file_name, g)
+            self.save_extensions = ['png','gif', 'root']
+            self.save(the_graph['canv'], plot_name, self.save_extensions)
+
+             
+        
+        
+        
+    def _make_plot_1D(self, file_name, POI,title='', graph_dict = None):
         
         self.fit_results = FitResultReader(POI, [file_name], combine_method='MultiDimFit')
         self.fit_results.set_files([file_name])
@@ -260,7 +548,7 @@ class LikelihoodFitContourPlot(PlotPolisher,RootPlottersBase):
         self.limits_dict = self.fit_results.get_results_dict(POI, option='standard', rescale_expression='')
         
         with open('{0}.limits'.format(file_name), 'w') as limits_file:
-             for value_id in self.limits_dict.keys():
+             for value_id in sorted(self.limits_dict.keys()):
                  limits_file.write('{0} : {1}\n'.format(value_id, self.limits_dict[value_id]))
              self.log.info('Writing fit results into {0}'.format(limits_file.name))
 
@@ -269,20 +557,46 @@ class LikelihoodFitContourPlot(PlotPolisher,RootPlottersBase):
         else:
             graph = {'k2k1_ratio' : {
                                     #'{0}nll'.format(POI) : {'contour_axis':'{0}:2*deltaNLL'.format(POI),'axis_nice_names': '{0}:-2 #Delta ln L'.format(POI)},
-                                    'k2k1_ratio_VS_nll' : {'contour_axis':'k2k1_ratio:2*deltaNLL',
-                                                        'axis_nice_names': 'k_{2}/k_{1}:-2 #Delta ln L' },
-                                    'k2k1_ratio_VS_qe'  : {'contour_axis':'k2k1_ratio:1-quantileExpected',
-                                                        'axis_nice_names': 'k_{2}/k_{1}:CL_{s}' },
-                                    'fa2_VS_nll'        : {'contour_axis':'(-1*0.090*TMath.Sign(1,k2k1_ratio)*TMath.Power(k2k1_ratio,2)/(1+0.090*TMath.Power(k2k1_ratio,2))):2*deltaNLL',
+                                    'k2k1_ratio_VS_nll' : {'contour_axis'   :'k2k1_ratio:2*deltaNLL',
+                                                           'axis_nice_names': 'k_{2}/k_{1}:-2 #Delta ln L',
+                                                           'axis_ranges'    : '[]:[0,12]'
+                                                           },
+                                    'k2k1_ratio_VS_qe'  : {'contour_axis'   :'k2k1_ratio:quantileExpected',
+                                                           'axis_nice_names': 'k_{2}/k_{1}:CL_{s+b}',
+                                                           'axis_ranges'    : '[]:[0,1]'
+                                                        },
+                                    'fa2_VS_nll'        : {'contour_axis'   :'(-1*0.090*TMath.Sign(1,k2k1_ratio)*TMath.Power(k2k1_ratio,2)/(1+0.090*TMath.Power(k2k1_ratio,2))):2*deltaNLL',
                                                         #'contour_axis':'(0.090*TMath.Sign(1,k2k1_ratio)*TMath.Power(k2k1_ratio,2)/(1+0.090*TMath.Power(k2k1_ratio,2)+2*-0.291*k2k1_ratio)):2*deltaNLL',
-                                                        'axis_nice_names': 'f_{a2} : -2 #Delta ln L'},
+                                                           'axis_nice_names': 'f_{a2} : -2 #Delta ln L',
+                                                           'axis_ranges'    : '[-1,1]:[0,12]'
+                                                        },
                                     },
                     'k3k1_ratio'  : {
-                                    'k3k1_ratio_VS_nll': {'contour_axis':'k3k1_ratio:2*deltaNLL',
-                                                            'axis_nice_names': 'k_{3}/k_{1}:-2 #Delta ln L' },
-                                    'fa3_VS_nll'       : {'contour_axis':'(0.040*TMath.Sign(1,k3k1_ratio)*TMath.Power(k3k1_ratio,2)/(1+0.040*TMath.Power(k3k1_ratio,2))):2*deltaNLL',
-                                                            'axis_nice_names': 'f_{a3} : -2 #Delta ln L'},
-                                    }
+                                    'k3k1_ratio_VS_nll': {'contour_axis'    :'k3k1_ratio:2*deltaNLL',
+                                                          'axis_nice_names' : 'k_{3}/k_{1}:-2 #Delta ln L',
+                                                          'axis_ranges'     : '[]:[0,12]'
+                                                            },
+                                    'k3k1_ratio_VS_qe'  : {'contour_axis'   :'k3k1_ratio:quantileExpected',
+                                                           'axis_nice_names': 'k_{3}/k_{1}:CL_{s+b}',
+                                                           'axis_ranges'    : '[]:[0,1]'
+                                                        },
+                                    'fa3_VS_nll'        : {'contour_axis'    :'(0.040*TMath.Sign(1,k3k1_ratio)*TMath.Power(k3k1_ratio,2)/(1+0.040*TMath.Power(k3k1_ratio,2))):2*deltaNLL',
+                                                          'axis_nice_names' : 'f_{a3} : -2 #Delta ln L',
+                                                          'axis_ranges'     : '[-1,1]:[0,12]'
+                                                            },
+                                    },
+                                    
+                    'r'           : {
+                                    'r_VS_nll'          : {'contour_axis'    :'r:2*deltaNLL',
+                                                          'axis_nice_names' : '#mu:-2 #Delta ln L',
+                                                          'axis_ranges'     : '[0,4]:[0,12]'
+                                                            },
+                                    'k2k1_ratio_VS_qe'  : {'contour_axis'   :'r:quantileExpected',
+                                                           'axis_nice_names': '#mu:CL_{s+b}',
+                                                           'axis_ranges'    : '[0,4]:[0,1]'
+                                                        },
+                                    },                
+                                    
                                          
                     }
                     
@@ -295,7 +609,7 @@ class LikelihoodFitContourPlot(PlotPolisher,RootPlottersBase):
             the_X = the_graph['contour_axis'].split(':')[0].strip()
 
             do_invert = False
-            if g=='fa2_VS_nll':
+            if g=='fa2_VS_nll':  #to get the intervals right because of negative sign
                 do_invert=True
             add_info_dict = {
                              'canv'             : TCanvas("canv_{0}".format(g),"Plot {0}".format(g),600,600),
@@ -307,7 +621,7 @@ class LikelihoodFitContourPlot(PlotPolisher,RootPlottersBase):
             pp.pprint(the_graph)
             #dump to file
             with open('{0}.{1}.limits'.format(file_name,g), 'w') as limits_file:
-                for value_id in the_graph['fit_results'].keys():
+                for value_id in sorted(the_graph['fit_results'].keys()):
                     limits_file.write('{0} : {1}\n'.format(value_id, the_graph['fit_results'][value_id]))
                 self.log.info('Writing fit results into {0}'.format(limits_file.name))
 
@@ -317,6 +631,7 @@ class LikelihoodFitContourPlot(PlotPolisher,RootPlottersBase):
             the_graph['graph'].Draw("AL")
             self.putBrasilianFlagsOnPlot(the_graph)
             self.putLimitLinesOnPlot(the_graph)
+            self.putBestFitArrowOnPlot(the_graph)
             self.putInformationOnPlot(the_graph)
             gPad.RedrawAxis()
             #saving plot
@@ -366,7 +681,7 @@ class FitResultReader(object):
         self.global_best_fit_dict= {}  #contains one best fit per input file
         self.ll_values_dict = {}
         self.ul_values_dict = {}
-        self.contours = None
+        self.contours = {}
         self.contour_graph= {}
         self._has_parsed_combine_result_already = False
         self.set_POI(POIs)
@@ -382,7 +697,7 @@ class FitResultReader(object):
             self.POI = POIs
         elif isinstance(POIs, str):
             import re
-            POIs = re.sub('[;: ]+',':',POIs) #pois can be split by ";:*, " - we don't care
+            POIs = re.sub('[;:, ]+',':',POIs) #pois can be split by ";:*, " - we don't care
             self.POI = POIs.split(":")
         
         for poi in self.POI:
@@ -440,17 +755,20 @@ class FitResultReader(object):
             assert 1<dims<=3, "We can accept 2 to 3 axis for the graph. You provided {0}.Please behave :)".format(dims)
             assert ('deltaNLL' in contour_axis_list[-1] or 'quantileExpected' in contour_axis_list[-1]), 'Your last axis has to contain either deltaNLL or quantileExpected.'
             import copy
-            required_branches = copy.deepcopy(contour_axis_list)
+            #required_branches = copy.deepcopy(contour_axis_list)
+            required_branches = []
             #Solve to accept even a formula as the axis.
             if 'deltaNLL' in contour_axis_list[-1]:
                 #self.log.debug('deltaNLL in contour_axis_list: {0}'.format(contour_axis_list[-1]) )
                 contour_axis_list[-1] = str(contour_axis_list[-1]).replace('deltaNLL','t.deltaNLL')
-                required_branches[-1] = 'deltaNLL'
+                #required_branches[-1] = 'deltaNLL'
+                required_branches.append('deltaNLL')
                 #self.log.debug('deltaNLL is an estimator: {0}'.format(contour_axis_list[-1]) )
                 
             elif 'quantileExpected' in contour_axis_list[-1]:
                 contour_axis_list[-1] = contour_axis_list[-1].replace('quantileExpected', 't.quantileExpected')
-                required_branches[-1] = 'quantileExpected'
+                #required_branches[-1] = 'quantileExpected'
+                required_branches.append('quantileExpected')
                 #self.log.debug('quantileExpected is an estimator: {0}'.format(contour_axis_list[-1]) )
                 
             self.log.debug('Changing names of pois for evaluation of formula later: N_poi = {0} N_axis= {1}'.format(len(self.POI),len(contour_axis_list[:-1])))
@@ -458,7 +776,8 @@ class FitResultReader(object):
                 for axis_id in range(len(contour_axis_list[:-1])):
                     self.log.debug('Changing names of pois for evaluation of formula later: poi_id = {0} axis_id = {1}'.format(poi_id, axis_id))
                     contour_axis_list[axis_id] = contour_axis_list[axis_id].replace(self.POI[poi_id],'t.{0}'.format(self.POI[poi_id]))
-                    required_branches[axis_id] = self.POI[poi_id]
+                    #required_branches[axis_id] = self.POI[poi_id]
+                    required_branches.append(self.POI[poi_id])
                     
             self.log.debug('Contour axis list changed for evaluation of formula to {0}'.format(contour_axis_list))
                     
@@ -467,6 +786,7 @@ class FitResultReader(object):
                 self.contour_graph[contour_axis] = TGraph()
             elif dims==3:
                 self.contour_graph[contour_axis] = TGraph2D()
+               
             self.contour_graph[contour_axis].SetNameTitle(contour_axis,contour_axis.replace(':',';') )
             
                        
@@ -477,15 +797,18 @@ class FitResultReader(object):
                 raise IOError, 'The file {0} either doesn\'t exist or cannot be open'.format(self.file_list[0])
             t = rootfile.Get('limit')
             
+            required_branches = list(set(required_branches))
             self.log.debug('Required branches are : {0}'.format(required_branches))
             for axis in range(dims):
                 assert t.GetListOfBranches().FindObject(required_branches[axis]), "The branch \"{0}\" doesn't exist.".format(required_branches[axis])
                 
             t.SetBranchStatus("*", False)    
-            for axis in range(dims):
-                t.SetBranchStatus(required_branches[axis], True)
+            #for axis in range(dims):
+                #t.SetBranchStatus(required_branches[axis], True)
+            for branch in required_branches:
+                t.SetBranchStatus(branch, True)
             
-            
+            x_y_z_list = []
             for en in range(1,t.GetEntriesFast()):
                 t.GetEntry(en)
                 if dims==2:
@@ -500,10 +823,21 @@ class FitResultReader(object):
                     X = eval(contour_axis_list[0])
                     Y = eval(contour_axis_list[1])
                     Z = eval(contour_axis_list[2])
+                    x_y_z_list.append((X,Y,Z))
                     if en%100 == 0:
                         #t.Show()
                         self.log.debug('Entry={3} X={0} Y={1} Z={2}'.format(X,Y,Z, en))
-                    self.contour_graph[contour_axis] = TGraph2D(en-1,X,Y,Z)
+                    self.contour_graph[contour_axis].SetPoint(en-1,X,Y,Z)
+            #if dims==3:
+                ##TGraph2D is too slow (Delunay triangulation) - we want to give back a TH2D
+                #th2d = self.contour_graph[contour_axis].GetHistogram("empty")
+                #self.log.debug("Copyng TGraph2D to TH2D EMPTY histo with nx = {0}, ny = {1}".format(th2d.GetXaxis().GetNbins(),th2d.GetYaxis().GetNbins() ))
+                #for point in x_y_z_list:
+                    #th2d.SetBinContent(th2d.GetXaxis().FindBin(point[0]),th2d.GetYaxis().FindBin(point[1]),point[2])
+                    ##self.log.debug('TH2D filled with value={0}. Current entries = {1}'.format(point, th2d.GetEntries()))
+                #import copy
+                #self.contour_graph[contour_axis] = copy.deepcopy(th2d)
+                #self.log.debug('TH2D given to contour {0} of type {1}'.format(self.contour_graph[contour_axis], type(self.contour_graph[contour_axis])))
                 
         return self.contour_graph[contour_axis]
         
@@ -618,15 +952,96 @@ class FitResultReader(object):
                     return_dict['UL95'],return_dict['LL95'] = return_dict['LL95'],return_dict['UL95']
             return return_dict
         else:
-            print 'The option {0} is still not implemented. Do you want to volonteer? :)'.format(option)
+            raise RuntimeError,'The option {0} is still not implemented. Do you want to volonteer? :)'.format(option)
             
             
         
-    def contours(self, cl = 0.68):
-        """Return list of TGraph contours with a given confidence level.
+    def get_contours(self, contour_axis, limits = None):
+        """Return dict of lists of TGraph contours with a given confidence level.
+           The keys are levels...
+           The code taken from http://root.cern.ch/root/html534/tutorials/hist/ContourList.C.html
         """
-        pass
-        return self.contours
+        self.log.debug('Extracting contours fo {0} at levels {1}'.format(contour_axis, limits))
+        
+        if limits==None: 
+            limits=['0.68','0.95']  #default limit values
+            
+        import re
+        contour_axis = re.sub('[;:]+',':',contour_axis) #can be split by ";: " - we don't care
+        n_missing=0
+        for limit in limits:
+            try:
+                #if the contours exist, we will return them imediatelly
+                self.contours[contour_axis][str(limit)]
+            #except KeyError:
+            except:
+                n_missing+=1
+                self.get_graph(contour_axis)
+                
+        if n_missing==0:
+            self.log.debug('Contour exist. Returning.')
+            return self.contours[contour_axis]
+        else:            
+            #initialize contours
+            self.contours[contour_axis]={}
+        #for level in limits:
+            #self.contours[str(level)]=[]
+        self.log.debug('Contours before extracting {0}'.format(self.contours))    
+            
+        graph_contours = self.contour_graph[contour_axis].Clone("graph_contours")
+        self.log.debug('Contour is of type {0}'.format(type(graph_contours)))    
+        #import array
+        contours = array('d',[float(lim) for lim in limits])
+
+        if isinstance(graph_contours,TH2D):
+            graph_contours.SetContour(len(contours), contours)
+            c = TCanvas("c","Contour List",0,0,600,600)
+            c.cd()
+            graph_contours.Draw("CONT Z LIST")
+            c.Update() #// Needed to force the plotting and retrieve the contours in TGraphs
+            conts = gROOT.GetListOfSpecials().FindObject("contours")
+            #// Get Contours
+            #conts = gROOT.GetListOfSpecials().FindObject("contours")
+            contLevel = None
+            curv      = None
+            TotalConts= 0
+
+            if (conts == None):
+                print "*** No Contours Were Extracted!\n"
+                TotalConts = 0
+                return
+            else: 
+                TotalConts = conts.GetSize()
+
+            print "TotalConts = %d\n" %(TotalConts)
+            #tgraph_list = {}
+            import copy
+            #self.contours[contour_axis]
+            for i in reversed(range(0,TotalConts)):
+                #last contour is the first in the contour array
+                contLevel = conts.At(i)
+                self.contours[contour_axis][str(limits[i])] = []
+                print "Contour %d has %d Graphs\n" %(i, contLevel.GetSize())
+                for j in range(0,contLevel.GetSize()):
+                    #tgraph_list.append(copy.deepcopy(contLevel.At(j)))
+                    self.contours[contour_axis][str(limits[i])].append(copy.deepcopy(contLevel.At(j)))
+                    
+        elif isinstance(graph_contours,TGraph2D):
+            # Create a struct
+            #import string
+            #limits_string = string.join(limits,',')
+            #gROOT.ProcessLine("Float_t MyContourLevels[] = {{{0}}}".format(string.join(limits,',')))
+            #from ROOT import MyContourLevels
+            #Create branches in the
+            for limit in limits:
+                conts = graph_contours.GetContourList(float(limit))
+                for j in range(0,conts.GetSize()):
+                    self.contours[contour_axis][str(limit)].append(copy.deepcopy(conts.At(j)))
+                    
+        self.log.debug('Contour for {0} is of type={1}.'.format(contour_axis,type(self.contours[contour_axis])))
+        
+        #we return dict with keys=limits and values=lists of TGraph objects
+        return self.contours[contour_axis]
         
     def set_combine_method(self,combine_method):
         """Set method in order to know how the limit trees look like. 
@@ -662,7 +1077,7 @@ class FitResultReader(object):
                 if not rootfile:
                     raise IOError, 'The file {0} either doesn\'t exist or cannot be open'.format(root_file_name)
                 t = rootfile.Get('limit')
-                assert t.GetListOfBranches().FindObject(poi), "The branch \"{0}\" doesn't exist.".format()
+                assert t.GetListOfBranches().FindObject(poi), "The branch \"{0}\" doesn't exist.".format(poi)
                 
                 #don't read uninteresting branches
                 t.SetBranchStatus("*", False)
@@ -707,6 +1122,14 @@ class FitResultReader(object):
                         t.GetEntry(en)
                         # set x=quantileExpected and y=POI and create segments
                         qe, poi_value, dNLL  = t.quantileExpected, eval('t.{0}'.format(poi)), t.deltaNLL
+                        #adding check of change of poi_value in case we have multidim fit. 
+                        #if the value is same as previous, we just skip.
+                        if en==1:
+                            poi_value_prev = poi_value
+                        if AreSame(poi_value,poi_value_prev):
+                            poi_value_prev = poi_value
+                            continue
+                        
                         
                         #check if trend is change, and then change the bool is_raising which will show which vector should be filled
                         if (en > 2):
