@@ -11,8 +11,9 @@ import pprint
 from array import array
 from lib.util.Logger import *
 from plotLimit import *
-
-
+import copy
+        
+        
 def parseOptions():
 
     usage = ('usage: %prog [options] \n'
@@ -52,23 +53,42 @@ class ChainProcessor(object):
         self.fs="2e2mu"
         self.lumi="19.79"
         self.lumi_zfill="19.79"
-        self.discriminant="D_{0-}(90^{o})"
         self.MY_CUR_WWW_SUBDIR=""
         self.append_name_base = run_data_name
         self.MY_CUR_WWW_SUBDIR = self.append_name_base
         self.mu_opt = 'muFloating'
         self.POIs = self.run_dict['POI']
         self.poi = self.run_dict['POI_setup']
-        self.termNames =  self.run_dict['termNames']
-        self.templatedir = self.run_dict['templatedir']
-        self.discriminant = self.run_dict['discriminant_name']
-        self.additional_options = self.run_dict['additional_options']
+        self.massWindow = '121,131'
+        self.termNames=''
+        self.templatedir=''
+        self.discriminant=''
+        self.additional_options=''
+        try:
+            self.termNames =  self.run_dict['termNames']
+        except KeyError:
+            self.log.info('Missing termNames in configuration. This is ok if you are running combination of 7 and 8 TeV.')
+        try:
+            self.massWindow =  self.run_dict['mass_window']
+        except KeyError:
+            self.log.info('Using default value for massWindow: {0}'.format(self.massWindow))
+        try:
+            self.templatedir = self.run_dict['templatedir']
+        except KeyError:
+            self.log.info('Missing templatedir in configuration. This is ok if you are running combination of 7 and 8 TeV.')
+        try:
+            self.discriminant = self.run_dict['discriminant_name']
+        except KeyError:
+            self.log.info('Missing discriminant_name in configuration. This is ok if you are running combination of 7 and 8 TeV.')
+        try:
+            self.additional_options = self.run_dict['additional_options']
+        except KeyError:
+            self.log.info('Missing additional_options in configuration. This is ok if you are running combination of 7 and 8 TeV.')
         try:
             self.analysis_inputs = self.run_dict['analysis_inputs']
         except KeyError:
             self.analysis_inputs = 'SM_inputs_8TeV_CJLST'
             self.log.info('Using 8 TeV analysis inputs from : {0}'.format(self.analysis_inputs))
-        
         try:
             self.combine_datacards = self.run_dict['combine_datacards']
         except KeyError:
@@ -78,7 +98,6 @@ class ChainProcessor(object):
         else:
             self.combination_7and8TeV = True
             self.log.info('Runing sequence for combining different datacard directories.')
-            
         try:
             self.systematic_opt = int(bool(self.run_dict['do_systematics']))
         except KeyError:
@@ -112,6 +131,7 @@ class ChainProcessor(object):
         def _set_POI_range(self,this_poi):
             """We use this function to set ranges to parameters because we set them lumi-dependant.
             """
+            return
             if this_poi=="k3k1_ratio":
                 theRange=""
                 if float(self.lumi) >  50: 
@@ -208,11 +228,11 @@ class ChainProcessor(object):
         if self.fs.lower() == "4l":
             self.fs_expanded = "4e,4#mu,2e2#mu"
             #self.fs_expanded = "4e,4#mu"
-        os.environ['PLOT_TAG'] = "Asimov data %(poi_name_value_plot)s | Discrim. %(discriminant)s | L=%(lumi)s fb^{-1} @ %(sqrts_plot)s TeV | Fin. state = %(fs_expanded)s" %self.__dict__
+        #os.environ['PLOT_TAG'] = "Asimov data %(poi_name_value_plot)s | Discrim. %(discriminant)s | L=%(lumi)s fb^{-1} @ %(sqrts_plot)s TeV | Fin. state = %(fs_expanded)s" %self.__dict__
         import string
         self.sqrts_dc_noTeV = string.replace(self.sqrts_dc,'TeV','')
         cmd = {}
-        cmd['createCards']  = "rm -r cards_%(append_name_base)s; python makeDCsandWSs.py -b -i %(analysis_inputs)s -a %(append_name_base)s -t %(templatedir)s --terms %(termNames)s %(additional_options)s" %self.__dict__
+        cmd['createCards']  = "rm -r cards_%(append_name_base)s; python makeDCsandWSs.py -b -i %(analysis_inputs)s -a %(append_name_base)s -t %(templatedir)s --terms %(termNames)s --massWindow %(massWindow)s %(additional_options)s" %self.__dict__
         cmd['combCards']    = "rm -rf hzz4l_4lS_%(sqrts_dc)s_ALT.txt; combineCards.py hzz4l_4muS_%(sqrts_dc)s_ALT.txt hzz4l_4eS_%(sqrts_dc)s_ALT.txt hzz4l_2e2muS_%(sqrts_dc)s_ALT.txt> hzz4l_4lS_%(sqrts_dc)s_ALT.txt" %self.__dict__
         #cmd['combCards']   = "rm -rf hzz4l_4lS_%(sqrts_dc)s_ALT.txt; combineCards.py hzz4l_4muS_%(sqrts_dc)s_ALT.txt hzz4l_4eS_%(sqrts_dc)s_ALT.txt > hzz4l_4lS_%(sqrts_dc)s_ALT.txt" %self.__dict__
         cmd['t2w']          = "text2workspace.py hzz4l_%(fs)sS_%(sqrts_dc)s_ALT.txt -m 126 -P %(poi_physics_model)s %(poi_ranges_string_t2w)s  --PO %(mu_opt)s -o combine.ws.%(fs)s.%(version)s.root" %self.__dict__
@@ -234,8 +254,8 @@ class ChainProcessor(object):
             #cmd['combCards']   = "rm -rf hzz4l_4lS_%(sqrts_dc)s_ALT.txt; combineCards.py hzz4l_4muS_%(sqrts_dc)s_ALT.txt hzz4l_4eS_%(sqrts_dc)s_ALT.txt > hzz4l_4lS_%(sqrts_dc)s_ALT.txt" %self.__dict__
             cmd['t2w']          = "text2workspace.py hzz4l_4lS_7and8TeV_ALT.txt -m 126 -P %(poi_physics_model)s %(poi_ranges_string_t2w)s  --PO %(mu_opt)s -o combine.ws.%(fs)s.%(version)s.root" %self.__dict__
             cmd['gen']          = "combine -M GenerateOnly combine.ws.%(fs)s.%(version)s.root -m 126 -t -1 --expectSignal=1 --saveToys --setPhysicsModelParameters %(poi_name_value)s -S %(systematic_opt)s" %self.__dict__
-            cmd['addasimov']    = "root -b -l -q %(create_cards_dir)s/addToyDataset.C\(\\\"combine.ws.%(fs)s.%(version)s.root\\\",\\\"higgsCombineTest.GenerateOnly.mH126.123456.root\\\",\\\"toy_asimov\\\",\\\"workspaceWithAsimov_%(poi_name_value_filename)s.root\\\"\)" %self.__dict__
-            cmd['fit']          = "combine -M MultiDimFit workspaceWithAsimov_%(poi_name_value_filename)s.root --algo=grid --points %(poi_n_points)s  -m 126 -n .asimov.%(fs)s.%(poi_name_value_filename)s -D toys/toy_asimov -S %(systematic_opt)s --setPhysicsModelParameterRanges %(poi_ranges_string_fit)s" %self.__dict__
+            cmd['addasimov']    = "root -b -l -q %(create_cards_dir)s/addToyDataset.C\(\\\"combine.ws.%(fs)s.%(version)s.root\\\",\\\"higgsCombineTest.GenerateOnly.mH126.123456.root\\\",\\\"toy_asimov\\\",\\\"workspaceWithAsimov_%(poi_name_value_filename)s_lumi_%(lumi)s.root\\\"\)" %self.__dict__
+            cmd['fit']          = "combine -M MultiDimFit workspaceWithAsimov_%(poi_name_value_filename)s_lumi_%(lumi)s.root --algo=grid --points %(poi_n_points)s  -m 126 -n .asimov.%(fs)s.%(poi_name_value_filename)s -D toys/toy_asimov -S %(systematic_opt)s --setPhysicsModelParameterRanges %(poi_ranges_string_fit)s" %self.__dict__
             cmd['plot']         = "root -l -b -q %(create_cards_dir)s/plotLimit.C\(\\\"higgsCombine.asimov.%(fs)s.%(poi_name_value_filename)s.MultiDimFit.mH126.root\\\",\\\"%(pois)s\\\",\\\"environ PLOT_TAG\\\" \)" %self.__dict__
             
       
@@ -258,7 +278,7 @@ class ChainProcessor(object):
             title = "Asimov data %(poi_name_value_plot)s | %(discriminant)s | L=%(lumi)s fb^{-1} @ %(sqrts_plot)s TeV | %(fs_expanded)s" %self.__dict__
             if self.combination_7and8TeV:
                 limits_file_name = "higgsCombine.asimov.%(fs)s.%(poi_name_value_filename)s.MultiDimFit.mH126.root" %self.__dict__
-                title = "Asimov data %(poi_name_value_plot)s | %(discriminant)s | 5.1 fb^{-1}@7TeV + 19.7 fb^{-1}@8TeV | %(fs_expanded)s" %self.__dict__
+                title = "Asimov data %(poi_name_value_plot)s | %(discriminant)s | 5.05 fb^{-1}@7TeV + 19.79 fb^{-1}@8TeV | %(fs_expanded)s" %self.__dict__
             
             graph_dict = None
             self.limits_dict={}
@@ -287,7 +307,8 @@ class ChainProcessor(object):
                     POI_list=[-10, -7, -5, -3, -2.8, -2.76, -2.7, -2.6, 0, 1, 1.04, 1.5, 1.71, 2, 3.6, 3.7, 4, 4.5, 5, 5.5, 7, 10, 15]
                 elif POI == 'k3k1_ratio':
                     #POI_list=[3.8, 3.9, 4, 4.2, 4.5]
-                    POI_list=[0, 3.4, 3.45, 3.5,3.55, 7.5,  7.6, 7.7]
+                    #POI_list=[0, 3.4, 3.45, 3.5,3.55, 7.5,  7.6, 7.7]
+                    POI_list=[0, 4.25, 9.64]
                     POI_list+=[-val for val in POI_list]
                 else: 
                     POI_list=[-10, -7, -5, -3, -2.8, -2.6, 15]
@@ -300,9 +321,11 @@ class ChainProcessor(object):
                     self.log.debug('F-C for {0} = {1}'.format(self.FC_POI_name,self.FC_POI_value))
                     self.poi_for_setting_value_with_value = self.poi_for_setting_value.format(POI_value)
                     self.nToysFC = 10000
-                    
+                    self.lumi_value = 'cmshzz4l_lumi_%(sqrts_dc_noTeV)s=%(lumi)s'
+                    if self.combination_7and8TeV:
+                        self.lumi_value = 'cmshzz4l_lumi_8=19.79,cmshzz4l_lumi_7=5.051'
                     self.result_file_name = ".rCLsplusb_f8i10t%(nToysFC)s_%(FC_POI_name)s_%(FC_POI_value)s" %self.__dict__
-                    cmd['feldman-cousins']="combine workspaceWithAsimov_%(poi_name_value_filename)s_lumi_%(lumi)s.root -M HybridNew --freq --testStat=PL --rule=CLsplusb --singlePoint %(poi_for_setting_value_with_value)s --setPhysicsModelParameters cmshzz4l_lumi_%(sqrts_dc_noTeV)s=%(lumi)s -m 126 -n %(result_file_name)s -D toys/toy_asimov --saveHybridResult --saveToys -T %(nToysFC)s  -i 10 -S 1 --fork 8" %self.__dict__
+                    cmd['feldman-cousins']="combine workspaceWithAsimov_%(poi_name_value_filename)s_lumi_%(lumi)s.root -M HybridNew --freq --testStat=PL --rule=CLsplusb --singlePoint %(poi_for_setting_value_with_value)s --setPhysicsModelParameters %(lumi_value)s -m 126 -n %(result_file_name)s -D toys/toy_asimov --saveHybridResult --saveToys -T %(nToysFC)s  -i 10 -S 1 --fork 8" %self.__dict__
                     
                     misc.processCmd(cmd['feldman-cousins'])
                     
@@ -355,7 +378,143 @@ class ChainProcessor(object):
     def get_poi_name_value_filename(self) : return self.poi_name_value_filename
     def get_run_data(self): return self.run_dict
     
+def run_singles(run_data_name, run_data,cmds='create'):  #run_entry will replace opt.run_data_name
+        
+   ############################
+    log = Logger().getLogger("run_singles", 10)
     
+    log.info('Running on datacards: {0}'.format(run_data_name))
+    log.info('Running commands: {0}'.format(cmds))
+    log.info('Running on setup:')
+    pp.pprint(run_data)
+    #quit()
+    chain_process = ChainProcessor(run_data_name, run_data)
+    #common_data = full_config["COMMON"]
+    #print "@@@@ THE COMMON DATA:"
+    #pp.pprint(common_data)
+    chain_process.set_sqrts_dc(str(run_data['sqrts_dc']))
+    chain_process.set_sqrts_plot(str(run_data['sqrts_plot']))
+    chain_process.set_do_copy_to_webdir(opt.do_copy_to_webdir)
+        
+    for poi in list(run_data['POI']):
+        if poi.lower()=='mu': continue
+        log.debug('Setting POI value for {0}'.format(poi))
+        chain_process.set_poi_value(str(poi), str(run_data[poi]))
+        
+    
+    lumi_list = run_data['lumi_list']
+  
+    this_dir = os.getcwd()
+    cards_dir = "cards_{0}/HCG/126".format(run_data_name)
+    #out_file_name_base = "{0}.{1}.asimov.k3k1.{2}".format(opt.run_data_name, run_data['final_state'],run_data['k3k1_ratio'])
+    out_file_name_base = "{0}.{1}.asimov.{2}".format(run_data_name, run_data['final_state'],chain_process.get_poi_name_value_filename())
+    if 'info' not in run_data.keys(): 
+        run_data['info']='Not available...'
+    log.info(run_data['info'])
+    info_name = out_file_name_base+".info"
+    tab_name = out_file_name_base+".tab"
+    log.debug("tab_name={0}".format(tab_name))
+    
+    import yaml
+    with open('data_config.yaml', 'w') as fdata:
+        fdata.write(yaml.dump(run_data, default_flow_style=False))
+        log.info('Writing used configuration to data_config.yaml')
+    
+    
+    if 'create' in cmds:
+        chain_process.process("createCards")
+            
+        try:
+            os.remove(info_name)
+        except OSError , exception:
+            if exception.errno != errno.EEXIST:
+                pass
+            
+        try:
+            os.remove(tab_name)
+        except OSError , exception:
+            if exception.errno != errno.EEXIST:
+                pass
+    os.chdir(cards_dir)        
+    log.debug("Current dir = {0}".format(os.getcwd()))
+    if 'comb' in cmds:
+        chain_process.process("combCards,t2w")
+    #if 't2w' in cmds:
+        #chain_process.process("t2w")
+    os.chdir(this_dir)
+    log.debug("Current dir = {0}".format(os.getcwd()))        
+    print "--------------------------------------------------------"
+    
+    with open(info_name, "w") as finfo:
+        finfo.write(run_data['info'])
+    
+    f = open(tab_name, "w")
+    #f.write(chain_process.get_table_row(col_names=1))
+    tab_dict = {}
+    for lumi in lumi_list:
+        chain_process.set_lumi(lumi, n_digits=4)
+        
+        os.chdir(cards_dir)
+        log.debug("Current dir = {0}".format(os.getcwd()))
+        if 'gen' in cmds:
+            chain_process.process("gen,addasimov")
+            #chain_process.process("addasimov")
+        #if 'addasimov' in cmds:
+            #chain_process.process("addasimov")
+        if 'fit' in cmds:
+            chain_process.process("fit")
+        if 'plot' in cmds:
+            chain_process.process("plot")
+        
+            #chain_process.process("plot")
+            #table_raw = chain_process.get_table_row()
+            tab_dict['{0}'.format(str(lumi).zfill(4))] = chain_process.get_limits_dict()
+            #tab_dict[int(lumi)] = chain_process.get_limits_dict()
+        if 'feldman-cousins' in cmds:
+            chain_process.process("feldman-cousins")
+            
+        os.chdir(this_dir)
+        log.debug("Current dir = {0}".format(os.getcwd()))        
+        #f.write(table_raw)
+        #print "%({lumi} %({bf} %({ul68} %({ul95} %({wf}" >> %(tab_name
+        shutil.copy("{0}/{1}".format(this_dir,tab_name),"{0}/{1}".format(cards_dir, tab_name))
+        
+    with open(tab_name, 'w') as f:
+        #f.write(yaml.dump(tab_dict, default_flow_style=False))
+        import json
+        json.dump(tab_dict,f,sort_keys=True,indent=4, separators=(',', ': '))
+        log.info('Writing lumi and limits to {0}'.format(tab_name))
+        print json.dumps(tab_dict, sort_keys=True,indent=4, separators=(',', ': '))
+        
+    #copy info, table and DC to webdir
+    shutil.copy("{0}/{1}".format(this_dir,info_name),"{0}/{1}".format(cards_dir, info_name))
+    #shutil.copy("{0}/data_config.yaml".format(this_dir,info_name),"{0}/data_config.yaml".format(cards_dir))
+    
+    
+    if opt.do_copy_to_webdir:
+        import lib.util.MiscTools as misc
+        webdir = chain_process.get_webdir()
+        misc.make_sure_path_exists(webdir)
+        shutil.copy("/afs/cern.ch/user/r/roko/www/html/index.php",webdir)
+        
+        file_list_for_moving = {
+            "{0}/{1}".format(this_dir,tab_name) : "{0}/{1}".format(webdir, "results.tab"),
+            "{0}/{1}".format(this_dir,info_name) : "{0}/{1}".format(webdir, "basic.info"),
+            #"{0}/data_config.yaml".format(this_dir) : "{0}/data_config.yaml".format(webdir)
+            }
+            
+        for file in file_list_for_moving.values():
+            if os.path.exists(file) and os.path.isfile(file): 
+                os.remove(file)
+        for file in file_list_for_moving.keys():
+            shutil.move(file,file_list_for_moving[file])
+        
+        if opt.datacard:
+            shutil.copy("{0}/hzz4l_4lS_{1}_ALT.txt".format(cards_dir,chain_process.get_sqrts_dc()),"{0}/{1}".format(webdir, "combine.card"))
+            shutil.copy("{0}/combine.ws.{1}.v1.root".format(cards_dir,chain_process.get_fs()),"{0}/{1}".format(webdir, "combine.ws.root"))
+            
+        ############################
+
 
 if __name__ == "__main__":
     """
@@ -379,147 +538,51 @@ if __name__ == "__main__":
     log = Logger().getLogger(__name__, 10)
 
     #read configuration
-    import lib.util.UniversalConfigParser as ucp
-    cfg_reader = ucp.UniversalConfigParser(cfg_type="YAML",file_list = opt.config_filename)
+    from  lib.util.UniversalConfigParser import UniversalConfigParser
+    cfg_reader = UniversalConfigParser(cfg_type="YAML",file_list = opt.config_filename)
     #cfg_reader.setLogLevel(10)
-    full_config = cfg_reader.get_dict()
-    run_data = full_config["COMMON"]
-    run_data.update(full_config[opt.run_data_name])
     pp = pprint.PrettyPrinter(indent=4)
+    full_config = cfg_reader.get_dict()
+    run_data = copy.deepcopy(full_config["COMMON"])
+    #run_data={}
+    #pp.pprint(run_data)
+    #print "___________________________________"
+    #pp.pprint(full_config[opt.run_data_name])
+    #print "___________________________________"
+    run_data.update(full_config[opt.run_data_name])
+    
+    
     #pp.pprint(full_config)
-        
+    #global pp    
     print "@@@@ THE RUN DATA: YAML -> DICT"
     pp.pprint(run_data)
     if opt.print_config_and_exit:
         quit()
 
-   ############################
-    chain_process = ChainProcessor(opt.run_data_name, run_data)
-    #common_data = full_config["COMMON"]
-    #print "@@@@ THE COMMON DATA:"
-    #pp.pprint(common_data)
-    chain_process.set_sqrts_dc(str(run_data['sqrts_dc']))
-    chain_process.set_sqrts_plot(str(run_data['sqrts_plot']))
-    chain_process.set_do_copy_to_webdir(opt.do_copy_to_webdir)
+    #TODO: make switch for the case of combination of 7 and 8 TeV.    
+    if 'combine_datacards' in run_data.keys():
+        #do loop on list of datacards to combine
+        #check if they have been created, allow the commands....
+        log.info('Creating datacards for 7 and 8 TeV combination: {0} ...'.format(opt.run_data_name))
+        log.info('Commands to run: {0}'.format(cmd_list))
+        if 'create' in cmd_list:
+            for run_entry in run_data['combine_datacards']:
+                log.info('Creating partial datacards for the combination: {0} ...'.format(run_entry))
+                run_entry_data = copy.deepcopy(full_config["COMMON"])
+                run_entry_data.update(full_config[run_entry])
+                process_commands = 'create,comb'
+                #pp.pprint(run_entry_data)
+                #pp.pprint(full_config[run_entry])
+                run_singles(run_entry, run_entry_data, process_commands)  #run_entry will replace opt.run_data_name
+                print 
+                print '\n\n\n','.... Finished ', process_commands,' for',run_entry,'....\n',100*'_','\n\n\n'
+        #now run the combination    
+        run_singles(opt.run_data_name, run_data,cmd_list)
+    else:
+        #run standard procedure for one datacard
+        log.info('Creating datacards for {0} ...'.format(opt.run_data_name))
+        run_singles(opt.run_data_name, run_data,cmd_list)
+        #pass
         
-    for poi in list(run_data['POI']):
-        if poi.lower()=='mu': continue
-        log.debug('Setting POI value for {0}'.format(poi))
-        chain_process.set_poi_value(str(poi), str(run_data[poi]))
-        
-    
-    lumi_list = run_data['lumi_list']
-  
-    this_dir = os.getcwd()
-    cards_dir = "cards_{0}/HCG/126".format(opt.run_data_name)
-    #out_file_name_base = "{0}.{1}.asimov.k3k1.{2}".format(opt.run_data_name, run_data['final_state'],run_data['k3k1_ratio'])
-    out_file_name_base = "{0}.{1}.asimov.{2}".format(opt.run_data_name, run_data['final_state'],chain_process.get_poi_name_value_filename())
-    if 'info' not in run_data.keys(): 
-        run_data['info']='Not available...'
-    log.info(run_data['info'])
-    info_name = out_file_name_base+".info"
-    tab_name = out_file_name_base+".tab"
-    log.debug("tab_name={0}".format(tab_name))
-    
-    import yaml
-    with open('data_config.yaml', 'w') as fdata:
-        fdata.write(yaml.dump(run_data, default_flow_style=False))
-        log.info('Writing used configuration to data_config.yaml')
-    
-    
-    if 'create' in cmd_list:
-        chain_process.process("createCards")
-            
-        try:
-            os.remove(info_name)
-        except OSError , exception:
-            if exception.errno != errno.EEXIST:
-                pass
-            
-        try:
-            os.remove(tab_name)
-        except OSError , exception:
-            if exception.errno != errno.EEXIST:
-                pass
-    os.chdir(cards_dir)        
-    log.debug("Current dir = {0}".format(os.getcwd()))
-    if 'comb' in cmd_list:
-        chain_process.process("combCards,t2w")
-    #if 't2w' in cmd_list:
-        #chain_process.process("t2w")
-    os.chdir(this_dir)
-    log.debug("Current dir = {0}".format(os.getcwd()))        
-    print "--------------------------------------------------------"
-    
-    with open(info_name, "w") as finfo:
-        finfo.write(run_data['info'])
-    
-    f = open(tab_name, "w")
-    #f.write(chain_process.get_table_row(col_names=1))
-    tab_dict = {}
-    for lumi in lumi_list:
-        chain_process.set_lumi(lumi, n_digits=4)
-        
-        os.chdir(cards_dir)
-        log.debug("Current dir = {0}".format(os.getcwd()))
-        if 'gen' in cmd_list:
-            chain_process.process("gen,addasimov")
-            #chain_process.process("addasimov")
-        #if 'addasimov' in cmd_list:
-            #chain_process.process("addasimov")
-        if 'fit' in cmd_list:
-            chain_process.process("fit")
-        if 'plot' in cmd_list:
-            chain_process.process("plot")
-        
-            #chain_process.process("plot")
-            #table_raw = chain_process.get_table_row()
-            tab_dict['{0}'.format(str(lumi).zfill(4))] = chain_process.get_limits_dict()
-            #tab_dict[int(lumi)] = chain_process.get_limits_dict()
-        if 'feldman-cousins' in cmd_list:
-            chain_process.process("feldman-cousins")
-            
-        os.chdir(this_dir)
-        log.debug("Current dir = {0}".format(os.getcwd()))        
-        #f.write(table_raw)
-        #print "%({lumi} %({bf} %({ul68} %({ul95} %({wf}" >> %(tab_name
-        shutil.copy("{0}/{1}".format(this_dir,tab_name),"{0}/{1}".format(cards_dir, tab_name))
-        
-    with open(tab_name, 'w') as f:
-        #f.write(yaml.dump(tab_dict, default_flow_style=False))
-        import json
-        json.dump(tab_dict,f,sort_keys=True,indent=4, separators=(',', ': '))
-        log.info('Writing lumi and limits to {0}'.format(tab_name))
-        print json.dumps(tab_dict, sort_keys=True,indent=4, separators=(',', ': '))
-        
-    #copy info, table and DC to webdir
-    shutil.copy("{0}/{1}".format(this_dir,info_name),"{0}/{1}".format(cards_dir, info_name))
-    shutil.copy("{0}/data_config.yaml".format(this_dir,info_name),"{0}/data_config.yaml".format(cards_dir))
-    
-    
-    if opt.do_copy_to_webdir:
-        import lib.util.MiscTools as misc
-        webdir = chain_process.get_webdir()
-        misc.make_sure_path_exists(webdir)
-        shutil.copy("/afs/cern.ch/user/r/roko/www/html/index.php",webdir)
-        
-        file_list_for_moving = {
-            "{0}/{1}".format(this_dir,tab_name) : "{0}/{1}".format(webdir, "results.tab"),
-            "{0}/{1}".format(this_dir,info_name) : "{0}/{1}".format(webdir, "basic.info"),
-            "{0}/data_config.yaml".format(this_dir) : "{0}/data_config.yaml".format(webdir)
-            }
-            
-        for file in file_list_for_moving.values():
-            if os.path.exists(file) and os.path.isfile(file): 
-                os.remove(file)
-        for file in file_list_for_moving.keys():
-            shutil.move(file,file_list_for_moving[file])
-        
-        if opt.datacard:
-            shutil.copy("{0}/hzz4l_4lS_{1}_ALT.txt".format(cards_dir,chain_process.get_sqrts_dc()),"{0}/{1}".format(webdir, "combine.card"))
-            shutil.copy("{0}/combine.ws.{1}.v1.root".format(cards_dir,chain_process.get_fs()),"{0}/{1}".format(webdir, "combine.ws.root"))
-            
-        ############################
-
-        
+    print "DONE."
         

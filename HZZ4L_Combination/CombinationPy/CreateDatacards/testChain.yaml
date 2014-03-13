@@ -39,7 +39,7 @@
 #   / /_   _| (_) || |  __/\ V /  
 #  /_/  |_|  \___/ |_|\___| \_/  
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
-2D.k3k1.0.IntOn.D0M.Dint13.8TeV.M4l121to131.RECO:
+2D.k3k1.0.IntOn.D0M.Dint13.8TeV.M4l121to131.RECO.SYS:
     termNames : ggH,gg0M,ggInt_13P,ggInt_13N
     templatedir : Sandbox/templates_compare2Pedja_v2/LF_RECO_8TeV/Templates2D_D0M_Dint13/refurbished
     discriminant_name : D_{0-}^{int(13)} 
@@ -47,6 +47,7 @@
     analysis_inputs : SM_inputs_8TeV_CJLST
     final_state : 4l
     sqrts_plot : 8   # the energy used only for plots, doesn't change anything in calculation
+    do_systematics: 1
     k3k1_ratio : 0
     POI: k3k1_ratio
     lumi_list : [19.79]
@@ -55,7 +56,7 @@
           - really the 2D templates are used
           
 
-2D.k3k1.0.IntOn.D0M.Dint13.7TeV.M4l121to131.RECO:
+2D.k3k1.0.IntOn.D0M.Dint13.7TeV.M4l121to131.RECO.SYS:
     termNames : ggH,gg0M,ggInt_13P,ggInt_13N
     templatedir : Sandbox/templates_compare2Pedja_v2/LF_RECO_8TeV/Templates2D_D0M_Dint13/refurbished
     discriminant_name : D_{0-}^{int(13)} 
@@ -64,6 +65,7 @@
     final_state : 4l
     sqrts_plot : 7   # the energy used only for plots, doesn't change anything in calculation
     sqrts_dc: 7TeV
+    do_systematics: 1
     k3k1_ratio : 0
     POI: k3k1_ratio
     lumi_list : [5.051]
@@ -73,19 +75,20 @@
           - really the 2D templates are used
           
           
-2D.k3k1.0.IntOn.D0M.Dint13.7and8TeVcombination.M4l121to131.RECO:
+2D.k3k1.0.IntOn.D0M.Dint13.7and8TeVcombination.M4l121to131.RECO.SYS:
     termNames : ggH,gg0M,ggInt_13P,ggInt_13N
     templatedir : DUMMY
     discriminant_name : D_{0-}^{int(13)} 
     additional_options : --user_option UniformBkg
     final_state : 4l
     sqrts_plot : "7 + 8"
+    do_systematics: 1
     combine_datacards: 
-                       - 2D.k3k1.0.IntOn.D0M.Dint13.7TeV.M4l121to131.RECO
-                       - 2D.k3k1.0.IntOn.D0M.Dint13.8TeV.M4l121to131.RECO
+                       - 2D.k3k1.0.IntOn.D0M.Dint13.7TeV.M4l121to131.RECO.SYS
+                       - 2D.k3k1.0.IntOn.D0M.Dint13.8TeV.M4l121to131.RECO.SYS
 #     k3k1_ratio : 0
-#     k3k1_ratio : 5.13
-    k3k1_ratio : -3.273
+    k3k1_ratio : 5.13
+#     k3k1_ratio : -3.273
     POI: k3k1_ratio
     info: |
           - used only for plotting pourposis not creating datacards
@@ -106,7 +109,7 @@
 #   / /_   _| (_) || |  __/\ V /  
 #  /_/  |_|  \___/ |_|\___| \_/  
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
-2D.k2k1.0.IntOn.D0Ph.Dint12.8TeV.M4l121to131.RECO:
+2D.k2k1.0.IntOn.D0Ph.Dint12.8TeV.M4l121to131.RECO.SYS:
     termNames : ggH,gg0Ph,ggInt_12N
     templatedir : Sandbox/templates_compare2Pedja_v2/LF_RECO_8TeV/Templates2D_D0Ph_Dint12/refurbished
     discriminant_name : D_{0-}^{int(12)} 
@@ -114,7 +117,9 @@
     analysis_inputs : SM_inputs_8TeV_CJLST
     final_state : 4l
     sqrts_plot : 8   # the energy used only for plots, doesn't change anything in calculation
+    do_systematics: 1
     k2k1_ratio : 0
+    
     POI: k2k1_ratio
     lumi_list : [19.79]
     info: |
@@ -122,7 +127,7 @@
           - really the 2D templates are used
           
 
-2D.k2k1.0.IntOn.D0Ph.Dint12.7TeV.M4l121to131.RECO:
+2D.k2k1.0.IntOn.D0Ph.Dint12.7TeV.M4l121to131.RECO.SYS:
     termNames : ggH,gg0Ph,ggInt_12N
     templatedir : Sandbox/templates_compare2Pedja_v2/LF_RECO_8TeV/Templates2D_D0Ph_Dint12/refurbished
     discriminant_name : D_{0-}^{int(12)} 
@@ -131,6 +136,7 @@
     final_state : 4l
     sqrts_plot : 7   # the energy used only for plots, doesn't change anything in calculation
     sqrts_dc: 7TeV
+    do_systematics: 1
     k2k1_ratio : 0
     POI: k2k1_ratio
     lumi_list : [5.051]
@@ -140,19 +146,20 @@
           - really the 2D templates are used
           
           
-2D.k2k1.0.IntOn.D0Ph.Dint12.7and8TeVcombination.M4l121to131.RECO:
+2D.k2k1.0.IntOn.D0Ph.Dint12.7and8TeVcombination.M4l121to131.RECO.SYS:
     termNames : ggH,gg0Ph,ggInt_12N
     templatedir : Sandbox/templates_compare2Pedja_v2/LF_RECO_8TeV/Templates2D_D0Ph_Dint12/refurbished
     discriminant_name : D_{0-}^{int(12)} 
     additional_options : --user_option UniformBkg
     final_state : 4l
     sqrts_plot : "7 + 8"
+    do_systematics: 1
     combine_datacards: 
-                       - 2D.k2k1.0.IntOn.D0Ph.Dint12.7TeV.M4l121to131.RECO
-                       - 2D.k2k1.0.IntOn.D0Ph.Dint12.8TeV.M4l121to131.RECO
-#     k2k1_ratio : 0
+                       - 2D.k2k1.0.IntOn.D0Ph.Dint12.7TeV.M4l121to131.RECO.SYS
+                       - 2D.k2k1.0.IntOn.D0Ph.Dint12.8TeV.M4l121to131.RECO.SYS
+    k2k1_ratio : 0
 #     k2k1_ratio : -3.333
-    k2k1_ratio : 2.1821
+#     k2k1_ratio : 2.1821
     POI: k2k1_ratio
     info: |
           - used only for plotting pourposis not creating datacards
@@ -255,9 +262,6 @@
           - 8 TeV datacards with only qqZZ background shape but yield is sum of all bkgs
 
           
-          
-          
-          
 2D.k3k1.0.PedjaIn.IntOn.D0Ph.Dint12.8TeV.M4l121to131.RECO.FactorsInWS.newTempl.newFactors.HN:
     termNames : ggH,gg0M,ggInt_13P,ggInt_13N
 #     termNames : ggH,gg0M
@@ -290,58 +294,518 @@
     k3k1_ratio : 0
     k2k1_ratio : 0
     POI: [k2k1_ratio,k3k1_ratio]
+    POI_setup: 
+        k2k1_ratio: {range: "-20,20", n_scan_points: 60, nice_name: "k_{2}/k_{1}", value: 0, range_vs_lumi : "not_implemented"} 
+        k3k1_ratio: {range: "-100,100", n_scan_points: 60,  nice_name: "k_{3}/k_{1}", value: 0, range_vs_lumi : "not_implemented"} 
+#     lumi_list : [19.7]
     info: |
           - 2D RECO Templates for scan on both k2k1_ratio and k3k1_ratio
           - 8 TeV datacards with only qqZZ background shape but yield is sum of all bkgs
-          
-2D.k2k1.TEST:
+          - rebinned templates2D to 40x40 bins
+          - factors in WS like RooRealVars for easier debugging     
+ 
+# # # # # # # # # # # # # # # # # # # # # # # # # # #
+#      _ _   _ _   _   ____                   
+#     | | | | | | | | / ___| _   _ _ __   ___ 
+#  _  | | |_| | | | | \___ \| | | | '_ \ / __|
+# | |_| |  _  | |_| |  ___) | |_| | | | | (__ 
+#  \___/|_| |_|\___/  |____/ \__, |_| |_|\___|
+#                            |___/            
+# # # # # # # # # # # # # # # # # # # # # # # # # # # 
+     
+2D.k2k1.0.IntOn.D0Ph.Dbkg.8TeV.M4l121to131.RECO:
     termNames : ggH,gg0Ph,ggInt_12N
-    templatedir : Sandbox/templates_compare2Pedja_v2/LF_RECO_8TeV/Templates2D_D0Ph_Dint12/refurbished
-    discriminant_name : D_{0-}^{int(12)} 
+    templatedir : Sandbox/templates_compare2Pedja_v3/LF_RECO_8TeV/Templates2D_D0Ph_Dbkg/refurbished
+    discriminant_name : D_{0Ph}^{bkg} 
     additional_options : --user_option UniformBkg
     analysis_inputs : SM_inputs_8TeV_CJLST
     final_state : 4l
     sqrts_plot : 8   # the energy used only for plots, doesn't change anything in calculation
     k2k1_ratio : 0
+    lumi_list : [19.79,25]
     POI: k2k1_ratio
     info: |
-            - really the 2D templates are used
+            - 2D templates are used, DPh+ VS Dbkg
             - recomputed gamma/lambda factors
             - rebinned templates2D to 40x40 bins
             - factors in WS like RooRealVars for easier debuging        
-            
-2D.k3k1.TEST:
+
+               
+2D.k3k1.0.IntOn.D0M.Dint13.8TeV.M4l106to141.RECO.SYS:
     termNames : ggH,gg0M,ggInt_13P,ggInt_13N
 #     termNames : ggH,gg0M
 #     templatedir : Sandbox/templates_compare2Pedja_v2/LF_RECO_8TeV/Templates2D_D0M_Dint13/unfolded 
-    templatedir : Sandbox/templates_compare2Pedja_v2/LF_RECO_8TeV/Templates2D_D0M_Dint13/refurbished 
-    discriminant_name : D_{0-}^{int(13)} 
+    templatedir : Sandbox/templates_compare2Pedja_v2/LF_RECO_8TeV/Templates2D_D0M_Dint13/refurbished
+    discriminant_name : D_{0-}^{bkg}
     additional_options : --user_option UniformBkg 
+    analysis_inputs : SM_inputs_8TeV_CJLST
     final_state : 4l 
     sqrts_plot : 8   # the energy used only for plots, doesn't change anything in calculation
     k3k1_ratio : 0
+    lumi_list : [19.79,25]
+#     mass_window: "106,141"
+    do_systematics: 1
     POI: k3k1_ratio
     info: |
-          - 2D RECO Templates
-          - 8 TeV datacards with only qqZZ background shape but yield is sum of all bkgs
+            - 2D templates are used, D0- VS Dbkg
+            - recomputed gamma/lambda factors
+            - rebinned templates2D to 40x40 bins
+            - factors in WS like RooRealVars for easier debuging        
 
-           
-2D.k2k1.k3k1.TEST:
-    termNames : ggH,gg0Ph,ggInt_12N,gg0M,ggInt_13P,ggInt_13N
-#     termNames : ggH,ggInt_12N,gg0M,ggInt_13P,ggInt_13N
-    templatedir : Sandbox/templates_compare2Pedja_v3/LF_RECO_8TeV/Templates2D_D0M_D0Ph/refurbished
-    discriminant_name : D_{0-}^{int(13)} 
+#7 TeV
+2D.k2k1.0.IntOn.D0Ph.Dbkg.7TeV.M4l121to131.RECO:
+    termNames : ggH,gg0Ph,ggInt_12N
+    templatedir : Sandbox/templates_compare2Pedja_v3/LF_RECO_7TeV/Templates2D_D0Ph_Dbkg/refurbished
+    discriminant_name : D_{0Ph}^{bkg} 
+    additional_options : --user_option UniformBkg
+    analysis_inputs : SM_inputs_7TeV
+    final_state : 4l
+    sqrts_plot : 7   # the energy used only for plots, doesn't change anything in calculation
+    sqrts_dc: 7TeV
+    k2k1_ratio : 0
+    lumi_list : [5.051]
+    POI: k2k1_ratio
+    info: |
+            - 2D templates are used, DPh+ VS Dbkg
+            - recomputed gamma/lambda factors
+            - rebinned templates2D to 40x40 bins
+            - factors in WS like RooRealVars for easier debuging        
+
+               
+2D.k3k1.0.IntOn.D0M.Dint13.7TeV.M4l106to141.RECO.SYS:
+    termNames : ggH,gg0M,ggInt_13P,ggInt_13N
+#     termNames : ggH,gg0M
+#     templatedir : Sandbox/templates_compare2Pedja_v2/LF_RECO_7TeV/Templates2D_D0M_Dint13/unfolded 
+    templatedir : Sandbox/templates_compare2Pedja_v2/LF_RECO_7TeV/Templates2D_D0M_Dint13/refurbished
+    discriminant_name : D_{0-}^{bkg}
+    additional_options : --user_option UniformBkg
+    analysis_inputs : SM_inputs_7TeV
+    final_state : 4l
+    sqrts_plot : 7   # the energy used only for plots, doesn't change anything in calculation
+    sqrts_dc: 7TeV
+    k3k1_ratio : 0
+    lumi_list : [5.051]
+    do_systematics: 1
+#     mass_window: "106,141"
+    POI: k3k1_ratio
+    info: |
+            - 2D templates are used, D0- VS Dbkg
+            - recomputed gamma/lambda factors
+            - rebinned templates2D to 40x40 bins
+            - factors in WS like RooRealVars for easier debuging        
+
+
+          
+2D.k2k1.0.IntOn.D0Ph.Dbkg.7and8TeVcombination.M4l121to131.RECO:
+#     termNames : ggH,gg0Ph,ggInt_12N
+#     templatedir : Sandbox/templates_compare2Pedja_v2/LF_RECO_8TeV/Templates2D_D0Ph_Dint12/refurbished
+#     discriminant_name : D_{0-}^{int(12)} 
+#     additional_options : --user_option UniformBkg
+    final_state : 4l
+    sqrts_plot : "7 + 8"
+    combine_datacards: 
+                       - 2D.k2k1.0.IntOn.D0Ph.Dbkg.7TeV.M4l121to131.RECO
+                       - 2D.k2k1.0.IntOn.D0Ph.Dbkg.8TeV.M4l121to131.RECO
+    k2k1_ratio : 0
+#     k2k1_ratio : -3.333
+#     k2k1_ratio : 2.1821
+    POI: k2k1_ratio
+    info: |
+          - used only for plotting pourposis not creating datacards
+          - used for the input into 7+8TeV combination
+          - really the 2D templates are used
+
+2D.k3k1.0.IntOn.D0M.Dint13.7and8TeVcombination.M4l106to141.RECO.SYS:
+    final_state : 4l
+    sqrts_plot : "7 + 8"
+    combine_datacards: 
+                       - 2D.k3k1.0.IntOn.D0M.Dint13.7TeV.M4l106to141.RECO.SYS
+                       - 2D.k3k1.0.IntOn.D0M.Dint13.8TeV.M4l106to141.RECO.SYS
+
+#     k3k1_ratio : 0
+    k3k1_ratio : -3.27
+#     k3k1_ratio : 5.13
+    POI: k3k1_ratio
+    do_systematics: 1
+#     mass_window: "106,141"
+    info: |
+          - used only for plotting pourposis not creating datacards
+          - used for the input into 7+8TeV combination
+          - really the 2D templates are used
+
+
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+####Bigger mass window
+####_____________________________________________________________________________
+    
+2D.k2k1.0.IntOn.D0Ph.Dbkg.8TeV.M4l106to141.RECO:
+    termNames : ggH,gg0Ph,ggInt_12N
+    templatedir : Sandbox/templates_compare2Pedja_v3/LF_RECO_8TeV/Templates2D_D0Ph_Dbkg/refurbished
+    discriminant_name : D_{0Ph}^{bkg} 
+    additional_options : --user_option UniformBkg
+    analysis_inputs : SM_inputs_8TeV_CJLST
+    mass_window: "106,141"
+    final_state : 4l
+    sqrts_plot : 8   # the energy used only for plots, doesn't change anything in calculation
+    k2k1_ratio : 0
+    lumi_list : [19.79,25]
+    POI: k2k1_ratio
+    info: |
+            - 2D templates are used, DPh+ VS Dbkg
+            - recomputed gamma/lambda factors
+            - rebinned templates2D to 40x40 bins
+            - factors in WS like RooRealVars for easier debuging        
+
+               
+2D.k3k1.0.IntOn.D0M.Dbkg.8TeV.M4l106to141.RECO:
+    termNames : ggH,gg0M,ggInt_13P,ggInt_13N
+#     termNames : ggH,gg0M
+#     templatedir : Sandbox/templates_compare2Pedja_v2/LF_RECO_8TeV/Templates2D_D0M_Dint13/unfolded 
+    templatedir : Sandbox/templates_compare2Pedja_v3/LF_RECO_8TeV/Templates2D_D0M_Dbkg/refurbished
+    discriminant_name : D_{0-}^{bkg}
     additional_options : --user_option UniformBkg 
+    analysis_inputs : SM_inputs_8TeV_CJLST
+    mass_window: "106,141"
     final_state : 4l 
     sqrts_plot : 8   # the energy used only for plots, doesn't change anything in calculation
     k3k1_ratio : 0
-    k2k1_ratio : 0
-    POI: [k2k1_ratio,k3k1_ratio]
+    lumi_list : [19.79,25]
+    POI: k3k1_ratio
     info: |
-          - 2D RECO Templates for scan on both k2k1_ratio and k3k1_ratio
-          - 8 TeV datacards with only qqZZ background shape but yield is sum of all bkgs
-             
+            - 2D templates are used, D0- VS Dbkg
+            - recomputed gamma/lambda factors
+            - rebinned templates2D to 40x40 bins
+            - factors in WS like RooRealVars for easier debuging        
+
+#7 TeV
+2D.k2k1.0.IntOn.D0Ph.Dbkg.7TeV.M4l106to141.RECO:
+    termNames : ggH,gg0Ph,ggInt_12N
+    templatedir : Sandbox/templates_compare2Pedja_v3/LF_RECO_7TeV/Templates2D_D0Ph_Dbkg/refurbished
+    discriminant_name : D_{0Ph}^{bkg} 
+    additional_options : --user_option UniformBkg
+    analysis_inputs : SM_inputs_7TeV
+    mass_window: "106,141"
+    do_systematics: 1
+    final_state : 4l
+    sqrts_plot : 7   # the energy used only for plots, doesn't change anything in calculation
+    sqrts_dc: 7TeV
+    k2k1_ratio : 0
+    lumi_list : [5.051]
+    POI: k2k1_ratio
+    info: |
+            - 2D templates are used, DPh+ VS Dbkg
+            - recomputed gamma/lambda factors
+            - rebinned templates2D to 40x40 bins
+            - factors in WS like RooRealVars for easier debuging        
+
+               
+2D.k3k1.0.IntOn.D0M.Dbkg.7TeV.M4l106to141.RECO:
+    termNames : ggH,gg0M,ggInt_13P,ggInt_13N
+#     termNames : ggH,gg0M
+#     templatedir : Sandbox/templates_compare2Pedja_v2/LF_RECO_7TeV/Templates2D_D0M_Dint13/unfolded 
+    templatedir : Sandbox/templates_compare2Pedja_v3/LF_RECO_7TeV/Templates2D_D0M_Dbkg/refurbished
+    discriminant_name : D_{0-}^{bkg}
+    additional_options : --user_option UniformBkg
+    analysis_inputs : SM_inputs_7TeV
+    mass_window: "106,141"
+    final_state : 4l
+    sqrts_plot : 7   # the energy used only for plots, doesn't change anything in calculation
+    sqrts_dc: 7TeV
+    k3k1_ratio : 0
+    lumi_list : [5.051]
+    POI: k3k1_ratio
+    info: |
+            - 2D templates are used, D0- VS Dbkg
+            - recomputed gamma/lambda factors
+            - rebinned templates2D to 40x40 bins
+            - factors in WS like RooRealVars for easier debuging        
+
+
           
+2D.k2k1.0.IntOn.D0Ph.Dbkg.7and8TeVcombination.M4l106to141.RECO:
+    final_state : 4l
+    sqrts_plot : "7 + 8"
+    combine_datacards: 
+                       - 2D.k2k1.0.IntOn.D0Ph.Dbkg.7TeV.M4l106to141.RECO
+                       - 2D.k2k1.0.IntOn.D0Ph.Dbkg.8TeV.M4l106to141.RECO
+    k2k1_ratio : 0
+#     k2k1_ratio : -3.333
+#     k2k1_ratio : 2.1821
+    POI: k2k1_ratio
+    info: |
+          - used only for plotting pourposis not creating datacards
+          - used for the input into 7+8TeV combination
+          - really the 2D templates are used
+
+
+          
+2D.k3k1.0.IntOn.D0M.Dbkg.7and8TeVcombination.M4l106to141.RECO:
+    final_state : 4l
+    sqrts_plot : "7 + 8"
+    combine_datacards: 
+                       - 2D.k3k1.0.IntOn.D0M.Dbkg.7TeV.M4l106to141.RECO
+                       - 2D.k3k1.0.IntOn.D0M.Dbkg.8TeV.M4l106to141.RECO
+#     k3k1_ratio : 0
+    k3k1_ratio : -3.333
+#     k3k1_ratio : 2.1821
+    POI: k3k1_ratio
+    info: |
+          - used only for plotting pourposis not creating datacards
+          - used for the input into 7+8TeV combination
+          - really the 2D templates are used
+
+#run with projected to Dbkg only
+  
+2D.k2k1.0.IntOn.Dbkg.8TeV.M4l106to141.RECO:
+    termNames : ggH,gg0Ph,ggInt_12N
+    templatedir : Sandbox/templates_compare2Pedja_v3/LF_RECO_8TeV/Templates2D_D0Ph_Dbkg/projectedY
+    discriminant_name : D_{0Ph}^{bkg} 
+    additional_options : --user_option UniformBkg
+    analysis_inputs : SM_inputs_8TeV_CJLST
+    mass_window: "106,141"
+    final_state : 4l
+    sqrts_plot : 8   # the energy used only for plots, doesn't change anything in calculation
+    k2k1_ratio : 0
+    lumi_list : [19.79,25]
+    POI: k2k1_ratio
+    info: |
+            - 2D templates are used, DPh+ VS Dbkg
+            - recomputed gamma/lambda factors
+            - rebinned templates2D to 40x40 bins
+            - factors in WS like RooRealVars for easier debuging        
+
+               
+2D.k3k1.0.IntOn.Dbkg.8TeV.M4l106to141.RECO:
+    termNames : ggH,gg0M,ggInt_13P,ggInt_13N
+#     termNames : ggH,gg0M
+#     templatedir : Sandbox/templates_compare2Pedja_v2/LF_RECO_8TeV/Templates2D_D0M_Dint13/unfolded 
+    templatedir : Sandbox/templates_compare2Pedja_v3/LF_RECO_8TeV/Templates2D_D0M_Dbkg/projectedY
+    discriminant_name : D_{0-}^{bkg}
+    additional_options : --user_option UniformBkg 
+    analysis_inputs : SM_inputs_8TeV_CJLST
+    mass_window: "106,141"
+    final_state : 4l 
+    sqrts_plot : 8   # the energy used only for plots, doesn't change anything in calculation
+    k3k1_ratio : 0
+    lumi_list : [19.79,25]
+    POI: k3k1_ratio
+    info: |
+            - 2D templates are used, D0- VS Dbkg
+            - recomputed gamma/lambda factors
+            - rebinned templates2D to 40x40 bins
+            - factors in WS like RooRealVars for easier debuging        
+
+#7 TeV
+2D.k2k1.0.IntOn.Dbkg.7TeV.M4l106to141.RECO:
+    termNames : ggH,gg0Ph,ggInt_12N
+    templatedir : Sandbox/templates_compare2Pedja_v3/LF_RECO_7TeV/Templates2D_D0Ph_Dbkg/projectedY
+    discriminant_name : D_{0Ph}^{bkg} 
+    additional_options : --user_option UniformBkg
+    analysis_inputs : SM_inputs_7TeV
+    mass_window: "106,141"
+    final_state : 4l
+    sqrts_plot : 7   # the energy used only for plots, doesn't change anything in calculation
+    sqrts_dc: 7TeV
+    k2k1_ratio : 0
+    lumi_list : [5.051]
+    POI: k2k1_ratio
+    info: |
+            - 2D templates are used, DPh+ VS Dbkg
+            - recomputed gamma/lambda factors
+            - rebinned templates2D to 40x40 bins
+            - factors in WS like RooRealVars for easier debuging        
+
+               
+2D.k3k1.0.IntOn.Dbkg.7TeV.M4l106to141.RECO:
+    termNames : ggH,gg0M,ggInt_13P,ggInt_13N
+#     termNames : ggH,gg0M
+#     templatedir : Sandbox/templates_compare2Pedja_v2/LF_RECO_7TeV/Templates2D_D0M_Dint13/unfolded 
+    templatedir : Sandbox/templates_compare2Pedja_v3/LF_RECO_7TeV/Templates2D_D0M_Dbkg/projectedY
+    discriminant_name : D_{0-}^{bkg}
+    additional_options : --user_option UniformBkg
+    analysis_inputs : SM_inputs_7TeV
+    mass_window: "106,141"
+    final_state : 4l
+    sqrts_plot : 7   # the energy used only for plots, doesn't change anything in calculation
+    sqrts_dc: 7TeV
+    k3k1_ratio : 0
+    lumi_list : [5.051]
+    POI: k3k1_ratio
+    info: |
+            - 2D templates are used, D0- VS Dbkg
+            - recomputed gamma/lambda factors
+            - rebinned templates2D to 40x40 bins
+            - factors in WS like RooRealVars for easier debuging        
+
+2D.k2k1.0.IntOn.Dbkg.7and8TeVcombination.M4l106to141.RECO:
+    final_state : 4l
+    sqrts_plot : "7 + 8"
+    combine_datacards: 
+                       - 2D.k2k1.0.IntOn.Dbkg.7TeV.M4l106to141.RECO
+                       - 2D.k2k1.0.IntOn.Dbkg.8TeV.M4l106to141.RECO
+    k2k1_ratio : 0
+#     k2k1_ratio : -3.333
+#     k2k1_ratio : 2.1821
+    POI: k2k1_ratio
+    info: |
+          - used only for plotting pourposis not creating datacards
+          - used for the input into 7+8TeV combination
+          - really the 2D templates are used
+
+2D.k3k1.0.IntOn.Dbkg.7and8TeVcombination.M4l106to141.RECO:
+    final_state : 4l
+    sqrts_plot : "7 + 8"
+    combine_datacards: 
+                       - 2D.k3k1.0.IntOn.Dbkg.7TeV.M4l106to141.RECO
+                       - 2D.k3k1.0.IntOn.Dbkg.8TeV.M4l106to141.RECO
+    k3k1_ratio : 0
+#     k3k1_ratio : -3.333
+#     k3k1_ratio : 2.1821
+    POI: k3k1_ratio
+    info: |
+          - used only for plotting pourposis not creating datacards
+          - used for the input into 7+8TeV combination
+          - really the 2D templates are used
+
+# # # With systematics
+####Bigger mass window
+    
+2D.k2k1.0.IntOn.D0Ph.Dbkg.8TeV.M4l106to141.RECO.SYS:
+    termNames : ggH,gg0Ph,ggInt_12N
+    templatedir : Sandbox/templates_compare2Pedja_v3/LF_RECO_8TeV/Templates2D_D0Ph_Dbkg/refurbished
+    discriminant_name : D_{0Ph}^{bkg} 
+    additional_options : --user_option UniformBkg
+    analysis_inputs : SM_inputs_8TeV_CJLST
+    mass_window: "106,141"
+    final_state : 4l
+    sqrts_plot : 8   # the energy used only for plots, doesn't change anything in calculation
+    k2k1_ratio : 0
+    lumi_list : [19.79,25]
+    do_systematics: 1
+    POI: k2k1_ratio
+    info: |
+            - 2D templates are used, DPh+ VS Dbkg
+            - recomputed gamma/lambda factors
+            - rebinned templates2D to 40x40 bins
+            - factors in WS like RooRealVars for easier debuging        
+
+               
+2D.k3k1.0.IntOn.D0M.Dbkg.8TeV.M4l106to141.RECO.SYS:
+    termNames : ggH,gg0M,ggInt_13P,ggInt_13N
+#     termNames : ggH,gg0M
+#     templatedir : Sandbox/templates_compare2Pedja_v2/LF_RECO_8TeV/Templates2D_D0M_Dint13/unfolded 
+    templatedir : Sandbox/templates_compare2Pedja_v3/LF_RECO_8TeV/Templates2D_D0M_Dbkg/refurbished
+    discriminant_name : D_{0-}^{bkg}
+    additional_options : --user_option UniformBkg 
+    analysis_inputs : SM_inputs_8TeV_CJLST
+    mass_window: "106,141"
+    final_state : 4l 
+    sqrts_plot : 8   # the energy used only for plots, doesn't change anything in calculation
+    k3k1_ratio : 0
+    lumi_list : [19.79,25]
+    do_systematics: 1
+    POI: k3k1_ratio
+    info: |
+            - 2D templates are used, D0- VS Dbkg
+            - recomputed gamma/lambda factors
+            - rebinned templates2D to 40x40 bins
+            - factors in WS like RooRealVars for easier debuging        
+
+#7 TeV
+2D.k2k1.0.IntOn.D0Ph.Dbkg.7TeV.M4l106to141.RECO.SYS:
+    termNames : ggH,gg0Ph,ggInt_12N
+    templatedir : Sandbox/templates_compare2Pedja_v3/LF_RECO_7TeV/Templates2D_D0Ph_Dbkg/refurbished
+    discriminant_name : D_{0Ph}^{bkg} 
+    additional_options : --user_option UniformBkg
+    analysis_inputs : SM_inputs_7TeV
+    mass_window: "106,141"
+    final_state : 4l
+    sqrts_plot : 7   # the energy used only for plots, doesn't change anything in calculation
+    sqrts_dc: 7TeV
+    k2k1_ratio : 0
+    lumi_list : [5.051]
+    do_systematics: 1
+    POI: k2k1_ratio
+    info: |
+            - 2D templates are used, DPh+ VS Dbkg
+            - recomputed gamma/lambda factors
+            - rebinned templates2D to 40x40 bins
+            - factors in WS like RooRealVars for easier debuging        
+
+               
+2D.k3k1.0.IntOn.D0M.Dbkg.7TeV.M4l106to141.RECO.SYS:
+    termNames : ggH,gg0M,ggInt_13P,ggInt_13N
+#     termNames : ggH,gg0M
+#     templatedir : Sandbox/templates_compare2Pedja_v2/LF_RECO_7TeV/Templates2D_D0M_Dint13/unfolded 
+    templatedir : Sandbox/templates_compare2Pedja_v3/LF_RECO_7TeV/Templates2D_D0M_Dbkg/refurbished
+    discriminant_name : D_{0-}^{bkg}
+    additional_options : --user_option UniformBkg
+    analysis_inputs : SM_inputs_7TeV
+    mass_window: "106,141"
+    final_state : 4l
+    sqrts_plot : 7   # the energy used only for plots, doesn't change anything in calculation
+    sqrts_dc: 7TeV
+    k3k1_ratio : 0
+    lumi_list : [5.051]
+    do_systematics: 1
+    POI: k3k1_ratio
+    info: |
+            - 2D templates are used, D0- VS Dbkg
+            - recomputed gamma/lambda factors
+            - rebinned templates2D to 40x40 bins
+            - factors in WS like RooRealVars for easier debuging        
+
+
+          
+2D.k2k1.0.IntOn.D0Ph.Dbkg.7and8TeVcombination.M4l106to141.RECO.SYS:
+    final_state : 4l
+    sqrts_plot : "7 + 8"
+    combine_datacards: 
+                       - 2D.k2k1.0.IntOn.D0Ph.Dbkg.7TeV.M4l106to141.RECO.SYS
+                       - 2D.k2k1.0.IntOn.D0Ph.Dbkg.8TeV.M4l106to141.RECO.SYS
+#     k2k1_ratio : 0
+#     k2k1_ratio : -3.333
+    k2k1_ratio : 2.1821
+    POI: k2k1_ratio
+    do_systematics: 1
+    info: |
+          - used only for plotting pourposis not creating datacards
+          - used for the input into 7+8TeV combination
+          - really the 2D templates are used
+          - normalization systematics included
+
+       
+2D.k3k1.0.IntOn.D0M.Dbkg.7and8TeVcombination.M4l106to141.RECO.SYS:
+    final_state : 4l
+    sqrts_plot : "7 + 8"
+    combine_datacards: 
+                       - 2D.k3k1.0.IntOn.D0M.Dbkg.7TeV.M4l106to141.RECO.SYS
+                       - 2D.k3k1.0.IntOn.D0M.Dbkg.8TeV.M4l106to141.RECO.SYS
+#     k3k1_ratio : 0
+#     k3k1_ratio : -3.27
+    k3k1_ratio : 5.13
+    POI: k3k1_ratio
+    do_systematics: 1
+    info: |
+          - used only for plotting pourposis not creating datacards
+          - used for the input into 7+8TeV combination
+          - really the 2D templates are used
+          - normalization systematics included
+
+   
+          
+        
+              
           
 # # # # # # # # # # # # # # # # # # # # # 
 #   ____ ___  __  __ __  __  ___  _   _ 
@@ -353,10 +817,11 @@
 COMMON:
     sqrts_dc : 8TeV   #the energy for DC
     sqrts_plot : 14   # the energy used only for plots, doesn't change anything in calculation
+    mass_window: "121,131"
     POI: [k3k1_ratio,k2k1_ratio]
     POI_setup: 
-        k2k1_ratio: {range: "-20,20", n_scan_points: 100, nice_name: "k_{2}/k_{1}", value: 0, range_vs_lumi : "not_implemented"} 
-        k3k1_ratio: {range: "-100,100", n_scan_points: 100,  nice_name: "k_{3}/k_{1}", value: 0, range_vs_lumi : "not_implemented"} 
+        k2k1_ratio: {range: "-50,50", n_scan_points: 1000, nice_name: "k_{2}/k_{1}", value: 0, range_vs_lumi : "not_implemented"} 
+        k3k1_ratio: {range: "-50,50", n_scan_points: 1000,  nice_name: "k_{3}/k_{1}", value: 0, range_vs_lumi : "not_implemented"} 
         
     k3k1_ratio : 0
     lumi_list : [25]
