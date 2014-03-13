@@ -354,6 +354,8 @@ class LikelihoodFitContourPlot(PlotPolisher,RootPlottersBase):
                 elif axis_id==1:  #Y-axis
                     graph.GetYaxis().SetRangeUser(axis_range[0],axis_range[1])
                 elif axis_id==2:  #Z-axis
+                    graph.SetMinimum(axis_range[0])
+                    graph.SetMaximum(axis_range[1])
                     graph.GetZaxis().SetRangeUser(axis_range[0],axis_range[1])
             
         #if 'quantileExpected' in graph_dict['contour_axis']:
@@ -421,17 +423,21 @@ class LikelihoodFitContourPlot(PlotPolisher,RootPlottersBase):
                                     #'{0}nll'.format(POI) : {'contour_axis':'{0}:2*deltaNLL'.format(POI),'axis_nice_names': '{0}:-2 #Delta ln L'.format(POI)},
                                     'k2k1_ratio_VS_k3k1_ratio_VS_nll' : {'contour_axis':'k3k1_ratio:k2k1_ratio:2*deltaNLL',
                                                                          'axis_nice_names': 'k_{3}/k_{1}:k_{2}/k_{1}:-2 #Delta ln L',
-                                                                         'axis_ranges' : '[]:[]:[0,12]'
+                                                                         'axis_ranges' : '[]:[]:[0,12]',
+                                                                         #'contour_levels':['2.30','5.99'],
+                                                                         'contour_levels':['1','3.84'],
                                                                          },
-                                    #'k2k1_ratio_VS_k3k1_ratio_VS_qe'  : {'contour_axis':'k3k1_ratio:k2k1_ratio:1-quantileExpected',
+                                    #'k2k1_ratio_VS_k3k1_ratio_VS_qe'  : {'contour_axis':'k3k1_ratio:k2k1_ratio:quantileExpected',
                                                                          #'axis_nice_names': 'k_{3}/k_{1}:k_{2}/k_{1}:CL_{s+b}',
-                                                                         #'axis_ranges' : '[]:[]:[0,1]'
+                                                                         #'axis_ranges' : '[]:[]:[0,1]',
+                                                                         #'contour_levels':['0.32','0.05'],
                                                                          #},
                                     #'fa2_VS_fa3_VS_nll'               : {'contour_axis':'(0.040*TMath.Sign(1,k3k1_ratio)*TMath.Power(k3k1_ratio,2)/(1+0.040*TMath.Power(k3k1_ratio,2))):\
                                                                                          #(-1*0.090*TMath.Sign(1,k2k1_ratio)*TMath.Power(k2k1_ratio,2)/(1+0.090*TMath.Power(k2k1_ratio,2))):\
-                                                                                         #:2*deltaNLL',
+                                                                                         #2*deltaNLL',
                                                                          #'axis_nice_names': 'f_{a2}:f_{a3}:-2 #Delta ln L',
-                                                                         #'axis_ranges' : '[-1,1]:[-1,1]:[0,12]'
+                                                                         #'axis_ranges' : '[-1,1]:[-1,1]:[0,12]',
+                                                                         #'contour_levels':['2.30','5.99'],
                                                                          #},
                                     },
                      'k2k1_ratio,r' : {
@@ -440,7 +446,7 @@ class LikelihoodFitContourPlot(PlotPolisher,RootPlottersBase):
                                                                          'axis_nice_names': 'k_{2}/k_{1}:#mu:-2 #Delta ln L',
                                                                          'axis_ranges' : '[]:[0,4]:[0,12]'
                                                                          },
-                                    'k2k1_ratio_VS_r_VS_qe'           : {'contour_axis':'k2k1_ratio:r:1-quantileExpected',
+                                    'k2k1_ratio_VS_r_VS_qe'           : {'contour_axis':'k2k1_ratio:r:quantileExpected',
                                                                          'axis_nice_names': 'k_{2}/k_{1}:#mu:CL_{s+b}',
                                                                          'axis_ranges' : '[]:[0,4]:[0,1]'
                                                                          },
@@ -456,7 +462,7 @@ class LikelihoodFitContourPlot(PlotPolisher,RootPlottersBase):
                                                                          'axis_nice_names': 'k_{3}/k_{1}:#mu:-2 #Delta ln L',
                                                                          'axis_ranges' : '[]:[0,4]:[0,12]'
                                                                          },
-                                    'k3k1_ratio_VS_r_VS_qe'           : {'contour_axis':'k3k1_ratio:r:1-quantileExpected',
+                                    'k3k1_ratio_VS_r_VS_qe'           : {'contour_axis':'k3k1_ratio:r:quantileExpected',
                                                                          'axis_nice_names': 'k_{3}/k_{1}:#mu:CL_{s+b}',
                                                                          'axis_ranges' : '[]:[0,4]:[0,1]'
                                                                          },
@@ -509,18 +515,21 @@ class LikelihoodFitContourPlot(PlotPolisher,RootPlottersBase):
             #self.limit_contours_2D = self.fit_results.contours(the_graph['contour_axis'], levels=[0.68,0.95])
             
             the_graph['graph'].Draw("COLZ")
-            contours = self.fit_results.get_contours(the_graph['contour_axis'],limits=['2.30','5.99'])
+            contours = self.fit_results.get_contours(the_graph['contour_axis'],the_graph['contour_levels'])
             the_graph['canv'].cd()
             
-            for tgraph in contours['5.99']:
-                tgraph.SetLineWidth(2)
-                #tgraph.SetFillStyle(kSolid)
-                tgraph.SetLineColor(kBlack)
-                tgraph.Draw("Csame")
-            for tgraph in contours['2.30']:
+            #68% level
+            for tgraph in contours[the_graph['contour_levels'][0]]:
                 tgraph.SetLineWidth(2)
                 tgraph.SetLineColor(kBlack)
                 tgraph.SetLineStyle(kDashed)
+                tgraph.Draw("Csame")
+                
+            #95%level
+            for tgraph in contours[the_graph['contour_levels'][1]]:
+                tgraph.SetLineWidth(2)
+                #tgraph.SetFillStyle(kSolid)
+                tgraph.SetLineColor(kBlack)
                 tgraph.Draw("Csame")
             the_graph['canv'].Update()  
             
@@ -561,6 +570,10 @@ class LikelihoodFitContourPlot(PlotPolisher,RootPlottersBase):
                                                            'axis_nice_names': 'k_{2}/k_{1}:-2 #Delta ln L',
                                                            'axis_ranges'    : '[]:[0,12]'
                                                            },
+                                    'a2a1_ratio_VS_nll': {'contour_axis'    :'-0.5*k2k1_ratio:2*deltaNLL',
+                                                          'axis_nice_names' : 'a_{2}/a_{1}:-2 #Delta ln L',
+                                                          'axis_ranges'     : '[]:[0,12]'
+                                                        },
                                     'k2k1_ratio_VS_qe'  : {'contour_axis'   :'k2k1_ratio:quantileExpected',
                                                            'axis_nice_names': 'k_{2}/k_{1}:CL_{s+b}',
                                                            'axis_ranges'    : '[]:[0,1]'
@@ -574,6 +587,10 @@ class LikelihoodFitContourPlot(PlotPolisher,RootPlottersBase):
                     'k3k1_ratio'  : {
                                     'k3k1_ratio_VS_nll': {'contour_axis'    :'k3k1_ratio:2*deltaNLL',
                                                           'axis_nice_names' : 'k_{3}/k_{1}:-2 #Delta ln L',
+                                                          'axis_ranges'     : '[]:[0,12]'
+                                                            },
+                                    'a3a1_ratio_VS_nll': {'contour_axis'    :'-0.5*k3k1_ratio:2*deltaNLL',
+                                                          'axis_nice_names' : 'a_{3}/a_{1}:-2 #Delta ln L',
                                                           'axis_ranges'     : '[]:[0,12]'
                                                             },
                                     'k3k1_ratio_VS_qe'  : {'contour_axis'   :'k3k1_ratio:quantileExpected',
@@ -609,7 +626,7 @@ class LikelihoodFitContourPlot(PlotPolisher,RootPlottersBase):
             the_X = the_graph['contour_axis'].split(':')[0].strip()
 
             do_invert = False
-            if g=='fa2_VS_nll':  #to get the intervals right because of negative sign
+            if g in ['fa2_VS_nll','a2a1_ratio_VS_nll','a3a1_ratio_VS_nll']:  #to get the intervals right because of negative sign
                 do_invert=True
             add_info_dict = {
                              'canv'             : TCanvas("canv_{0}".format(g),"Plot {0}".format(g),600,600),
@@ -631,7 +648,7 @@ class LikelihoodFitContourPlot(PlotPolisher,RootPlottersBase):
             the_graph['graph'].Draw("AL")
             self.putBrasilianFlagsOnPlot(the_graph)
             self.putLimitLinesOnPlot(the_graph)
-            self.putBestFitArrowOnPlot(the_graph)
+            #self.putBestFitArrowOnPlot(the_graph)
             self.putInformationOnPlot(the_graph)
             gPad.RedrawAxis()
             #saving plot
@@ -967,6 +984,7 @@ class FitResultReader(object):
             limits=['0.68','0.95']  #default limit values
             
         import re
+        import copy
         contour_axis = re.sub('[;:]+',':',contour_axis) #can be split by ";: " - we don't care
         n_missing=0
         for limit in limits:
@@ -993,7 +1011,8 @@ class FitResultReader(object):
         #import array
         contours = array('d',[float(lim) for lim in limits])
 
-        if isinstance(graph_contours,TH2D):
+        #if isinstance(graph_contours,plotLimit.TH2D):
+        if 'TH2D' in str(type(graph_contours)):
             graph_contours.SetContour(len(contours), contours)
             c = TCanvas("c","Contour List",0,0,600,600)
             c.cd()
@@ -1015,7 +1034,7 @@ class FitResultReader(object):
 
             print "TotalConts = %d\n" %(TotalConts)
             #tgraph_list = {}
-            import copy
+            
             #self.contours[contour_axis]
             for i in reversed(range(0,TotalConts)):
                 #last contour is the first in the contour array
@@ -1026,20 +1045,40 @@ class FitResultReader(object):
                     #tgraph_list.append(copy.deepcopy(contLevel.At(j)))
                     self.contours[contour_axis][str(limits[i])].append(copy.deepcopy(contLevel.At(j)))
                     
-        elif isinstance(graph_contours,TGraph2D):
-            # Create a struct
-            #import string
-            #limits_string = string.join(limits,',')
-            #gROOT.ProcessLine("Float_t MyContourLevels[] = {{{0}}}".format(string.join(limits,',')))
-            #from ROOT import MyContourLevels
-            #Create branches in the
-            for limit in limits:
+        #elif isinstance(graph_contours,plotLimit.TGraph2D):
+        #elif 'TGraph2D' in str(type(graph_contours)):
+            ## Create a struct
+            ##import string
+            ##limits_string = string.join(limits,',')
+            ##gROOT.ProcessLine("Float_t MyContourLevels[] = {{{0}}}".format(string.join(limits,',')))
+            ##from ROOT import MyContourLevels
+            ##Create branches in the
+            
+            #c = TCanvas("c_tgraph2D","Contour List",0,0,600,600)
+            #graph_contours.Draw("COLZ")
+            ###c.Update()  
+            #for limit in limits:
+                    #self.log.debug('Doing the contours for {0}'.format(limit))
+                    #conts = graph_contours.GetContourList(float(limit))
+                    #for j in range(0,conts.GetSize()):
+                        #self.log.debug('Adding contour: level={0} i={1} '.format(limit,j))
+                        #self.contours[contour_axis][str(limit)].append(copy.deepcopy(conts.At(j)))
+                  
+        c = TCanvas("c_tgraph2D","Contour List",0,0,600,600)
+        graph_contours.Draw("COLZ")
+        c.Update()  
+        for limit in limits:
+                
                 conts = graph_contours.GetContourList(float(limit))
+                self.log.debug('Doing the contours for {0}: #contours = {1}'.format(limit, conts.GetSize()))
+                self.contours[contour_axis][str(limit)] = []
                 for j in range(0,conts.GetSize()):
+                    self.log.debug('Adding contour: level={0} i={1} '.format(limit,j))
                     self.contours[contour_axis][str(limit)].append(copy.deepcopy(conts.At(j)))
-                    
-        self.log.debug('Contour for {0} is of type={1}.'.format(contour_axis,type(self.contours[contour_axis])))
         
+        
+        self.log.debug('Contour for {0} is of type={1}.'.format(contour_axis,type(self.contours[contour_axis])))
+        print self.contours[contour_axis]
         #we return dict with keys=limits and values=lists of TGraph objects
         return self.contours[contour_axis]
         
