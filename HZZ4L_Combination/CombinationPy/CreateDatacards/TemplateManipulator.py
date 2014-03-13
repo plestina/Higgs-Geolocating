@@ -138,11 +138,11 @@ def unfoldedHist_Flat(hist,histName,norm=-1):
         
     
     
-def make_projected_hist(template_file, dir_2D ):
+def make_projected_hist(template_file, dir_2D, to_axis='X' ):
     
-    print "------------- Projecting  templates to X"
+    print "------------- Projecting  templates to ",to_axis
     #dir_2D = '/afs/cern.ch/work/r/roko/Stat/CMSSW_611_JCP/src/HZZ4L_Combination/CombinationPy/CreateDatacards/Sandbox/templates_compare2Pedja/Templates2D_D0M_Dint13/'
-    dir_2D_projected = dir_2D+"/projected/"
+    dir_2D_projected = dir_2D+"/projected{0}/".format(to_axis)
     misc.make_sure_path_exists(dir_2D_projected)
     #f=ROOT.TFile('/afs/cern.ch/work/r/roko/Stat/CMSSW_611_JCP/src/HZZ4L_Combination/CombinationPy/CreateDatacards/Sandbox/templates2D_D0M_Dint13/Dsignal_2e2mu.root')
     #f=ROOT.TFile('/afs/cern.ch/work/r/roko/Stat/CMSSW_611_JCP/src/HZZ4L_Combination/CombinationPy/CreateDatacards/Sandbox/Templates2D_D0Ph_Dint12/DSignal_4l.root')
@@ -181,39 +181,46 @@ def make_projected_hist(template_file, dir_2D ):
           
     print "Axis x = {0} y = {1}".format(th2.GetXaxis().GetTitle(), th2.GetYaxis().GetTitle())
     for term in allowedTermNames:
-        try:
-            #th2 = f.Get('{0}_shape'.format(term))
-            #projected = f.Get('{0}_shape'.format(term)).GetName()
-            projected = f.Get('{0}_shape'.format(term)).ProjectionX("{0}_shape_D0M".format(term))
-
-        except:
-            print "@@@@ Shape {0}_shape doesn't exist.".format(term)
-        else:
-            print 'Working with {0}_shape'.format(term)
-            fnew.cd()
-            
-            if 'Dbackground_ggZZ' in template_file: 
-                    print "---------------> Changing name to : ggZZ_shape"
-                    projected.SetNameTitle("ggZZ_shape","ggZZ_shape_projected")
-            elif 'Dbackground_ZJets' in template_file: 
-                    print "---------------> Changing name to : zjets_shape"
-                    projected.SetNameTitle("zjets_shape","zjets_shape_projected")
-                    
-            else: 
-                term_name = term
-                if copy_13_templates_to_12 and term in new_names.keys():
-                        term_name = new_names[term]
-                projected.SetNameTitle('{0}_shape'.format(term_name),"{0}_shape_projected".format(term))
-            print "New template name/title: {0}/{1}".format(projected.GetName(),projected.GetTitle())
-            c1 =ROOT.TCanvas("Templates","Templates",800,800)
-            c1.cd()
-            ROOT.gPad.SetRightMargin(0.085)
-            projected.Draw("hist")
-            misc.make_sure_path_exists(dir_2D_projected+"/fig")
-            for ext in [".png", ".pdf", ".root",".C"]: 
-                c1.SaveAs(dir_2D_projected +"/fig/"+template_file+"_"+term+ext)            
-            projected.Write()
-            
+        if to_axis.lower()=='x':
+            try:
+                #th2 = f.Get('{0}_shape'.format(term))
+                #projected = f.Get('{0}_shape'.format(term)).GetName()
+                projected = f.Get('{0}_shape'.format(term)).ProjectionX("{0}_shape_D0M".format(term))
+            except:
+                print "@@@@ Shape {0}_shape doesn't exist. Going to next one.".format(term)
+                continue
+        elif to_axis.lower()=='y':
+            try:
+                projected = f.Get('{0}_shape'.format(term)).ProjectionY("{0}_shape_D0M".format(term))
+            except:
+                print "@@@@ Shape {0}_shape doesn't exist. Going to next one.".format(term)
+                continue
+        #else:
+        print 'Working with {0}_shape'.format(term)
+        fnew.cd()
+        
+        if 'Dbackground_ggZZ' in template_file: 
+                print "---------------> Changing name to : ggZZ_shape"
+                projected.SetNameTitle("ggZZ_shape","ggZZ_shape_projected")
+        elif 'Dbackground_ZJets' in template_file: 
+                print "---------------> Changing name to : zjets_shape"
+                projected.SetNameTitle("zjets_shape","zjets_shape_projected")
+                
+        else: 
+            term_name = term
+            if copy_13_templates_to_12 and term in new_names.keys():
+                    term_name = new_names[term]
+            projected.SetNameTitle('{0}_shape'.format(term_name),"{0}_shape_projected".format(term))
+        print "New template name/title: {0}/{1}".format(projected.GetName(),projected.GetTitle())
+        c1 =ROOT.TCanvas("Templates","Templates",800,800)
+        c1.cd()
+        ROOT.gPad.SetRightMargin(0.085)
+        projected.Draw("hist")
+        misc.make_sure_path_exists(dir_2D_projected+"/fig")
+        for ext in [".png", ".pdf", ".root",".C"]: 
+            c1.SaveAs(dir_2D_projected +"/fig/"+template_file+"_"+term+ext)            
+        projected.Write()
+        
     if not 'Dbackground' in template_file: 
                 copy_tree(f, fnew,"factors")
     f.Close()
@@ -397,7 +404,7 @@ def copy_tree(f_src, f_dest,tree_name):
     #clone of old tree in new file
     f_dest.cd()
     newtree = oldtree.CloneTree();
-    newtree.Print()
+    #newtree.Print()
     newtree.Write()
 
     
@@ -447,6 +454,29 @@ if __name__ == "__main__":
                                                     'Dbackground_ZJetsCR_AllChans.root'],
             
                                                     
+            ###Discriminant templates for k3k1_ratio, with D_bkg
+            'DSignal_D0M_Dbkg_2e2mu.root':['Dsignal_2e2mu.root','Dsignal_superMELA_2e2mu.root'],
+            'DSignal_D0M_Dbkg_4e.root':['Dsignal_4e.root','Dsignal_superMELA_4e.root'],
+            'DSignal_D0M_Dbkg_4mu.root':['Dsignal_4mu.root','Dsignal_superMELA_4mu.root'],
+
+            'DBackground_D0M_Dbkg_qqZZ_2e2mu.root':['Dbackground_qqZZ_2e2mu.root','Dbackground_qqZZ_superMELA_2e2mu.root',],
+            'DBackground_D0M_Dbkg_qqZZ_4e.root':['Dbackground_qqZZ_4e.root',      'Dbackground_qqZZ_superMELA_4e.root'],
+            'DBackground_D0M_Dbkg_qqZZ_4mu.root':['Dbackground_qqZZ_4mu.root','Dbackground_qqZZ_superMELA_4mu.root',
+                                                    'Dbackground_ggZZ_2e2mu.root','Dbackground_ggZZ_4e.root','Dbackground_ggZZ_4mu.root',
+                                                    'Dbackground_ZJetsCR_AllChans.root'],
+            
+                    
+            ###Discriminant templates for k3k1_ratio, with D_bkg
+            'DSignal_D0Ph_Dbkg_2e2mu.root':['Dsignal_2e2mu.root','Dsignal_superMELA_2e2mu.root'],
+            'DSignal_D0Ph_Dbkg_4e.root':['Dsignal_4e.root','Dsignal_superMELA_4e.root'],
+            'DSignal_D0Ph_Dbkg_4mu.root':['Dsignal_4mu.root','Dsignal_superMELA_4mu.root'],
+
+            'DBackground_D0Ph_Dbkg_qqZZ_2e2mu.root':['Dbackground_qqZZ_2e2mu.root','Dbackground_qqZZ_superMELA_2e2mu.root',],
+            'DBackground_D0Ph_Dbkg_qqZZ_4e.root':['Dbackground_qqZZ_4e.root',      'Dbackground_qqZZ_superMELA_4e.root'],
+            'DBackground_D0Ph_Dbkg_qqZZ_4mu.root':['Dbackground_qqZZ_4mu.root','Dbackground_qqZZ_superMELA_4mu.root',
+                                                    'Dbackground_ggZZ_2e2mu.root','Dbackground_ggZZ_4e.root','Dbackground_ggZZ_4mu.root',
+                                                    'Dbackground_ZJetsCR_AllChans.root'],
+                                                    
         }
     
     
@@ -471,8 +501,15 @@ if __name__ == "__main__":
       'Dbackground_ZJetsCR_AllChans.root'
       ]
     dir_2D = [
-        '/afs/cern.ch/work/r/roko/Stat/CMSSW_611_JCP/src/HZZ4L_Combination/CombinationPy/CreateDatacards/Sandbox/templates_compare2Pedja_v3/LF_RECO_7TeV/Templates2D_D0M_D0Ph',
-        '/afs/cern.ch/work/r/roko/Stat/CMSSW_611_JCP/src/HZZ4L_Combination/CombinationPy/CreateDatacards/Sandbox/templates_compare2Pedja_v3/LF_RECO_8TeV/Templates2D_D0M_D0Ph',
+        #'/afs/cern.ch/work/r/roko/Stat/CMSSW_611_JCP/src/HZZ4L_Combination/CombinationPy/CreateDatacards/Sandbox/templates_compare2Pedja_v3/LF_RECO_7TeV/Templates2D_D0M_D0Ph',
+        #'/afs/cern.ch/work/r/roko/Stat/CMSSW_611_JCP/src/HZZ4L_Combination/CombinationPy/CreateDatacards/Sandbox/templates_compare2Pedja_v3/LF_RECO_8TeV/Templates2D_D0M_D0Ph',
+        
+        '/afs/cern.ch/work/r/roko/Stat/CMSSW_611_JCP/src/HZZ4L_Combination/CombinationPy/CreateDatacards/Sandbox/templates_compare2Pedja_v3/LF_RECO_7TeV/Templates2D_D0M_Dbkg',
+        '/afs/cern.ch/work/r/roko/Stat/CMSSW_611_JCP/src/HZZ4L_Combination/CombinationPy/CreateDatacards/Sandbox/templates_compare2Pedja_v3/LF_RECO_8TeV/Templates2D_D0M_Dbkg',
+        
+        '/afs/cern.ch/work/r/roko/Stat/CMSSW_611_JCP/src/HZZ4L_Combination/CombinationPy/CreateDatacards/Sandbox/templates_compare2Pedja_v3/LF_RECO_7TeV/Templates2D_D0Ph_Dbkg',
+        '/afs/cern.ch/work/r/roko/Stat/CMSSW_611_JCP/src/HZZ4L_Combination/CombinationPy/CreateDatacards/Sandbox/templates_compare2Pedja_v3/LF_RECO_8TeV/Templates2D_D0Ph_Dbkg',
+        
         #'/afs/cern.ch/work/r/roko/Stat/CMSSW_611_JCP/src/HZZ4L_Combination/CombinationPy/CreateDatacards/Sandbox/templates_compare2Pedja/LF_RECO_8TeV/Templates2D_D0M_Dint13/',
         #'/afs/cern.ch/work/r/roko/Stat/CMSSW_611_JCP/src/HZZ4L_Combination/CombinationPy/CreateDatacards/Sandbox/templates_compare2Pedja/LF_GEN_8TeV/Templates2D_D0Ph_Dint12/',
         #'/afs/cern.ch/work/r/roko/Stat/CMSSW_611_JCP/src/HZZ4L_Combination/CombinationPy/CreateDatacards/Sandbox/templates_compare2Pedja_v2/LF_RECO_8TeV/Templates2D_D0Ph_Dint12',
@@ -508,7 +545,9 @@ if __name__ == "__main__":
             print "------------------------------ INPUT FILE:", file_name
             #make_unfolded_hist(file_name, theDir)
             #make_projected_hist(file_name, theDir)
-            make_refurbished_hist(file_name, theDir)
+            make_projected_hist(file_name, theDir,'Y')
+            #make_refurbished_hist(file_name, theDir)
+            
             #make_refurbished_hist(file_name, theDir, new_dir='refurbishedRebinned22', rebin=(2,2))
             #make_refurbished_hist(file_name, theDir, new_dir='refurbishedRebinned55', rebin=(5,5))
             #make_refurbished_hist(file_name, theDir, new_dir='refurbishedSmoothed_k5b', smooth=(1,'k5b'))
