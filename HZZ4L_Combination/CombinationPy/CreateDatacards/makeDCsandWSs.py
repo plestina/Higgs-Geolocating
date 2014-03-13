@@ -30,9 +30,9 @@ def parseOptions():
     parser.add_option('--unfold', action='store_true', dest='unfold', default=False ,help='unfold 2D to 1D histograms')
     parser.add_option('--unfolded', action='store_true', dest='unfolded', default=False ,help='unfold 2D to 1D histograms but use external unfolding')
     parser.add_option('-L', '--lumi', dest='lumi', type='string', default="UseFromInputFile",    help='lumi for datacards')
-    parser.add_option('--terms', dest='termNames', type='string', default="UseDeafaultTerms",    help='pass collection of term names separated by colon ":"')
+    parser.add_option('--terms', dest='termNames', type='string', default="UseDeafaultTerms",    help='pass collection of term names separated by coma')
     parser.add_option('--user_option', dest='user_option', type='string', default="UseFromInputFile",    help='Arbitrary user options for datacards')
-
+    parser.add_option('--massWindow', dest='massWindow', type='string', default="UseDefault", help='Limits on Higgs mass window.')
     
     
     # store options and arguments as global variables
@@ -139,6 +139,36 @@ def creationLoop(directory):
 	theInputs4e['termNames'] = termNames
 	theInputs4mu['termNames'] = termNames 
 	theInputs2e2mu['termNames'] = termNames
+	
+    if opt.massWindow != "UseDefault":
+        massWindow = opt.massWindow.split(",")
+        assert len(massWindow)==2, 'You must provide a mass range within two boundaries.'
+        assert massWindow[0]<massWindow[1], 'The lower mass boundary has to be smaller that the upper one ! :)'
+        print "@@@@ Using massWindow = {0}".format(str(massWindow))
+        massWindow[0]=float(massWindow[0])
+        massWindow[1]=float(massWindow[1])
+        
+        theInputs4e['low_M']  = massWindow[0]
+        theInputs4e['high_M'] = massWindow[1]
+        
+        theInputs4mu['low_M']  = massWindow[0]
+        theInputs4mu['high_M'] = massWindow[1]
+        
+        theInputs2e2mu['low_M']  = massWindow[0]
+        theInputs2e2mu['high_M'] = massWindow[1]
+    else:
+        massWindow=[121.0,131.0]
+        print "@@@@ Using massWindow = {0}".format(str(massWindow))
+        
+        theInputs4e['low_M']  = massWindow[0]
+        theInputs4e['high_M'] = massWindow[1]
+        
+        theInputs4mu['low_M']  = massWindow[0]
+        theInputs4mu['high_M'] = massWindow[1]
+        
+        theInputs2e2mu['low_M']  = massWindow[0]
+        theInputs2e2mu['high_M'] = massWindow[1]
+        
 		
     
     

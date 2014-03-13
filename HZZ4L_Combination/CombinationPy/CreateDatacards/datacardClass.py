@@ -769,8 +769,10 @@ class datacardClass(object):
 
         
         ## ----------------------- SIGNAL RATES ----------------------- ##
-        #self.CMS_zz4l_mass.setRange("shape",self.inputs['low_M'],self.inputs['high_M'])
-        self.CMS_zz4l_mass.setRange("shape",121,131)
+        self.CMS_zz4l_mass.setRange("shape",self.inputs['low_M'],self.inputs['high_M'])
+        self.log.info('Using mass window:')
+        self.CMS_zz4l_mass.Print()
+        #self.CMS_zz4l_mass.setRange("shape",121,131)
         #self.CMS_zz4l_mass.setRange("shape",106,141)
         
         fr_low_M = self.inputs['low_M']

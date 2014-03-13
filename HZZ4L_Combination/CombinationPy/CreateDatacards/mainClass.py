@@ -42,34 +42,34 @@ class mainClass():
         print '>>>>>> Decay Channel: ',theInputs['decayChannel'],' = ',appendName
 
         ## ----------------- WIDTH AND RANGES ----------------- ##
-        myCSW = HiggsCSandWidth()
-        widthHVal =  myCSW.HiggsWidth(0,theMH)
+        #myCSW = HiggsCSandWidth()
+        #widthHVal =  myCSW.HiggsWidth(0,theMH)
 
-        self.windowVal = max( widthHVal, 1.0)
-        self.windowVal = max( widthHVal, 1.0)
-        lowside = 100.0
-        highside = 1000.0
-        if (theMH >= 275):
-            lowside = 180.0
-            highside = 650.0
-        if (theMH >= 350):
-            lowside = 200.0
-            highside = 900.0
-        if (theMH >= 500):
-            lowside = 250.0
-            highside = 1000.0
-        if (theMH >= 700):
-            lowside = 350.0
-            highside = 1400.0
+        #self.windowVal = max( widthHVal, 1.0)
+        #self.windowVal = max( widthHVal, 1.0)
+        #lowside = 100.0
+        #highside = 1000.0
+        #if (theMH >= 275):
+            #lowside = 180.0
+            #highside = 650.0
+        #if (theMH >= 350):
+            #lowside = 200.0
+            #highside = 900.0
+        #if (theMH >= 500):
+            #lowside = 250.0
+            #highside = 1000.0
+        #if (theMH >= 700):
+            #lowside = 350.0
+            #highside = 1400.0
                         
-        self.low_M = max( (theMH - 20.*self.windowVal), lowside)
-        self.high_M = min( (theMH + 15.*self.windowVal), highside)
+        #self.low_M = max( (theMH - 20.*self.windowVal), lowside)
+        #self.high_M = min( (theMH + 15.*self.windowVal), highside)
                
-        print '>>>>>> Higgs Width: ',widthHVal,' Window --- Low: ', self.low_M,' High: ', self.high_M
+        #print '>>>>>> Higgs Width: ',widthHVal,' Window --- Low: ', self.low_M,' High: ', self.high_M
 
-        ## add to the inputs
-        theInputs['low_M'] = self.low_M
-        theInputs['high_M'] = self.high_M
+        ### add to the inputs
+        #theInputs['low_M'] = self.low_M
+        #theInputs['high_M'] = self.high_M
         
         
 
